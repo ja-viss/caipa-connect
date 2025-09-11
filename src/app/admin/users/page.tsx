@@ -4,18 +4,18 @@ export default function UserManagementPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">User Management</h1>
-        <p className="text-muted-foreground">Administer user roles and permissions.</p>
+        <h1 className="text-3xl font-bold text-foreground">Gestión de Usuarios</h1>
+        <p className="text-muted-foreground">Administrar roles y permisos de usuario.</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Users</CardTitle>
+          <CardTitle>Usuarios</CardTitle>
           <CardDescription>
-            This is a placeholder for the user management interface.
+            Este es un marcador de posición para la interfaz de gestión de usuarios.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p>User administration features will be implemented here.</p>
+          <p>Las funciones de administración de usuarios se implementarán aquí.</p>
         </CardContent>
       </Card>
     </div>

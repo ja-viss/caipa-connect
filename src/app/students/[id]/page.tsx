@@ -21,7 +21,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
   const allLogsString = logs
     .map(
       (log) =>
-        `Date: ${log.date}\nTeacher: ${log.teacher}\nAchievements: ${log.achievements}\nChallenges: ${log.challenges}\nObservations: ${log.observations}\n---`
+        `Fecha: ${log.date}\nProfesor(a): ${log.teacher}\nLogros: ${log.achievements}\nDesafíos: ${log.challenges}\nObservaciones: ${log.observations}\n---`
     )
     .join('\n\n');
 
@@ -42,12 +42,12 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <div className="w-full text-sm space-y-2">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-muted-foreground" />
-                <span className="font-semibold">Representative:</span>
+                <span className="font-semibold">Representante:</span>
                 <span>{student.representative.name}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="font-semibold">Rep. Email:</span>
+                <span className="font-semibold">Email Rep.:</span>
                 <a href={`mailto:${student.representative.email}`} className="text-primary hover:underline">
                   {student.representative.email}
                 </a>
@@ -57,7 +57,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Learning Objectives</CardTitle>
+            <CardTitle>Objetivos de Aprendizaje</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3 list-disc list-inside">
@@ -71,8 +71,8 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
       <div className="lg:col-span-2 flex flex-col gap-8">
         <Card>
           <CardHeader>
-            <CardTitle>Daily Activity Logs</CardTitle>
-            <CardDescription>Record achievements, challenges, and observations.</CardDescription>
+            <CardTitle>Registros de Actividad Diaria</CardTitle>
+            <CardDescription>Registre logros, desafíos y observaciones.</CardDescription>
           </CardHeader>
           <CardContent>
             <ActivityLogger studentId={student.id} />
@@ -85,21 +85,21 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
                       <p className="font-semibold">{log.teacher}</p>
                       <p className="text-xs text-muted-foreground">{log.date}</p>
                     </div>
-                    <p><strong>Achievements:</strong> {log.achievements}</p>
-                    <p><strong>Challenges:</strong> {log.challenges}</p>
-                    <p><strong>Observations:</strong> {log.observations}</p>
+                    <p><strong>Logros:</strong> {log.achievements}</p>
+                    <p><strong>Desafíos:</strong> {log.challenges}</p>
+                    <p><strong>Observaciones:</strong> {log.observations}</p>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No activity logs found.</p>
+                <p className="text-sm text-muted-foreground">No se encontraron registros de actividad.</p>
               )}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Progress Reports</CardTitle>
-            <CardDescription>Generate and view AI-powered progress reports.</CardDescription>
+            <CardTitle>Informes de Progreso</CardTitle>
+            <CardDescription>Genere y vea informes de progreso impulsados por IA.</CardDescription>
           </CardHeader>
           <CardContent>
             <ProgressReportGenerator
@@ -111,7 +111,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
              <div className="space-y-6">
                  {reports.map(report => (
                      <div key={report.id}>
-                        <p className="text-sm font-semibold text-muted-foreground mb-2">Report from {report.date}</p>
+                        <p className="text-sm font-semibold text-muted-foreground mb-2">Informe del {report.date}</p>
                         <div className="p-4 bg-muted/50 rounded-md text-sm whitespace-pre-wrap font-mono">
                             {report.content}
                         </div>

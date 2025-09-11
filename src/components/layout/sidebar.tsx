@@ -8,15 +8,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { LayoutDashboard, Users, MessageSquare, Shield, BookOpen, Settings } from 'lucide-react';
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/students', label: 'Students', icon: Users },
-  { href: '/messages', label: 'Messages', icon: MessageSquare },
-  { href: '/resources', label: 'Resources', icon: BookOpen },
+  { href: '/', label: 'Panel', icon: LayoutDashboard },
+  { href: '/students', label: 'Estudiantes', icon: Users },
+  { href: '/messages', label: 'Mensajes', icon: MessageSquare },
+  { href: '/resources', label: 'Recursos', icon: BookOpen },
 ];
 
 const adminNavItems = [
-  { href: '/admin/users', label: 'User Management', icon: Shield },
-  { href: '/admin/classrooms', label: 'Classrooms', icon: Users },
+  { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
+  { href: '/admin/classrooms', label: 'Aulas', icon: Users },
 ];
 
 export function Sidebar() {
@@ -92,7 +92,7 @@ export function Sidebar() {
               )}
             >
               <Settings className="h-4 w-4" />
-              Settings
+              Configuración
             </Link>
       </div>
     </aside>

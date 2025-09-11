@@ -26,15 +26,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/students', label: 'Students', icon: Users },
-  { href: '/messages', label: 'Messages', icon: MessageSquare },
-  { href: '/resources', label: 'Resources', icon: BookOpen },
+  { href: '/', label: 'Panel', icon: LayoutDashboard },
+  { href: '/students', label: 'Estudiantes', icon: Users },
+  { href: '/messages', label: 'Mensajes', icon: MessageSquare },
+  { href: '/resources', label: 'Recursos', icon: BookOpen },
 ];
 
 const adminNavItems = [
-  { href: '/admin/users', label: 'User Management', icon: Shield },
-  { href: '/admin/classrooms', label: 'Classrooms', icon: Users },
+  { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
+  { href: '/admin/classrooms', label: 'Aulas', icon: Users },
 ];
 
 
@@ -45,7 +45,7 @@ export default function Header() {
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">
             <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
+            <span className="sr-only">Alternar Menú</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
@@ -93,7 +93,7 @@ export default function Header() {
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search..."
+          placeholder="Buscar..."
           className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
@@ -107,12 +107,12 @@ export default function Header() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Ms. Davis</DropdownMenuLabel>
+          <DropdownMenuLabel>Sra. Davis</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuItem>Configuración</DropdownMenuItem>
+          <DropdownMenuItem>Soporte</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem>Cerrar Sesión</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

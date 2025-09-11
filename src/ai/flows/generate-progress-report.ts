@@ -1,33 +1,33 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating student progress reports from daily activity logs.
+ * @fileOverview Un agente de IA para generar informes de progreso de estudiantes a partir de registros de actividad diaria.
  *
- * - generateProgressReport - A function that generates a student progress report.
- * - GenerateProgressReportInput - The input type for the generateProgressReport function.
- * - GenerateProgressReportOutput - The return type for the generateProgressReport function.
+ * - generateProgressReport - Una función que genera un informe de progreso del estudiante.
+ * - GenerateProgressReportInput - El tipo de entrada para la función generateProgressReport.
+ * - GenerateProgressReportOutput - El tipo de retorno para la función generateProgressReport.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateProgressReportInputSchema = z.object({
-  studentName: z.string().describe('The name of the student.'),
+  studentName: z.string().describe('El nombre del estudiante.'),
   dailyActivityLogs: z
     .string()
     .describe(
-      'A list of daily activity logs for the student. Each log entry should include the date, activities performed, achievements, challenges, and observations.'
+      'Una lista de registros de actividad diaria para el estudiante. Cada entrada de registro debe incluir la fecha, actividades realizadas, logros, desafíos y observaciones.'
     ),
   learningObjectives: z
     .string()
-    .describe('The learning objectives for the student.'),
+    .describe('Los objetivos de aprendizaje para el estudiante.'),
 });
 export type GenerateProgressReportInput = z.infer<
   typeof GenerateProgressReportInputSchema
 >;
 
 const GenerateProgressReportOutputSchema = z.object({
-  progressReport: z.string().describe('The generated progress report.'),
+  progressReport: z.string().describe('El informe de progreso generado.'),
 });
 export type GenerateProgressReportOutput = z.infer<
   typeof GenerateProgressReportOutputSchema
@@ -43,13 +43,13 @@ const prompt = ai.definePrompt({
   name: 'generateProgressReportPrompt',
   input: {schema: GenerateProgressReportInputSchema},
   output: {schema: GenerateProgressReportOutputSchema},
-  prompt: `You are an AI assistant that specializes in creating student progress reports based on their daily activity logs and learning objectives.
+  prompt: `Eres un asistente de IA que se especializa en crear informes de progreso de estudiantes basados en sus registros de actividad diaria y objetivos de aprendizaje.
 
-  Student Name: {{{studentName}}}
-  Learning Objectives: {{{learningObjectives}}}
-  Daily Activity Logs: {{{dailyActivityLogs}}}
+  Nombre del Estudiante: {{{studentName}}}
+  Objetivos de Aprendizaje: {{{learningObjectives}}}
+  Registros de Actividad Diaria: {{{dailyActivityLogs}}}
 
-  Generate a comprehensive progress report for the student, highlighting their achievements, challenges, and areas for improvement. Incorporate specific observations from the daily activity logs to provide a detailed evaluation of the student's progress toward their learning objectives.`,
+  Genera un informe de progreso completo para el estudiante, destacando sus logros, desafíos y áreas de mejora. Incorpora observaciones específicas de los registros de actividad diaria para proporcionar una evaluación detallada del progreso del estudiante hacia sus objetivos de aprendizaje.`,
 });
 
 const generateProgressReportFlow = ai.defineFlow(

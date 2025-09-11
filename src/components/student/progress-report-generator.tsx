@@ -37,13 +37,13 @@ export default function ProgressReportGenerator({
     if (result.success) {
       setReport(result.report);
       toast({
-        title: 'Report Generated',
-        description: 'The progress report has been successfully generated.',
+        title: 'Informe Generado',
+        description: 'El informe de progreso ha sido generado exitosamente.',
       });
     } else {
       toast({
         title: 'Error',
-        description: result.error || 'Failed to generate the report.',
+        description: result.error || 'No se pudo generar el informe.',
         variant: 'destructive',
       });
     }
@@ -57,23 +57,23 @@ export default function ProgressReportGenerator({
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Generating...
+            Generando...
           </>
         ) : (
-          'Generate AI Progress Report'
+          'Generar Informe de Progreso con IA'
         )}
       </Button>
 
       {report && (
         <div>
-          <h4 className="font-semibold mb-2">Generated Report Draft:</h4>
+          <h4 className="font-semibold mb-2">Borrador del Informe Generado:</h4>
           <div className="p-4 bg-muted/50 rounded-md text-sm whitespace-pre-wrap font-mono border">
             {report}
           </div>
           <div className="flex gap-2 mt-4">
-            <Button size="sm">Save Report</Button>
+            <Button size="sm">Guardar Informe</Button>
             <Button size="sm" variant="outline">
-              Copy Text
+              Copiar Texto
             </Button>
           </div>
         </div>

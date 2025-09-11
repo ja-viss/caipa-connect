@@ -7,7 +7,7 @@ import Header from '@/components/layout/header';
 
 export const metadata: Metadata = {
   title: 'CAIPA Connect',
-  description: 'A platform for educators and representatives to connect and support student progress.',
+  description: 'Una plataforma para que educadores y representantes se conecten y apoyen el progreso de los estudiantes.',
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

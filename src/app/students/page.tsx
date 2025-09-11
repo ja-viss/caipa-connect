@@ -12,10 +12,10 @@ export default function StudentsPage() {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
-            <h1 className="text-3xl font-bold text-foreground">Students</h1>
-            <p className="text-muted-foreground">Manage and view student profiles.</p>
+            <h1 className="text-3xl font-bold text-foreground">Estudiantes</h1>
+            <p className="text-muted-foreground">Gestionar y ver perfiles de estudiantes.</p>
         </div>
-        <Button>Add Student</Button>
+        <Button>Añadir Estudiante</Button>
       </div>
       
       <Card>
@@ -26,10 +26,10 @@ export default function StudentsPage() {
                 <TableHead className="hidden w-[100px] sm:table-cell">
                   <span className="sr-only">Avatar</span>
                 </TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Representative</TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Representante</TableHead>
                 <TableHead>
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">Acciones</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -55,7 +55,7 @@ export default function StudentsPage() {
                      <Button asChild variant="ghost" size="icon">
                         <Link href={`/students/${student.id}`}>
                             <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">View Profile</span>
+                            <span className="sr-only">Ver Perfil</span>
                         </Link>
                     </Button>
                   </TableCell>

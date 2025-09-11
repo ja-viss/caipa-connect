@@ -20,9 +20,9 @@ export const students: Student[] = [
       email: 'sarah.j@example.com',
     },
     learningObjectives: [
-      'Improve reading comprehension by one grade level.',
-      'Master basic multiplication and division facts.',
-      'Develop effective collaboration skills in group projects.',
+      'Mejorar la comprensión lectora en un nivel de grado.',
+      'Dominar las operaciones básicas de multiplicación y división.',
+      'Desarrollar habilidades de colaboración efectivas en proyectos grupales.',
     ],
   },
   {
@@ -35,9 +35,9 @@ export const students: Student[] = [
       email: 'david.c@example.com',
     },
     learningObjectives: [
-      'Write a coherent five-paragraph essay.',
-      'Understand the principles of photosynthesis.',
-      'Participate actively in class discussions.',
+      'Escribir un ensayo coherente de cinco párrafos.',
+      'Comprender los principios de la fotosíntesis.',
+      'Participar activamente en las discusiones de clase.',
     ],
   },
   {
@@ -50,9 +50,9 @@ export const students: Student[] = [
       email: 'emily.t@example.com',
     },
     learningObjectives: [
-      'Solve two-step algebraic equations.',
-      'Identify the main themes in a literary text.',
-      'Use correct grammar and punctuation in all written work.',
+      'Resolver ecuaciones algebraicas de dos pasos.',
+      'Identificar los temas principales en un texto literario.',
+      'Usar correctamente la gramática y la puntuación en todos los trabajos escritos.',
     ],
   },
     {
@@ -65,9 +65,9 @@ export const students: Student[] = [
       email: 'maria.g@example.com',
     },
     learningObjectives: [
-      'Improve public speaking and presentation skills.',
-      'Understand the historical context of the Civil Rights Movement.',
-      'Apply the scientific method to a hands-on experiment.',
+      'Mejorar las habilidades de hablar en público y de presentación.',
+      'Comprender el contexto histórico del Movimiento por los Derechos Civiles.',
+      'Aplicar el método científico a un experimento práctico.',
     ],
   },
 ];
@@ -77,28 +77,28 @@ export const activityLogs: ActivityLog[] = [
         id: 'log1',
         studentId: '1',
         date: '2024-07-28',
-        teacher: 'Ms. Davis',
-        achievements: 'Liam successfully identified the main idea in three short stories and answered comprehension questions with 90% accuracy.',
-        challenges: 'He found it difficult to infer character motivations without explicit descriptions.',
-        observations: 'Liam is showing great enthusiasm for reading. Using graphic organizers seems to help him structure his thoughts.'
+        teacher: 'Sra. Davis',
+        achievements: 'Liam identificó con éxito la idea principal en tres cuentos y respondió preguntas de comprensión con un 90% de precisión.',
+        challenges: 'Le resultó difícil inferir las motivaciones de los personajes sin descripciones explícitas.',
+        observations: 'Liam muestra gran entusiasmo por la lectura. El uso de organizadores gráficos parece ayudarle a estructurar sus pensamientos.'
     },
     {
         id: 'log2',
         studentId: '1',
         date: '2024-07-29',
-        teacher: 'Ms. Davis',
-        achievements: 'Participated actively in a group discussion about a shared text, offering relevant ideas.',
-        challenges: 'Still hesitant to lead the conversation but willingly builds on others\' points.',
-        observations: 'His confidence in group settings is visibly growing.'
+        teacher: 'Sra. Davis',
+        achievements: 'Participó activamente en una discusión grupal sobre un texto compartido, ofreciendo ideas relevantes.',
+        challenges: 'Todavía duda en liderar la conversación pero complementa voluntariamente los puntos de los demás.',
+        observations: 'Su confianza en entornos grupales está creciendo visiblemente.'
     },
     {
         id: 'log3',
         studentId: '2',
         date: '2024-07-29',
-        teacher: 'Mr. Smith',
-        achievements: 'Olivia drafted a strong introductory paragraph for her essay on photosynthesis, with a clear thesis statement.',
-        challenges: 'Struggled to find credible sources for her research and needed guidance.',
-        observations: 'She is a diligent worker and responds well to constructive feedback.'
+        teacher: 'Sr. Smith',
+        achievements: 'Olivia redactó un párrafo introductorio sólido para su ensayo sobre la fotosíntesis, con una declaración de tesis clara.',
+        challenges: 'Tuvo dificultades para encontrar fuentes creíbles para su investigación y necesitó orientación.',
+        observations: 'Es una trabajadora diligente y responde bien a los comentarios constructivos.'
     }
 ];
 
@@ -107,7 +107,7 @@ export const progressReports: ProgressReport[] = [
         id: 'rep1',
         studentId: '1',
         date: '2024-06-30',
-        content: 'Liam has shown consistent progress in his reading skills. He is beginning to apply various reading strategies to understand complex texts. His participation in group activities has improved, though he could be more assertive. We will continue to focus on inferential thinking and leadership skills in the coming month.'
+        content: 'Liam ha mostrado un progreso constante en sus habilidades de lectura. Está comenzando a aplicar diversas estrategias de lectura para comprender textos complejos. Su participación en actividades grupales ha mejorado, aunque podría ser más asertivo. Continuaremos enfocándonos en el pensamiento inferencial y las habilidades de liderazgo en el próximo mes.'
     }
 ];
 
@@ -116,33 +116,33 @@ export const conversations: Conversation[] = [
         id: 'conv1',
         contactName: 'Emily Carter',
         contactAvatar: getImage('contact-emily'),
-        lastMessagePreview: 'That sounds great, thank you!',
-        lastMessageTimestamp: '2:45 PM',
+        lastMessagePreview: '¡Eso suena genial, gracias!',
+        lastMessageTimestamp: '14:45',
         messages: [
-            { id: 'msg1', sender: 'contact', text: 'Hi, I wanted to check in on Noah\'s progress with his algebra homework.', timestamp: '2:40 PM' },
-            { id: 'msg2', sender: 'user', text: 'Hi Emily! He\'s doing much better. He scored 85% on the last quiz. We are focusing on word problems this week.', timestamp: '2:42 PM' },
-            { id: 'msg3', sender: 'contact', text: 'That sounds great, thank you!', timestamp: '2:45 PM' },
+            { id: 'msg1', sender: 'contact', text: 'Hola, quería saber cómo va el progreso de Noah con su tarea de álgebra.', timestamp: '14:40' },
+            { id: 'msg2', sender: 'user', text: '¡Hola Emily! Le va mucho mejor. Obtuvo un 85% en el último examen. Esta semana nos estamos centrando en los problemas de palabras.', timestamp: '14:42' },
+            { id: 'msg3', sender: 'contact', text: '¡Eso suena genial, gracias!', timestamp: '14:45' },
         ]
     },
     {
         id: 'conv2',
         contactName: 'David Lee',
         contactAvatar: getImage('contact-david'),
-        lastMessagePreview: 'Okay, I will make sure she reviews them.',
-        lastMessageTimestamp: '11:10 AM',
+        lastMessagePreview: 'De acuerdo, me aseguraré de que los revise.',
+        lastMessageTimestamp: '11:10',
         messages: [
-             { id: 'msg4', sender: 'user', text: 'Hi David, just a reminder that Olivia\'s essay draft is due tomorrow. I have attached the rubric to her portal.', timestamp: '11:08 AM' },
-             { id: 'msg5', sender: 'contact', text: 'Okay, I will make sure she reviews them.', timestamp: '11:10 AM' },
+             { id: 'msg4', sender: 'user', text: 'Hola David, solo un recordatorio de que el borrador del ensayo de Olivia vence mañana. He adjuntado la rúbrica a su portal.', timestamp: '11:08' },
+             { id: 'msg5', sender: 'contact', text: 'De acuerdo, me aseguraré de que los revise.', timestamp: '11:10' },
         ]
     },
     {
         id: 'conv3',
         contactName: 'Sarah Miller',
         contactAvatar: getImage('contact-sarah'),
-        lastMessagePreview: 'Can we schedule a brief call for tomorrow?',
-        lastMessageTimestamp: 'Yesterday',
+        lastMessagePreview: '¿Podemos programar una breve llamada para mañana?',
+        lastMessageTimestamp: 'Ayer',
         messages: [
-             { id: 'msg6', sender: 'contact', text: 'I have some concerns about Liam\'s recent test scores. Can we schedule a brief call for tomorrow?', timestamp: 'Yesterday' },
+             { id: 'msg6', sender: 'contact', text: 'Tengo algunas preocupaciones sobre los resultados recientes de los exámenes de Liam. ¿Podemos programar una breve llamada para mañana?', timestamp: 'Ayer' },
         ]
     }
 ];

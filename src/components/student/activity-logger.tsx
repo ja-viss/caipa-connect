@@ -9,9 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
 const activityLogSchema = z.object({
-  achievements: z.string().min(1, 'Achievements are required.'),
-  challenges: z.string().min(1, 'Challenges are required.'),
-  observations: z.string().min(1, 'Observations are required.'),
+  achievements: z.string().min(1, 'Los logros son obligatorios.'),
+  challenges: z.string().min(1, 'Los desafíos son obligatorios.'),
+  observations: z.string().min(1, 'Las observaciones son obligatorias.'),
 });
 
 type ActivityLogFormValues = z.infer<typeof activityLogSchema>;
@@ -33,10 +33,10 @@ export default function ActivityLogger({ studentId }: ActivityLoggerProps) {
 
   const onSubmit = (data: ActivityLogFormValues) => {
     // Here you would typically call a server action to save the log
-    console.log('New log for student', studentId, data);
+    console.log('Nuevo registro para el estudiante', studentId, data);
     toast({
-      title: 'Activity Logged',
-      description: 'The new activity has been saved successfully.',
+      title: 'Actividad Registrada',
+      description: 'La nueva actividad ha sido guardada exitosamente.',
     });
     form.reset();
   };
@@ -49,9 +49,9 @@ export default function ActivityLogger({ studentId }: ActivityLoggerProps) {
           name="achievements"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Achievements</FormLabel>
+              <FormLabel>Logros</FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe the student's achievements..." {...field} />
+                <Textarea placeholder="Describa los logros del estudiante..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -62,9 +62,9 @@ export default function ActivityLogger({ studentId }: ActivityLoggerProps) {
           name="challenges"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Challenges</FormLabel>
+              <FormLabel>Desafíos</FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe the student's challenges..." {...field} />
+                <Textarea placeholder="Describa los desafíos del estudiante..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,16 +75,16 @@ export default function ActivityLogger({ studentId }: ActivityLoggerProps) {
           name="observations"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Observations</FormLabel>
+              <FormLabel>Observaciones</FormLabel>
               <FormControl>
-                <Textarea placeholder="Note any other observations..." {...field} />
+                <Textarea placeholder="Anote cualquier otra observación..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit">Log Activity</Button>
+          <Button type="submit">Registrar Actividad</Button>
         </div>
       </form>
     </Form>
