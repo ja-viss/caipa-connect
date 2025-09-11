@@ -26,7 +26,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const navItems = [
-  { href: '/', label: 'Panel', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
   { href: '/students', label: 'Estudiantes', icon: Users },
   { href: '/messages', label: 'Mensajes', icon: MessageSquare },
   { href: '/resources', label: 'Recursos', icon: BookOpen },
@@ -40,7 +40,7 @@ const adminNavItems = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4 md:ml-64">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
       <Sheet>
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">

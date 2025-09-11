@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { LayoutDashboard, Users, MessageSquare, Shield, BookOpen, Settings } from 'lucide-react';
 
 const navItems = [
-  { href: '/', label: 'Panel', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
   { href: '/students', label: 'Estudiantes', icon: Users },
   { href: '/messages', label: 'Mensajes', icon: MessageSquare },
   { href: '/resources', label: 'Recursos', icon: BookOpen },

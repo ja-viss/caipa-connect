@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { Sidebar } from '@/components/layout/sidebar';
-import Header from '@/components/layout/header';
+import AppLayout from '@/components/layout/AppLayout';
 
 export const metadata: Metadata = {
   title: 'CAIPA Connect',
@@ -25,12 +24,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn('font-body antialiased', 'min-h-screen w-full bg-background text-foreground flex')}>
-        <Sidebar />
-        <div className="flex flex-col w-full">
-          <Header />
-          <main className="p-4 sm:p-6 lg:p-8 flex-1 overflow-auto">{children}</main>
-        </div>
+      <body className={cn('font-body antialiased', 'min-h-screen w-full bg-background text-foreground')}>
+        <AppLayout>{children}</AppLayout>
         <Toaster />
       </body>
     </html>
