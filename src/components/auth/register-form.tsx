@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +25,7 @@ function SubmitButton() {
 }
 
 export function RegisterForm() {
-  const [state, action] = useFormState(createUser, undefined);
+  const [state, action] = useActionState(createUser, undefined);
 
   return (
     <div className="mx-auto grid w-[350px] gap-6">
