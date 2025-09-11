@@ -1,7 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Users, FileText } from 'lucide-react';
+import { getDashboardStats } from "@/lib/actions/students";
+import type { Conversation } from "@/lib/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const stats = await getDashboardStats();
+
   return (
     <div className="flex flex-col gap-8">
       <h1 className="text-3xl font-bold text-foreground">Panel de Control</h1>
@@ -14,9 +19,9 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">124</div>
+            <div className="text-2xl font-bold">{stats.totalStudents}</div>
             <p className="text-xs text-muted-foreground">
-              +5 desde el último mes
+              estudiantes registrados
             </p>
           </CardContent>
         </Card>
@@ -28,7 +33,7 @@ export default function Dashboard() {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">32</div>
+            <div className="text-2xl font-bold">{stats.recentActivities}</div>
             <p className="text-xs text-muted-foreground">
               en las últimas 24 horas
             </p>
@@ -42,7 +47,7 @@ export default function Dashboard() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">{stats.reportsGenerated}</div>
             <p className="text-xs text-muted-foreground">
               esta semana
             </p>
@@ -56,26 +61,22 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center font-bold text-primary-foreground">
-                  JD
-                </div>
-                <div>
-                  <p className="font-semibold">Jane Doe (Rep)</p>
-                  <p className="text-sm text-muted-foreground">Re: Progreso de Liam</p>
-                  <p className="text-sm mt-1">Gracias por la actualización, programemos una llamada...</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center font-bold text-primary-foreground">
-                  MS
-                </div>
-                <div>
-                  <p className="font-semibold">Sr. Smith</p>
-                  <p className="text-sm text-muted-foreground">Pregunta sobre Olivia</p>
-                  <p className="text-sm mt-1">¿Podría dar más detalles sobre sus desafíos con...</p>
-                </div>
-              </div>
+              {stats.recentConversations.length > 0 ? (
+                stats.recentConversations.map((convo: Conversation) => (
+                  <div key={convo.id} className="flex items-start gap-4">
+                     <Avatar className="h-10 w-10">
+                        <AvatarImage src={convo.contactAvatar.imageUrl} alt={convo.contactName} data-ai-hint={convo.contactAvatar.imageHint} />
+                        <AvatarFallback>{convo.contactName.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold">{convo.contactName}</p>
+                      <p className="text-sm text-muted-foreground truncate">{convo.lastMessagePreview}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No hay comunicaciones recientes.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -87,8 +88,8 @@ export default function Dashboard() {
             <div className="space-y-4">
                 <div className="flex items-center gap-4">
                     <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold">JUL</span>
-                        <span className="text-xl font-bold">31</span>
+                        <span className="text-sm font-bold">OCT</span>
+                        <span className="text-xl font-bold">25</span>
                     </div>
                     <div>
                         <p className="font-semibold">Conferencias de Padres y Maestros</p>
@@ -97,8 +98,8 @@ export default function Dashboard() {
                 </div>
                  <div className="flex items-center gap-4">
                     <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold">AGO</span>
-                        <span className="text-xl font-bold">05</span>
+                        <span className="text-sm font-bold">NOV</span>
+                        <span className="text-xl font-bold">12</span>
                     </div>
                     <div>
                         <p className="font-semibold">Día de Desarrollo Profesional</p>

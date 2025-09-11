@@ -2,7 +2,7 @@
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
-import type { Student, ActivityLog, ProgressReport, Conversation } from '@/lib/types';
+import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats } from '@/lib/types';
 import { PlaceHolderImages } from '../placeholder-images';
 
 async function getDb() {
@@ -90,10 +90,11 @@ export async function createActivityLog(logData: Omit<ActivityLog, 'id' | 'date'
         const newLog = {
             ...logData,
             id: crypto.randomUUID(),
-            date: new Date().toISOString().split('T')[0],
+            date: new Date().toISOString(),
         };
         await db.collection('activityLogs').insertOne(newLog);
         revalidatePath(`/students/${logData.studentId}`);
+        revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {
         console.error('Error creating activity log:', error);
@@ -107,10 +108,11 @@ export async function createProgressReport(reportData: Omit<ProgressReport, 'id'
         const newReport = {
             ...reportData,
             id: crypto.randomUUID(),
-            date: new Date().toISOString().split('T')[0],
+            date: new Date().toISOString(),
         };
         await db.collection('progressReports').insertOne(newReport);
         revalidatePath(`/students/${reportData.studentId}`);
+        revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {
         console.error('Error creating progress report:', error);
@@ -127,5 +129,37 @@ export async function getConversations(): Promise<Conversation[]> {
     } catch (error) {
         console.error('Error fetching conversations:', error);
         return [];
+    }
+}
+
+export async function getDashboardStats(): Promise<DashboardStats> {
+    try {
+        const db = await getDb();
+        
+        const totalStudents = await db.collection('students').countDocuments();
+        
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const recentActivities = await db.collection('activityLogs').countDocuments({ date: { $gte: twentyFourHoursAgo } });
+
+        const today = new Date();
+        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())).toISOString();
+        const reportsGenerated = await db.collection('progressReports').countDocuments({ date: { $gte: startOfWeek } });
+
+        const recentConversations = await db.collection('conversations').find().sort({ 'messages.timestamp': -1 }).limit(2).toArray();
+        
+        return {
+            totalStudents,
+            recentActivities,
+            reportsGenerated,
+            recentConversations: JSON.parse(JSON.stringify(recentConversations)),
+        };
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        return {
+            totalStudents: 0,
+            recentActivities: 0,
+            reportsGenerated: 0,
+            recentConversations: [],
+        };
     }
 }

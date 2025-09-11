@@ -38,7 +38,7 @@ export default function ProgressReportGenerator({
 
     const result = await handleGenerateReport(input);
 
-    if (result.success) {
+    if (result.success && result.report) {
       setReport(result.report);
       toast({
         title: 'Informe Generado',

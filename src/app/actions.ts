@@ -25,6 +25,6 @@ export async function handleGenerateReport(input: GenerateProgressReportInput) {
     } else if (error instanceof Error) {
         errorMessage = error.message;
     }
-    return { success: false, error: errorMessage };
+    return { success: false, error: errorMessage, report: null };
   }
 }

@@ -9,6 +9,8 @@ import { Mail, User } from 'lucide-react';
 import ActivityLogger from '@/components/student/activity-logger';
 import ProgressReportGenerator from '@/components/student/progress-report-generator';
 import type { Student, ActivityLog, ProgressReport } from '@/lib/types';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default async function StudentProfilePage({ params }: { params: { id: string } }) {
   const student: Student | null = await getStudentById(params.id);
@@ -24,7 +26,7 @@ export default async function StudentProfilePage({ params }: { params: { id: str
   const allLogsString = logs
     .map(
       (log) =>
-        `Fecha: ${log.date}\nProfesor(a): ${log.teacher}\nLogros: ${log.achievements}\nDesafíos: ${log.challenges}\nObservaciones: ${log.observations}\n---`
+        `Fecha: ${format(new Date(log.date), 'PPP', { locale: es })}\nProfesor(a): ${log.teacher}\nLogros: ${log.achievements}\nDesafíos: ${log.challenges}\nObservaciones: ${log.observations}\n---`
     )
     .join('\n\n');
 
@@ -63,11 +65,15 @@ export default async function StudentProfilePage({ params }: { params: { id: str
             <CardTitle>Objetivos de Aprendizaje</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3 list-disc list-inside">
-              {student.learningObjectives.map((objective, index) => (
-                <li key={index} className="text-sm">{objective}</li>
-              ))}
-            </ul>
+             {student.learningObjectives.length > 0 ? (
+                <ul className="space-y-3 list-disc list-inside">
+                  {student.learningObjectives.map((objective, index) => (
+                    <li key={index} className="text-sm">{objective}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">No se han definido objetivos de aprendizaje.</p>
+              )}
           </CardContent>
         </Card>
       </div>
@@ -86,7 +92,7 @@ export default async function StudentProfilePage({ params }: { params: { id: str
                   <div key={log.id} className="text-sm">
                     <div className="flex justify-between items-center mb-2">
                       <p className="font-semibold">{log.teacher}</p>
-                      <p className="text-xs text-muted-foreground">{log.date}</p>
+                      <p className="text-xs text-muted-foreground">{format(new Date(log.date), 'PPP', { locale: es })}</p>
                     </div>
                     <p><strong>Logros:</strong> {log.achievements}</p>
                     <p><strong>Desafíos:</strong> {log.challenges}</p>
@@ -113,14 +119,18 @@ export default async function StudentProfilePage({ params }: { params: { id: str
             />
              <Separator className="my-6" />
              <div className="space-y-6">
-                 {reports.map(report => (
-                     <div key={report.id}>
-                        <p className="text-sm font-semibold text-muted-foreground mb-2">Informe del {report.date}</p>
-                        <div className="p-4 bg-muted/50 rounded-md text-sm whitespace-pre-wrap font-mono">
-                            {report.content}
+                {reports.length > 0 ? (
+                    reports.map(report => (
+                        <div key={report.id}>
+                            <p className="text-sm font-semibold text-muted-foreground mb-2">Informe del {format(new Date(report.date), 'PPP', { locale: es })}</p>
+                            <div className="p-4 bg-muted/50 rounded-md text-sm whitespace-pre-wrap font-mono">
+                                {report.content}
+                            </div>
                         </div>
-                     </div>
-                 ))}
+                    ))
+                 ) : (
+                    <p className="text-sm text-muted-foreground">No se han generado informes.</p>
+                 )}
              </div>
           </CardContent>
         </Card>

@@ -50,6 +50,7 @@ export type Message = {
 };
 
 export type Conversation = {
+  _id?: ObjectId;
   id: string;
   contactName: string;
   contactAvatar: ImagePlaceholder;
@@ -57,3 +58,10 @@ export type Conversation = {
   lastMessagePreview: string;
   lastMessageTimestamp: string;
 };
+
+export type DashboardStats = {
+  totalStudents: number;
+  recentActivities: number;
+  reportsGenerated: number;
+  recentConversations: Conversation[];
+}
