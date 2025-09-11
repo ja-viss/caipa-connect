@@ -1,3 +1,47 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "student-liam",
+      "description": "Avatar for student Liam Johnson",
+      "imageUrl": "https://picsum.photos/seed/1/200/200",
+      "imageHint": "student avatar"
+    },
+    {
+      "id": "student-olivia",
+      "description": "Avatar for student Olivia Chen",
+      "imageUrl": "https://picsum.photos/seed/2/200/200",
+      "imageHint": "student avatar"
+    },
+    {
+      "id": "student-noah",
+      "description": "Avatar for student Noah Taylor",
+      "imageUrl": "https://picsum.photos/seed/3/200/200",
+      "imageHint": "student avatar"
+    },
+    {
+      "id": "student-emma",
+      "description": "Avatar for student Emma Garcia",
+      "imageUrl": "https://picsum.photos/seed/4/200/200",
+      "imageHint": "student avatar"
+    },
+    {
+      "id": "contact-emily",
+      "description": "Avatar for contact Emily Carter",
+      "imageUrl": "https://picsum.photos/seed/5/200/200",
+      "imageHint": "person avatar"
+    },
+    {
+      "id": "contact-david",
+      "description": "Avatar for contact David Lee",
+      "imageUrl": "https://picsum.photos/seed/6/200/200",
+      "imageHint": "person avatar"
+    },
+    {
+      "id": "contact-sarah",
+      "description": "Avatar for contact Sarah Miller",
+      "imageUrl": "https://picsum.photos/seed/7/200/200",
+      "imageHint": "person avatar"
+    }
+  ]
 }
