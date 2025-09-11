@@ -1,27 +1,37 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="mx-auto max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
-          <CardDescription>Ingresa tu correo electrónico a continuación para iniciar sesión en tu cuenta</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Iniciar Sesión</h1>
+            <p className="text-balance text-muted-foreground">
+              Ingresa tu correo electrónico para acceder a tu cuenta
+            </p>
+          </div>
           <form action="/dashboard" className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Correo Electrónico</Label>
-              <Input id="email" type="email" placeholder="nombre@ejemplo.com" required />
+              <Input
+                id="email"
+                type="email"
+                placeholder="nombre@ejemplo.com"
+                required
+              />
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Contraseña</Label>
-                <Link href="#" className="ml-auto inline-block text-sm underline">
+                <Link
+                  href="#"
+                  className="ml-auto inline-block text-sm underline"
+                >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
@@ -37,8 +47,18 @@ export default function LoginPage() {
               Registrarse
             </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      <div className="hidden bg-muted lg:block">
+        <Image
+          src="https://picsum.photos/seed/school/1200/800"
+          alt="Imagen descriptiva de un entorno educativo"
+          width="1920"
+          height="1080"
+          data-ai-hint="classroom students"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
     </div>
   );
 }
