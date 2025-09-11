@@ -14,13 +14,37 @@ export type Student = {
   _id?: ObjectId;
   id: string;
   name: string;
+  dob: string;
+  gender: string;
   avatar: ImagePlaceholder;
-  email: string;
+  
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relation: string;
+  };
+  
+  medicalInfo: {
+    diagnosis: string;
+    conditions: string;
+    medications: string;
+    allergies: string;
+  };
+
+  pedagogicalInfo: {
+    gradeLevel: string;
+    specializationArea: string;
+    skillsAndInterests: string;
+    supportNeeds: string;
+  };
+
   representative: {
     name: string;
+    relation: string;
+    phone: string;
     email: string;
+    address?: string;
   };
-  learningObjectives: string[];
 };
 
 export type ActivityLog = {

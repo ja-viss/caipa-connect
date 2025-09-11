@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Mail, User } from 'lucide-react';
+import { Mail, User, Phone, Home, Stethoscope, Pill, ShieldAlert, HeartPulse, GraduationCap, Lightbulb, UserRound, Target } from 'lucide-react';
 import ActivityLogger from '@/components/student/activity-logger';
 import ProgressReportGenerator from '@/components/student/progress-report-generator';
 import type { Student, ActivityLog, ProgressReport } from '@/lib/types';
@@ -41,40 +41,103 @@ export default async function StudentProfilePage({ params }: { params: { id: str
             </Avatar>
             <div className="text-center">
               <h2 className="text-2xl font-bold">{student.name}</h2>
-              <p className="text-muted-foreground">{student.email}</p>
+              <p className="text-muted-foreground">Fecha de Nac.: {format(new Date(student.dob), 'dd/MM/yyyy', { locale: es })}</p>
+              <p className="text-muted-foreground">Género: {student.gender}</p>
             </div>
-            <Separator />
-            <div className="w-full text-sm space-y-2">
-              <div className="flex items-center gap-2">
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Información del Representante</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+             <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-muted-foreground" />
-                <span className="font-semibold">Representante:</span>
-                <span>{student.representative.name}</span>
+                <span className="font-semibold">{student.representative.name} ({student.representative.relation})</span>
               </div>
-              <div className="flex items-center gap-2">
+               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="font-semibold">Email Rep.:</span>
                 <a href={`mailto:${student.representative.email}`} className="text-primary hover:underline">
                   {student.representative.email}
                 </a>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Objetivos de Aprendizaje</CardTitle>
-          </CardHeader>
-          <CardContent>
-             {student.learningObjectives.length > 0 ? (
-                <ul className="space-y-3 list-disc list-inside">
-                  {student.learningObjectives.map((objective, index) => (
-                    <li key={index} className="text-sm">{objective}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground">No se han definido objetivos de aprendizaje.</p>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-muted-foreground" />
+                <span>{student.representative.phone}</span>
+              </div>
+              {student.representative.address && (
+                 <div className="flex items-start gap-2">
+                  <Home className="w-4 h-4 text-muted-foreground mt-1" />
+                  <span>{student.representative.address}</span>
+                </div>
               )}
           </CardContent>
+        </Card>
+        
+        <Card>
+            <CardHeader>
+                <CardTitle>Información Médica</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+                 <div className="flex items-start gap-2">
+                    <Stethoscope className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Diagnóstico:</p>
+                        <p>{student.medicalInfo.diagnosis}</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <HeartPulse className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Condiciones Adicionales:</p>
+                        <p>{student.medicalInfo.conditions}</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <Pill className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Medicamentos:</p>
+                        <p>{student.medicalInfo.medications}</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <ShieldAlert className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Alergias:</p>
+                        <p>{student.medicalInfo.allergies}</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+        
+        <Card>
+            <CardHeader>
+                <CardTitle>Información Pedagógica</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+                 <div className="flex items-start gap-2">
+                    <GraduationCap className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Nivel/Grupo:</p>
+                        <p>{student.pedagogicalInfo.gradeLevel} / {student.pedagogicalInfo.specializationArea}</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <Lightbulb className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Habilidades e Intereses:</p>
+                        <p>{student.pedagogicalInfo.skillsAndInterests}</p>
+                    </div>
+                </div>
+                 <div className="flex items-start gap-2">
+                    <Target className="w-4 h-4 text-muted-foreground mt-1" />
+                    <div>
+                        <p className="font-semibold">Necesidades de Apoyo:</p>
+                        <p>{student.pedagogicalInfo.supportNeeds}</p>
+                    </div>
+                </div>
+            </CardContent>
         </Card>
       </div>
       <div className="lg:col-span-2 flex flex-col gap-8">
@@ -114,7 +177,7 @@ export default async function StudentProfilePage({ params }: { params: { id: str
             <ProgressReportGenerator
               studentId={student.id}
               studentName={student.name}
-              learningObjectives={student.learningObjectives.join('\n- ')}
+              learningObjectives={student.pedagogicalInfo.supportNeeds}
               dailyActivityLogs={allLogsString}
             />
              <Separator className="my-6" />

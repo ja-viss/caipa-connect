@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -16,34 +16,60 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { createStudent } from '@/lib/actions/students';
 import { Loader2 } from 'lucide-react';
+import { ScrollArea } from '../ui/scroll-area';
 
 const studentSchema = z.object({
+  // Student Info
   name: z.string().min(1, 'El nombre del estudiante es obligatorio.'),
-  email: z.string().email('Correo electrónico de estudiante inválido.'),
+  dob: z.string().min(1, 'La fecha de nacimiento es obligatoria.'),
+  gender: z.string().min(1, 'El género es obligatorio.'),
+  
+  // Emergency Contact
+  emergencyContactName: z.string().min(1, 'El nombre del contacto de emergencia es obligatorio.'),
+  emergencyContactPhone: z.string().min(1, 'El teléfono del contacto de emergencia es obligatorio.'),
+  emergencyContactRelation: z.string().min(1, 'La relación del contacto de emergencia es obligatoria.'),
+  
+  // Medical Info
+  diagnosis: z.string().min(1, 'El diagnóstico es obligatorio.'),
+  medicalConditions: z.string().min(1, 'Las condiciones médicas son obligatorias.'),
+  medications: z.string().min(1, 'Los medicamentos son obligatorios.'),
+  allergies: z.string().min(1, 'Las alergias son obligatorias.'),
+  
+  // Pedagogical Info
+  gradeLevel: z.string().min(1, 'El nivel educativo es obligatorio.'),
+  specializationArea: z.string().min(1, 'El área de especialización es obligatoria.'),
+  skillsAndInterests: z.string().min(1, 'Las habilidades e intereses son obligatorios.'),
+  supportNeeds: z.string().min(1, 'Las necesidades de apoyo son obligatorias.'),
+  
+  // Representative Info
   representativeName: z.string().min(1, 'El nombre del representante es obligatorio.'),
+  representativeRelation: z.string().min(1, 'La relación con el estudiante es obligatoria.'),
+  representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
+  representativeAddress: z.string().optional(),
 });
+
 
 type StudentFormValues = z.infer<typeof studentSchema>;
 
 export function AddStudentDialog() {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<StudentFormValues>({
     resolver: zodResolver(studentSchema),
   });
 
-  const onSubmit = async (data: StudentFormValues) => {
-    setIsSubmitting(true);
+  const onSubmit: SubmitHandler<StudentFormValues> = async (data) => {
     const result = await createStudent(data);
     if (result.success) {
       toast({
@@ -53,13 +79,18 @@ export function AddStudentDialog() {
       reset();
       setOpen(false);
     } else {
+      let errorMessage = 'No se pudo añadir al estudiante.';
+      if (result.error instanceof z.ZodError) {
+        errorMessage = result.error.errors.map(e => e.message).join(', ');
+      } else if (typeof result.error === 'string') {
+        errorMessage = result.error;
+      }
       toast({
         title: 'Error',
-        description: result.error || 'No se pudo añadir al estudiante.',
+        description: errorMessage,
         variant: 'destructive',
       });
     }
-    setIsSubmitting(false);
   };
 
   return (
@@ -67,56 +98,146 @@ export function AddStudentDialog() {
       <DialogTrigger asChild>
         <Button>Añadir Estudiante</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Añadir Nuevo Estudiante</DialogTitle>
           <DialogDescription>
             Completa la información para añadir un nuevo estudiante al sistema.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Nombre
-            </Label>
-            <div className="col-span-3">
-              <Input id="name" {...register('name')} className="w-full" />
-              {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Tabs defaultValue="student-info" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="student-info">Estudiante</TabsTrigger>
+              <TabsTrigger value="medical-info">Info. Médica</TabsTrigger>
+              <TabsTrigger value="pedagogical-info">Info. Pedagógica</TabsTrigger>
+              <TabsTrigger value="representative-info">Representante</TabsTrigger>
+            </TabsList>
+
+            <ScrollArea className="h-[50vh] mt-4">
+            <div className="p-4">
+            <TabsContent value="student-info" className="space-y-4">
+              <h3 className="font-semibold text-lg">Información Básica</h3>
+               <div>
+                  <Label htmlFor="name">Nombre y Apellido</Label>
+                  <Input id="name" {...register('name')} />
+                  {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
+               </div>
+               <div>
+                  <Label htmlFor="dob">Fecha de Nacimiento</Label>
+                  <Input id="dob" type="date" {...register('dob')} />
+                  {errors.dob && <p className="text-sm text-destructive mt-1">{errors.dob.message}</p>}
+               </div>
+                <div>
+                  <Label htmlFor="gender">Género</Label>
+                  <Input id="gender" {...register('gender')} />
+                  {errors.gender && <p className="text-sm text-destructive mt-1">{errors.gender.message}</p>}
+               </div>
+               <h3 className="font-semibold text-lg pt-4">Contacto de Emergencia</h3>
+                <div>
+                  <Label htmlFor="emergencyContactName">Nombre Completo</Label>
+                  <Input id="emergencyContactName" {...register('emergencyContactName')} />
+                  {errors.emergencyContactName && <p className="text-sm text-destructive mt-1">{errors.emergencyContactName.message}</p>}
+               </div>
+                <div>
+                  <Label htmlFor="emergencyContactPhone">Número de Teléfono</Label>
+                  <Input id="emergencyContactPhone" {...register('emergencyContactPhone')} />
+                  {errors.emergencyContactPhone && <p className="text-sm text-destructive mt-1">{errors.emergencyContactPhone.message}</p>}
+               </div>
+                <div>
+                  <Label htmlFor="emergencyContactRelation">Relación con el Estudiante</Label>
+                  <Input id="emergencyContactRelation" {...register('emergencyContactRelation')} />
+                  {errors.emergencyContactRelation && <p className="text-sm text-destructive mt-1">{errors.emergencyContactRelation.message}</p>}
+               </div>
+            </TabsContent>
+
+            <TabsContent value="medical-info" className="space-y-4">
+                <h3 className="font-semibold text-lg">Información Médica y de Diagnóstico</h3>
+                 <div>
+                    <Label htmlFor="diagnosis">Diagnóstico (TEA)</Label>
+                    <Textarea id="diagnosis" {...register('diagnosis')} />
+                    {errors.diagnosis && <p className="text-sm text-destructive mt-1">{errors.diagnosis.message}</p>}
+                </div>
+                 <div>
+                    <Label htmlFor="medicalConditions">Condiciones Médicas o Comorbilidades</Label>
+                    <Textarea id="medicalConditions" {...register('medicalConditions')} />
+                    {errors.medicalConditions && <p className="text-sm text-destructive mt-1">{errors.medicalConditions.message}</p>}
+                </div>
+                 <div>
+                    <Label htmlFor="medications">Medicamentos Actuales</Label>
+                    <Textarea id="medications" {...register('medications')} />
+                    {errors.medications && <p className="text-sm text-destructive mt-1">{errors.medications.message}</p>}
+                </div>
+                 <div>
+                    <Label htmlFor="allergies">Alergias</Label>
+                    <Textarea id="allergies" {...register('allergies')} />
+                    {errors.allergies && <p className="text-sm text-destructive mt-1">{errors.allergies.message}</p>}
+                </div>
+            </TabsContent>
+
+             <TabsContent value="pedagogical-info" className="space-y-4">
+                <h3 className="font-semibold text-lg">Información Pedagógica</h3>
+                 <div>
+                    <Label htmlFor="gradeLevel">Grado o Nivel Educativo</Label>
+                    <Input id="gradeLevel" {...register('gradeLevel')} />
+                    {errors.gradeLevel && <p className="text-sm text-destructive mt-1">{errors.gradeLevel.message}</p>}
+                </div>
+                 <div>
+                    <Label htmlFor="specializationArea">Área de Especialización o Grupo</Label>
+                    <Input id="specializationArea" {...register('specializationArea')} />
+                    {errors.specializationArea && <p className="text-sm text-destructive mt-1">{errors.specializationArea.message}</p>}
+                </div>
+                 <div>
+                    <Label htmlFor="skillsAndInterests">Habilidades e Intereses</Label>
+                    <Textarea id="skillsAndInterests" {...register('skillsAndInterests')} />
+                    {errors.skillsAndInterests && <p className="text-sm text-destructive mt-1">{errors.skillsAndInterests.message}</p>}
+                </div>
+                 <div>
+                    <Label htmlFor="supportNeeds">Necesidades de Apoyo Específicas</Label>
+                    <Textarea id="supportNeeds" {...register('supportNeeds')} />
+                    {errors.supportNeeds && <p className="text-sm text-destructive mt-1">{errors.supportNeeds.message}</p>}
+                </div>
+             </TabsContent>
+
+
+            <TabsContent value="representative-info" className="space-y-4">
+                <h3 className="font-semibold text-lg">Datos del Representante (Padre/Tutor)</h3>
+                <div>
+                  <Label htmlFor="representativeName">Nombre y Apellido</Label>
+                  <Input id="representativeName" {...register('representativeName')} />
+                  {errors.representativeName && <p className="text-sm text-destructive mt-1">{errors.representativeName.message}</p>}
+               </div>
+                <div>
+                  <Label htmlFor="representativeRelation">Relación con el Estudiante</Label>
+                  <Input id="representativeRelation" {...register('representativeRelation')} />
+                  {errors.representativeRelation && <p className="text-sm text-destructive mt-1">{errors.representativeRelation.message}</p>}
+               </div>
+                 <div>
+                  <Label htmlFor="representativePhone">Número de Teléfono</Label>
+                  <Input id="representativePhone" type="tel" {...register('representativePhone')} />
+                  {errors.representativePhone && <p className="text-sm text-destructive mt-1">{errors.representativePhone.message}</p>}
+               </div>
+               <div>
+                  <Label htmlFor="representativeEmail">Correo Electrónico</Label>
+                  <Input id="representativeEmail" type="email" {...register('representativeEmail')} />
+                  {errors.representativeEmail && <p className="text-sm text-destructive mt-1">{errors.representativeEmail.message}</p>}
+               </div>
+               <div>
+                  <Label htmlFor="representativeAddress">Dirección de Residencia (Opcional)</Label>
+                  <Input id="representativeAddress" {...register('representativeAddress')} />
+                  {errors.representativeAddress && <p className="text-sm text-destructive mt-1">{errors.representativeAddress.message}</p>}
+               </div>
+            </TabsContent>
             </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
-             <div className="col-span-3">
-              <Input id="email" type="email" {...register('email')} className="w-full" />
-              {errors.email && <p className="text-sm text-destructive mt-1">{errors.email.message}</p>}
-            </div>
-          </div>
-           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="representativeName" className="text-right">
-              Rep. Nombre
-            </Label>
-             <div className="col-span-3">
-              <Input id="representativeName" {...register('representativeName')} className="w-full" />
-              {errors.representativeName && <p className="text-sm text-destructive mt-1">{errors.representativeName.message}</p>}
-            </div>
-          </div>
-           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="representativeEmail" className="text-right">
-              Rep. Email
-            </Label>
-            <div className="col-span-3">
-              <Input id="representativeEmail" type="email" {...register('representativeEmail')} className="w-full" />
-              {errors.representativeEmail && <p className="text-sm text-destructive mt-1">{errors.representativeEmail.message}</p>}
-            </div>
-          </div>
-        <DialogFooter>
-          <Button type="submit" disabled={isSubmitting}>
-             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Guardar Estudiante
-          </Button>
-        </DialogFooter>
+            </ScrollArea>
+          </Tabs>
+
+          <DialogFooter className="mt-6">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Guardar Estudiante
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

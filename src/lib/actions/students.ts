@@ -4,6 +4,8 @@ import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats, Event } from '@/lib/types';
 import { PlaceHolderImages } from '../placeholder-images';
+import { z } from 'zod';
+
 
 async function getDb() {
   const client = await clientPromise;
@@ -21,21 +23,72 @@ export async function getStudents(): Promise<Student[]> {
   }
 }
 
-export async function createStudent(data: { name: string; email: string; representativeName: string; representativeEmail: string }): Promise<{ success: boolean; error?: string }> {
+const createStudentSchema = z.object({
+  name: z.string().min(1, 'El nombre del estudiante es obligatorio.'),
+  dob: z.string().min(1, 'La fecha de nacimiento es obligatoria.'),
+  gender: z.string().min(1, 'El género es obligatorio.'),
+  emergencyContactName: z.string().min(1, 'El nombre del contacto de emergencia es obligatorio.'),
+  emergencyContactPhone: z.string().min(1, 'El teléfono del contacto de emergencia es obligatorio.'),
+  emergencyContactRelation: z.string().min(1, 'La relación del contacto de emergencia es obligatoria.'),
+  diagnosis: z.string().min(1, 'El diagnóstico es obligatorio.'),
+  medicalConditions: z.string().min(1, 'Las condiciones médicas son obligatorias.'),
+  medications: z.string().min(1, 'Los medicamentos son obligatorios.'),
+  allergies: z.string().min(1, 'Las alergias son obligatorias.'),
+  gradeLevel: z.string().min(1, 'El nivel educativo es obligatorio.'),
+  specializationArea: z.string().min(1, 'El área de especialización es obligatoria.'),
+  skillsAndInterests: z.string().min(1, 'Las habilidades e intereses son obligatorios.'),
+  supportNeeds: z.string().min(1, 'Las necesidades de apoyo son obligatorias.'),
+  representativeName: z.string().min(1, 'El nombre del representante es obligatorio.'),
+  representativeRelation: z.string().min(1, 'La relación con el estudiante es obligatoria.'),
+  representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
+  representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
+  representativeAddress: z.string().optional(),
+});
+
+
+export async function createStudent(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
+    const validation = createStudentSchema.safeParse(data);
+
+    if (!validation.success) {
+      return { success: false, error: validation.error };
+    }
+    
+    const validatedData = validation.data;
+    
     try {
         const db = await getDb();
         const randomAvatar = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
         
-        const newStudent: Omit<Student, '_id'> = {
+        const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives'> = {
             id: crypto.randomUUID(),
-            name: data.name,
-            email: data.email,
+            name: validatedData.name,
+            dob: validatedData.dob,
+            gender: validatedData.gender,
             avatar: randomAvatar,
-            representative: {
-                name: data.representativeName,
-                email: data.representativeEmail,
+            emergencyContact: {
+              name: validatedData.emergencyContactName,
+              phone: validatedData.emergencyContactPhone,
+              relation: validatedData.emergencyContactRelation,
             },
-            learningObjectives: [], // Start with empty objectives
+            medicalInfo: {
+              diagnosis: validatedData.diagnosis,
+              conditions: validatedData.medicalConditions,
+              medications: validatedData.medications,
+              allergies: validatedData.allergies,
+            },
+            pedagogicalInfo: {
+              gradeLevel: validatedData.gradeLevel,
+              specializationArea: validatedData.specializationArea,
+              skillsAndInterests: validatedData.skillsAndInterests,
+              supportNeeds: validatedData.supportNeeds,
+            },
+            representative: {
+                name: validatedData.representativeName,
+                relation: validatedData.representativeRelation,
+                phone: validatedData.representativePhone,
+                email: validatedData.representativeEmail,
+                address: validatedData.representativeAddress,
+            },
         };
 
         await db.collection('students').insertOne(newStudent);

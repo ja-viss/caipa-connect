@@ -32,6 +32,7 @@ export default async function StudentsPage() {
                 </TableHead>
                 <TableHead>Nombre</TableHead>
                 <TableHead>Representante</TableHead>
+                <TableHead className="hidden md:table-cell">Grupo</TableHead>
                 <TableHead>
                   <span className="sr-only">Acciones</span>
                 </TableHead>
@@ -50,11 +51,9 @@ export default async function StudentsPage() {
                     <Link href={`/students/${student.id}`} className="hover:underline">
                       {student.name}
                     </Link>
-                     <div className="text-sm text-muted-foreground md:hidden">
-                        {student.email}
-                      </div>
                   </TableCell>
                   <TableCell>{student.representative.name}</TableCell>
+                   <TableCell className="hidden md:table-cell">{student.pedagogicalInfo.specializationArea}</TableCell>
                   <TableCell>
                      <Button asChild variant="ghost" size="icon">
                         <Link href={`/students/${student.id}`}>
