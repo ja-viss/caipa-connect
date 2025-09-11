@@ -59,9 +59,18 @@ export type Conversation = {
   lastMessageTimestamp: string;
 };
 
+export type Event = {
+    _id?: ObjectId;
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+};
+
 export type DashboardStats = {
   totalStudents: number;
   recentActivities: number;
   reportsGenerated: number;
   recentConversations: Conversation[];
+  upcomingEvents: Event[];
 }

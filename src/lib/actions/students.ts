@@ -2,7 +2,7 @@
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
-import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats } from '@/lib/types';
+import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats, Event } from '@/lib/types';
 import { PlaceHolderImages } from '../placeholder-images';
 
 async function getDb() {
@@ -132,6 +132,19 @@ export async function getConversations(): Promise<Conversation[]> {
     }
 }
 
+export async function getUpcomingEvents(): Promise<Event[]> {
+    try {
+        const db = await getDb();
+        const today = new Date().toISOString();
+        const events = await db.collection('events').find({ date: { $gte: today } }).sort({ date: 1 }).limit(2).toArray();
+        return JSON.parse(JSON.stringify(events));
+    } catch (error) {
+        console.error('Error fetching upcoming events:', error);
+        return [];
+    }
+}
+
+
 export async function getDashboardStats(): Promise<DashboardStats> {
     try {
         const db = await getDb();
@@ -147,11 +160,14 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 
         const recentConversations = await db.collection('conversations').find().sort({ 'messages.timestamp': -1 }).limit(2).toArray();
         
+        const upcomingEvents = await getUpcomingEvents();
+
         return {
             totalStudents,
             recentActivities,
             reportsGenerated,
             recentConversations: JSON.parse(JSON.stringify(recentConversations)),
+            upcomingEvents: JSON.parse(JSON.stringify(upcomingEvents)),
         };
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
@@ -160,6 +176,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             recentActivities: 0,
             reportsGenerated: 0,
             recentConversations: [],
+            upcomingEvents: [],
         };
     }
 }

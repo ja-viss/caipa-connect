@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Users, FileText } from 'lucide-react';
 import { getDashboardStats } from "@/lib/actions/students";
-import type { Conversation } from "@/lib/types";
+import type { Conversation, Event } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default async function Dashboard() {
   const stats = await getDashboardStats();
@@ -86,26 +88,22 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold">OCT</span>
-                        <span className="text-xl font-bold">25</span>
+              {stats.upcomingEvents.length > 0 ? (
+                stats.upcomingEvents.map((event: Event) => (
+                  <div key={event.id} className="flex items-center gap-4">
+                    <div className="flex flex-col items-center p-2 bg-muted rounded-md">
+                        <span className="text-sm font-bold uppercase">{format(new Date(event.date), 'MMM', { locale: es })}</span>
+                        <span className="text-xl font-bold">{format(new Date(event.date), 'dd')}</span>
                     </div>
                     <div>
-                        <p className="font-semibold">Conferencias de Padres y Maestros</p>
-                        <p className="text-sm text-muted-foreground">Evento de todo el día</p>
+                        <p className="font-semibold">{event.title}</p>
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
                     </div>
-                </div>
-                 <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold">NOV</span>
-                        <span className="text-xl font-bold">12</span>
-                    </div>
-                    <div>
-                        <p className="font-semibold">Día de Desarrollo Profesional</p>
-                        <p className="text-sm text-muted-foreground">Escuela cerrada para estudiantes</p>
-                    </div>
-                </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No hay próximos eventos.</p>
+              )}
             </div>
           </CardContent>
         </Card>
