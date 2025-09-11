@@ -13,7 +13,7 @@ export default function RegisterPage() {
           <CardDescription>Ingresa tu información para crear una cuenta</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
+          <form action="/dashboard" className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="full-name">Nombre Completo</Label>
               <Input id="full-name" placeholder="John Doe" required />
@@ -29,7 +29,7 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full">
               Crear Cuenta
             </Button>
-          </div>
+          </form>
           <div className="mt-4 text-center text-sm">
             ¿Ya tienes una cuenta?{' '}
             <Link href="/login" className="underline">

@@ -13,7 +13,7 @@ export default function LoginPage() {
           <CardDescription>Ingresa tu correo electrónico a continuación para iniciar sesión en tu cuenta</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
+          <form action="/dashboard" className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Correo Electrónico</Label>
               <Input id="email" type="email" placeholder="nombre@ejemplo.com" required />
@@ -30,7 +30,7 @@ export default function LoginPage() {
             <Button type="submit" className="w-full">
               Iniciar Sesión
             </Button>
-          </div>
+          </form>
           <div className="mt-4 text-center text-sm">
             ¿No tienes una cuenta?{' '}
             <Link href="/register" className="underline">
