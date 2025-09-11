@@ -6,7 +6,7 @@ import type { Student, ActivityLog, ProgressReport, Conversation } from '@/lib/t
 
 async function getDb() {
   const client = await clientPromise;
-  return client.db('caipa');
+  return client.db('school');
 }
 
 export async function getStudents(): Promise<Student[]> {
