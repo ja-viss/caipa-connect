@@ -1,13 +1,24 @@
 import Image from "next/image";
-import { conversations } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SendHorizonal, Search } from "lucide-react";
+import { getConversations } from "@/lib/actions/students";
+import type { Conversation } from "@/lib/types";
 
-export default function MessagesPage() {
+export default async function MessagesPage() {
+  const conversations: Conversation[] = await getConversations();
+  
+  if (conversations.length === 0) {
+    return (
+        <div className="flex items-center justify-center h-full">
+            <p>No se encontraron conversaciones.</p>
+        </div>
+    )
+  }
+
   const selectedConversation = conversations[0];
 
   return (

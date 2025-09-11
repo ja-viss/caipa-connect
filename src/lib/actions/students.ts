@@ -2,7 +2,7 @@
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
-import type { Student, ActivityLog, ProgressReport } from '@/lib/types';
+import type { Student, ActivityLog, ProgressReport, Conversation } from '@/lib/types';
 
 async function getDb() {
   const client = await clientPromise;
@@ -89,5 +89,17 @@ export async function createProgressReport(reportData: Omit<ProgressReport, 'id'
     } catch (error) {
         console.error('Error creating progress report:', error);
         return { success: false, error: 'Failed to create progress report.' };
+    }
+}
+
+
+export async function getConversations(): Promise<Conversation[]> {
+    try {
+        const db = await getDb();
+        const conversations = await db.collection('conversations').find({}).toArray();
+        return JSON.parse(JSON.stringify(conversations)) as Conversation[];
+    } catch (error) {
+        console.error('Error fetching conversations:', error);
+        return [];
     }
 }
