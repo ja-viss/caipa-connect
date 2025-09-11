@@ -24,20 +24,29 @@ export async function getStudents(): Promise<Student[]> {
 }
 
 const createStudentSchema = z.object({
+  // Student Info
   name: z.string().min(1, 'El nombre del estudiante es obligatorio.'),
   dob: z.string().min(1, 'La fecha de nacimiento es obligatoria.'),
   gender: z.string().min(1, 'El género es obligatorio.'),
+  
+  // Emergency Contact
   emergencyContactName: z.string().min(1, 'El nombre del contacto de emergencia es obligatorio.'),
   emergencyContactPhone: z.string().min(1, 'El teléfono del contacto de emergencia es obligatorio.'),
   emergencyContactRelation: z.string().min(1, 'La relación del contacto de emergencia es obligatoria.'),
+  
+  // Medical Info
   diagnosis: z.string().min(1, 'El diagnóstico es obligatorio.'),
   medicalConditions: z.string().min(1, 'Las condiciones médicas son obligatorias.'),
   medications: z.string().min(1, 'Los medicamentos son obligatorios.'),
   allergies: z.string().min(1, 'Las alergias son obligatorias.'),
+  
+  // Pedagogical Info
   gradeLevel: z.string().min(1, 'El nivel educativo es obligatorio.'),
   specializationArea: z.string().min(1, 'El área de especialización es obligatoria.'),
   skillsAndInterests: z.string().min(1, 'Las habilidades e intereses son obligatorios.'),
   supportNeeds: z.string().min(1, 'Las necesidades de apoyo son obligatorias.'),
+  
+  // Representative Info
   representativeName: z.string().min(1, 'El nombre del representante es obligatorio.'),
   representativeRelation: z.string().min(1, 'La relación con el estudiante es obligatoria.'),
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
