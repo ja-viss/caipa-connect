@@ -1,12 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getStudents } from "@/lib/actions/students";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import type { Student } from "@/lib/types";
+import { AddStudentDialog } from "@/components/student/add-student-dialog";
 
 export default async function StudentsPage() {
   const students: Student[] = await getStudents();
@@ -18,7 +19,7 @@ export default async function StudentsPage() {
             <h1 className="text-3xl font-bold text-foreground">Estudiantes</h1>
             <p className="text-muted-foreground">Gestionar y ver perfiles de estudiantes.</p>
         </div>
-        <Button>Añadir Estudiante</Button>
+        <AddStudentDialog />
       </div>
       
       <Card>

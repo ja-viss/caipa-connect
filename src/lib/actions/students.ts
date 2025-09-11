@@ -3,6 +3,7 @@
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import type { Student, ActivityLog, ProgressReport, Conversation } from '@/lib/types';
+import { PlaceHolderImages } from '../placeholder-images';
 
 async function getDb() {
   const client = await clientPromise;
@@ -13,14 +14,39 @@ export async function getStudents(): Promise<Student[]> {
   try {
     const db = await getDb();
     const students = await db.collection('students').find({}).toArray();
-    // The data from MongoDB includes _id, which is an ObjectId. We need to convert it to a string to pass it to the client component.
-    // Also, our type expects `id`, not `_id`.
-    return JSON.parse(JSON.stringify(students)) as Student[];
+    return JSON.parse(JSON.stringify(students));
   } catch (error) {
     console.error('Error fetching students:', error);
     return [];
   }
 }
+
+export async function createStudent(data: { name: string; email: string; representativeName: string; representativeEmail: string }): Promise<{ success: boolean; error?: string }> {
+    try {
+        const db = await getDb();
+        const randomAvatar = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+        
+        const newStudent: Omit<Student, '_id'> = {
+            id: crypto.randomUUID(),
+            name: data.name,
+            email: data.email,
+            avatar: randomAvatar,
+            representative: {
+                name: data.representativeName,
+                email: data.representativeEmail,
+            },
+            learningObjectives: [], // Start with empty objectives
+        };
+
+        await db.collection('students').insertOne(newStudent);
+        revalidatePath('/students');
+        return { success: true };
+    } catch (error) {
+        console.error('Error creating student:', error);
+        return { success: false, error: 'Failed to create student.' };
+    }
+}
+
 
 export async function getStudentById(id: string): Promise<Student | null> {
     try {
@@ -40,7 +66,7 @@ export async function getActivityLogsByStudentId(studentId: string): Promise<Act
     try {
         const db = await getDb();
         const logs = await db.collection('activityLogs').find({ studentId: studentId }).sort({ date: -1 }).toArray();
-        return JSON.parse(JSON.stringify(logs)) as ActivityLog[];
+        return JSON.parse(JSON.stringify(logs));
     } catch (error) {
         console.error('Error fetching activity logs:', error);
         return [];
@@ -51,14 +77,14 @@ export async function getProgressReportsByStudentId(studentId: string): Promise<
     try {
         const db = await getDb();
         const reports = await db.collection('progressReports').find({ studentId: studentId }).sort({ date: -1 }).toArray();
-        return JSON.parse(JSON.stringify(reports)) as ProgressReport[];
+        return JSON.parse(JSON.stringify(reports));
     } catch (error) {
         console.error('Error fetching progress reports:', error);
         return [];
     }
 }
 
-export async function createActivityLog(logData: Omit<ActivityLog, 'id' | 'date'>): Promise<{ success: boolean; error?: string }> {
+export async function createActivityLog(logData: Omit<ActivityLog, 'id' | 'date' | '_id'>): Promise<{ success: boolean; error?: string }> {
     try {
         const db = await getDb();
         const newLog = {
@@ -75,7 +101,7 @@ export async function createActivityLog(logData: Omit<ActivityLog, 'id' | 'date'
     }
 }
 
-export async function createProgressReport(reportData: Omit<ProgressReport, 'id' | 'date'>): Promise<{ success: boolean; error?: string }> {
+export async function createProgressReport(reportData: Omit<ProgressReport, 'id' | 'date' | '_id'>): Promise<{ success: boolean; error?: string }> {
     try {
         const db = await getDb();
         const newReport = {
@@ -97,7 +123,7 @@ export async function getConversations(): Promise<Conversation[]> {
     try {
         const db = await getDb();
         const conversations = await db.collection('conversations').find({}).toArray();
-        return JSON.parse(JSON.stringify(conversations)) as Conversation[];
+        return JSON.parse(JSON.stringify(conversations));
     } catch (error) {
         console.error('Error fetching conversations:', error);
         return [];

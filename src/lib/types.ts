@@ -1,6 +1,15 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import type { ObjectId } from 'mongodb';
 
+export type User = {
+  _id?: ObjectId;
+  id: string;
+  fullName: string;
+  email: string;
+  password?: string; // Should be hashed in a real app
+  role: 'admin' | 'teacher' | 'representative';
+};
+
 export type Student = {
   _id?: ObjectId;
   id: string;
