@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { createActivityLog } from '@/lib/actions/students';
 
 const activityLogSchema = z.object({
   achievements: z.string().min(1, 'Los logros son obligatorios.'),
@@ -31,14 +32,26 @@ export default function ActivityLogger({ studentId }: ActivityLoggerProps) {
     },
   });
 
-  const onSubmit = (data: ActivityLogFormValues) => {
-    // Here you would typically call a server action to save the log
-    console.log('Nuevo registro para el estudiante', studentId, data);
-    toast({
-      title: 'Actividad Registrada',
-      description: 'La nueva actividad ha sido guardada exitosamente.',
+  const onSubmit = async (data: ActivityLogFormValues) => {
+    const result = await createActivityLog({
+      studentId: studentId,
+      teacher: 'Sra. Davis', // This should be dynamic in a real app
+      ...data,
     });
-    form.reset();
+    
+    if (result.success) {
+      toast({
+        title: 'Actividad Registrada',
+        description: 'La nueva actividad ha sido guardada exitosamente.',
+      });
+      form.reset();
+    } else {
+       toast({
+        title: 'Error',
+        description: result.error || 'No se pudo registrar la actividad.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -84,7 +97,9 @@ export default function ActivityLogger({ studentId }: ActivityLoggerProps) {
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit">Registrar Actividad</Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Registrando...' : 'Registrar Actividad'}
+          </Button>
         </div>
       </form>
     </Form>

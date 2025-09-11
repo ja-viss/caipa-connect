@@ -1,6 +1,8 @@
 import type { ImagePlaceholder } from './placeholder-images';
+import type { ObjectId } from 'mongodb';
 
 export type Student = {
+  _id?: ObjectId;
   id: string;
   name: string;
   avatar: ImagePlaceholder;
@@ -13,6 +15,7 @@ export type Student = {
 };
 
 export type ActivityLog = {
+  _id?: ObjectId;
   id: string;
   studentId: string;
   date: string;
@@ -23,6 +26,7 @@ export type ActivityLog = {
 };
 
 export type ProgressReport = {
+  _id?: ObjectId;
   id: string;
   studentId: string;
   date: string;

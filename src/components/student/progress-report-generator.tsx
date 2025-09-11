@@ -6,24 +6,28 @@ import { useToast } from '@/hooks/use-toast';
 import { handleGenerateReport } from '@/app/actions';
 import { Loader2 } from 'lucide-react';
 import type { GenerateProgressReportInput } from '@/ai/flows/generate-progress-report';
+import { createProgressReport } from '@/lib/actions/students';
 
 interface ProgressReportGeneratorProps {
+  studentId: string;
   studentName: string;
   learningObjectives: string;
   dailyActivityLogs: string;
 }
 
 export default function ProgressReportGenerator({
+  studentId,
   studentName,
   learningObjectives,
   dailyActivityLogs,
 }: ProgressReportGeneratorProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [report, setReport] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleGenerate = async () => {
-    setIsLoading(true);
+    setIsGenerating(true);
     setReport(null);
 
     const input: GenerateProgressReportInput = {
@@ -38,7 +42,7 @@ export default function ProgressReportGenerator({
       setReport(result.report);
       toast({
         title: 'Informe Generado',
-        description: 'El informe de progreso ha sido generado exitosamente.',
+        description: 'El borrador del informe de progreso ha sido generado.',
       });
     } else {
       toast({
@@ -48,13 +52,38 @@ export default function ProgressReportGenerator({
       });
     }
 
-    setIsLoading(false);
+    setIsGenerating(false);
   };
+  
+  const handleSaveReport = async () => {
+    if (!report) return;
+
+    setIsSaving(true);
+    const result = await createProgressReport({
+        studentId,
+        content: report,
+    });
+
+    if (result.success) {
+        toast({
+            title: 'Informe Guardado',
+            description: 'El informe de progreso se ha guardado correctamente.',
+        });
+        setReport(null);
+    } else {
+        toast({
+            title: 'Error',
+            description: result.error || 'No se pudo guardar el informe.',
+            variant: 'destructive',
+        });
+    }
+    setIsSaving(false);
+  }
 
   return (
     <div className="space-y-4">
-      <Button onClick={handleGenerate} disabled={isLoading}>
-        {isLoading ? (
+      <Button onClick={handleGenerate} disabled={isGenerating || dailyActivityLogs.trim() === ''}>
+        {isGenerating ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Generando...
@@ -63,6 +92,8 @@ export default function ProgressReportGenerator({
           'Generar Informe de Progreso con IA'
         )}
       </Button>
+      {dailyActivityLogs.trim() === '' && <p className="text-xs text-muted-foreground">Se necesita al menos un registro de actividad para generar un informe.</p>}
+
 
       {report && (
         <div>
@@ -71,8 +102,11 @@ export default function ProgressReportGenerator({
             {report}
           </div>
           <div className="flex gap-2 mt-4">
-            <Button size="sm">Guardar Informe</Button>
-            <Button size="sm" variant="outline">
+            <Button size="sm" onClick={handleSaveReport} disabled={isSaving}>
+                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Guardar Informe
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(report)}>
               Copiar Texto
             </Button>
           </div>

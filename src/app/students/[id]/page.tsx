@@ -1,4 +1,4 @@
-import { students, activityLogs, progressReports } from '@/lib/data';
+import { getStudentById, getActivityLogsByStudentId, getProgressReportsByStudentId } from '@/lib/actions/students';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -8,15 +8,18 @@ import { Separator } from '@/components/ui/separator';
 import { Mail, User } from 'lucide-react';
 import ActivityLogger from '@/components/student/activity-logger';
 import ProgressReportGenerator from '@/components/student/progress-report-generator';
+import type { Student, ActivityLog, ProgressReport } from '@/lib/types';
 
-export default function StudentProfilePage({ params }: { params: { id: string } }) {
-  const student = students.find((s) => s.id === params.id);
-  const logs = activityLogs.filter((l) => l.studentId === params.id);
-  const reports = progressReports.filter((r) => r.studentId === params.id);
-
+export default async function StudentProfilePage({ params }: { params: { id: string } }) {
+  const student: Student | null = await getStudentById(params.id);
+  
   if (!student) {
     notFound();
   }
+  
+  const logs: ActivityLog[] = await getActivityLogsByStudentId(params.id);
+  const reports: ProgressReport[] = await getProgressReportsByStudentId(params.id);
+
 
   const allLogsString = logs
     .map(
@@ -103,6 +106,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           </CardHeader>
           <CardContent>
             <ProgressReportGenerator
+              studentId={student.id}
               studentName={student.name}
               learningObjectives={student.learningObjectives.join('\n- ')}
               dailyActivityLogs={allLogsString}

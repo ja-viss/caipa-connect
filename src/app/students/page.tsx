@@ -1,13 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import { students } from "@/lib/data";
+import { getStudents } from "@/lib/actions/students";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import type { Student } from "@/lib/types";
 
-export default function StudentsPage() {
+export default async function StudentsPage() {
+  const students: Student[] = await getStudents();
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
