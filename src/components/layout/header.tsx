@@ -21,7 +21,9 @@ import {
   LayoutDashboard,
   Shield,
   BookOpen,
-  Settings
+  Settings,
+  Contact,
+  Shapes
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
@@ -35,6 +37,8 @@ const navItems = [
 const adminNavItems = [
   { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
   { href: '/admin/classrooms', label: 'Aulas', icon: Users },
+  { href: '/admin/teachers', label: 'Docentes', icon: Contact },
+  { href: '/admin/areas', label: 'Áreas', icon: Shapes },
 ];
 
 
