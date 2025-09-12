@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats, Event } from '@/lib/types';
 import { PlaceHolderImages } from '../placeholder-images';
 import { z } from 'zod';
+import { ObjectId } from 'mongodb';
 
 
 async function getDb() {
@@ -123,6 +124,33 @@ export async function getStudentById(id: string): Promise<Student | null> {
         return null;
     }
 }
+
+export async function deleteStudent(studentId: string): Promise<{ success: boolean; error?: string }> {
+    if (!studentId) {
+        return { success: false, error: 'Student ID is required.' };
+    }
+
+    try {
+        const db = await getDb();
+        const result = await db.collection('students').deleteOne({ id: studentId });
+
+        if (result.deletedCount === 0) {
+            return { success: false, error: 'Student not found.' };
+        }
+        
+        // Optionally, delete related data like activity logs and reports
+        await db.collection('activityLogs').deleteMany({ studentId });
+        await db.collection('progressReports').deleteMany({ studentId });
+
+
+        revalidatePath('/students');
+        return { success: true };
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        return { success: false, error: 'Failed to delete student.' };
+    }
+}
+
 
 export async function getActivityLogsByStudentId(studentId: string): Promise<ActivityLog[]> {
     try {

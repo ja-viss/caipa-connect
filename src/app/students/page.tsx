@@ -1,13 +1,14 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getStudents } from "@/lib/actions/students";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
 import type { Student } from "@/lib/types";
 import { AddStudentDialog } from "@/components/student/add-student-dialog";
+import { DeleteStudentAlert } from "@/components/student/delete-student-alert";
 
 export default async function StudentsPage() {
   const students: Student[] = await getStudents();
@@ -54,13 +55,31 @@ export default async function StudentsPage() {
                   </TableCell>
                   <TableCell>{student.representative.name}</TableCell>
                    <TableCell className="hidden md:table-cell">{student.pedagogicalInfo.specializationArea}</TableCell>
-                  <TableCell>
-                     <Button asChild variant="ghost" size="icon">
-                        <Link href={`/students/${student.id}`}>
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Ver Perfil</span>
-                        </Link>
-                    </Button>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Abrir menú de acciones</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                           <Link href={`/students/${student.id}`} className="flex items-center cursor-pointer">
+                                <Eye className="mr-2 h-4 w-4" />
+                                Ver Perfil
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem disabled>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DeleteStudentAlert studentId={student.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
