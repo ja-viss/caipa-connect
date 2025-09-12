@@ -68,18 +68,30 @@ export type ProgressReport = {
 };
 
 export type Message = {
+  _id?: ObjectId;
   id: string;
-  sender: 'user' | 'contact';
-  text: string;
+  senderId: string; // e.g., 'admin-user-id'
+  recipient: {
+    type: 'all-teachers' | 'all-reps' | 'teacher' | 'rep';
+    id?: string; // teacherId or representative email
+  };
+  subject: string;
+  body: string;
   timestamp: string;
 };
+
 
 export type Conversation = {
   _id?: ObjectId;
   id: string;
   contactName: string;
   contactAvatar: ImagePlaceholder;
-  messages: Message[];
+  messages: {
+    id: string;
+    sender: 'user' | 'contact';
+    text: string;
+    timestamp: string;
+  }[];
   lastMessagePreview: string;
   lastMessageTimestamp: string;
 };

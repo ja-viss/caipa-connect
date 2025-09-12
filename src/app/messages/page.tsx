@@ -1,109 +1,107 @@
-import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { getMessages } from "@/lib/actions/messages";
+import { getStudents } from "@/lib/actions/students";
+import { getTeachers } from "@/lib/actions/teachers";
+import type { Message, Student, Teacher } from "@/lib/types";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SendHorizonal, Search } from "lucide-react";
-import { getConversations } from "@/lib/actions/students";
-import type { Conversation } from "@/lib/types";
+import { Users, User, Bot, MessageSquare } from "lucide-react";
+import { ComposeMessageDialog } from "@/components/messages/compose-message-dialog";
+
+function getRecipientName(message: Message, teachers: Teacher[], students: Student[]): string {
+    switch (message.recipient.type) {
+        case 'all-teachers':
+            return 'Todos los Docentes';
+        case 'all-reps':
+            return 'Todos los Representantes';
+        case 'teacher':
+            const teacher = teachers.find(t => t.id === message.recipient.id);
+            return teacher?.fullName || 'Docente Desconocido';
+        case 'rep':
+            const student = students.find(s => s.representative.email === message.recipient.id); // Assuming ID is email for reps
+            return student?.representative.name || 'Representante Desconocido';
+        default:
+            return 'Desconocido';
+    }
+}
+
+function getRecipientBadge(type: Message['recipient']['type']) {
+    switch (type) {
+        case 'all-teachers':
+            return <Badge variant="secondary"><Users className="mr-1 h-3 w-3" />Docentes</Badge>;
+        case 'all-reps':
+            return <Badge variant="secondary"><Users className="mr-1 h-3 w-3" />Representantes</Badge>;
+        case 'teacher':
+            return <Badge variant="outline"><User className="mr-1 h-3 w-3" />Docente</Badge>;
+        case 'rep':
+            return <Badge variant="outline"><User className="mr-1 h-3 w-3" />Representante</Badge>;
+        default:
+            return null;
+    }
+}
+
 
 export default async function MessagesPage() {
-  const conversations: Conversation[] = await getConversations();
-  
-  if (conversations.length === 0) {
-    return (
-        <div className="flex items-center justify-center h-full">
-            <p>No se encontraron conversaciones.</p>
-        </div>
-    )
-  }
+  const messages: Message[] = await getMessages();
+  const teachers: Teacher[] = await getTeachers();
+  const students: Student[] = await getStudents();
 
-  const selectedConversation = conversations[0];
+  const representatives = students.map(s => s.representative).filter(
+    (rep, index, self) => index === self.findIndex((r) => r.email === rep.email)
+  );
 
   return (
-    <div className="h-[calc(100vh-10rem)]">
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 h-full">
-      <Card className="col-span-1 md:col-span-1 lg:col-span-1 flex flex-col h-full">
-        <div className="p-4 border-b">
-          <h1 className="text-2xl font-bold">Mensajes</h1>
-          <div className="relative mt-2">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar conversaciones..." className="pl-8" />
-          </div>
+    <div className="flex flex-col gap-8 h-full">
+       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Centro de Mensajes</h1>
+          <p className="text-muted-foreground">Envía anuncios y mensajes a docentes y representantes.</p>
         </div>
-        <ScrollArea className="flex-1">
-          <div className="p-2">
-            {conversations.map((convo) => (
-              <div
-                key={convo.id}
-                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-muted/50 ${
-                  convo.id === selectedConversation.id ? 'bg-muted' : ''
-                }`}
-              >
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={convo.contactAvatar.imageUrl} alt={convo.contactName} data-ai-hint={convo.contactAvatar.imageHint} />
-                  <AvatarFallback>{convo.contactName.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 truncate">
-                  <p className="font-semibold">{convo.contactName}</p>
-                  <p className="text-sm text-muted-foreground truncate">{convo.lastMessagePreview}</p>
-                </div>
-                <span className="text-xs text-muted-foreground">{convo.lastMessageTimestamp}</span>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </Card>
+        <ComposeMessageDialog teachers={teachers} representatives={representatives} />
+      </div>
 
-      <Card className="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col h-full">
-        <div className="p-4 border-b flex items-center gap-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={selectedConversation.contactAvatar.imageUrl} alt={selectedConversation.contactName} data-ai-hint={selectedConversation.contactAvatar.imageHint} />
-            <AvatarFallback>{selectedConversation.contactName.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <h2 className="text-xl font-semibold">{selectedConversation.contactName}</h2>
-        </div>
-        <ScrollArea className="flex-1 p-6">
-          <div className="space-y-6">
-            {selectedConversation.messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {message.sender === 'contact' && (
-                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={selectedConversation.contactAvatar.imageUrl} alt={selectedConversation.contactName} data-ai-hint={selectedConversation.contactAvatar.imageHint} />
-                    <AvatarFallback>{selectedConversation.contactName.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                )}
-                <div>
-                    <div className={`p-3 rounded-lg max-w-xs lg:max-w-md ${
-                        message.sender === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}
-                    >
-                    <p>{message.text}</p>
+      <Card className="flex-1 flex flex-col">
+        <CardHeader>
+            <CardTitle>Mensajes Enviados</CardTitle>
+            <CardDescription>Historial de todos los mensajes y anuncios enviados.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 p-0">
+            <ScrollArea className="h-[calc(100vh-20rem)]">
+                {messages.length > 0 ? (
+                    <div className="space-y-4 p-4">
+                        {messages.map((message) => (
+                            <div key={message.id} className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                                    <div>
+                                        <p className="font-semibold text-lg">{message.subject}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            Para: {getRecipientName(message, teachers, students)}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      {getRecipientBadge(message.recipient.type)}
+                                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                        {new Date(message.timestamp).toLocaleString('es-VE')}
+                                      </span>
+                                    </div>
+                                </div>
+                                <div className="mt-4 p-3 bg-muted/50 rounded-md">
+                                    <p className="text-sm">{message.body}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                     <p className={`text-xs text-muted-foreground mt-1 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                        {message.timestamp}
-                    </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-        <div className="p-4 border-t">
-          <div className="relative">
-            <Input placeholder="Escribe tu mensaje..." className="pr-12" />
-            <Button size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
-              <SendHorizonal className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center h-full p-10 text-center">
+                        <MessageSquare className="h-16 w-16 text-muted-foreground/50" />
+                        <h3 className="text-xl font-semibold mt-4">No hay mensajes enviados</h3>
+                        <p className="text-muted-foreground mt-2">Envía tu primer mensaje para iniciar la comunicación.</p>
+                    </div>
+                )}
+            </ScrollArea>
+        </CardContent>
       </Card>
-    </div>
     </div>
   );
 }
