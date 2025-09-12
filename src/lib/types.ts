@@ -107,4 +107,13 @@ export type DashboardStats = {
   reportsGenerated: number;
   recentConversations: Conversation[];
   upcomingEvents: Event[];
-}
+};
+
+export type Teacher = {
+    _id?: ObjectId;
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    specialization: string;
+};

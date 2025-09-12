@@ -1,21 +1,66 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { getTeachers } from "@/lib/actions/teachers";
+import type { Teacher } from "@/lib/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { AddTeacherDialog } from "@/components/teacher/add-teacher-dialog";
+import { DeleteTeacherAlert } from "@/components/teacher/delete-teacher-alert";
+import { EditTeacherDialog } from "@/components/teacher/edit-teacher-dialog";
 
-export default function TeacherManagementPage() {
+export default async function TeacherManagementPage() {
+  const teachers: Teacher[] = await getTeachers();
+
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Gestión de Docentes</h1>
-        <p className="text-muted-foreground">Administrar perfiles de docentes y asignaciones a áreas.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Gestión de Docentes</h1>
+          <p className="text-muted-foreground">Administrar perfiles de docentes y asignaciones a áreas.</p>
+        </div>
+        <AddTeacherDialog />
       </div>
+      
       <Card>
-        <CardHeader>
-          <CardTitle>Docentes</CardTitle>
-          <CardDescription>
-            Este es un marcador de posición para la interfaz de gestión de docentes.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>Las funciones para crear, editar y asignar docentes se implementarán aquí.</p>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Correo Electrónico</TableHead>
+                <TableHead className="hidden md:table-cell">Especialización</TableHead>
+                <TableHead>
+                  <span className="sr-only">Acciones</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {teachers.map((teacher) => (
+                <TableRow key={teacher.id}>
+                  <TableCell className="font-medium">{teacher.fullName}</TableCell>
+                  <TableCell>{teacher.email}</TableCell>
+                  <TableCell className="hidden md:table-cell">{teacher.specialization}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Abrir menú de acciones</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <EditTeacherDialog teacher={teacher} />
+                        <DeleteTeacherAlert teacherId={teacher.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>
