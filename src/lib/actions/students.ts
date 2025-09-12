@@ -67,14 +67,12 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
     
     try {
         const db = await getDb();
-        const randomAvatar = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
         
-        const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives'> = {
+        const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives' | 'avatar'> = {
             id: crypto.randomUUID(),
             name: validatedData.name,
             dob: validatedData.dob,
             gender: validatedData.gender,
-            avatar: randomAvatar,
             emergencyContact: {
               name: validatedData.emergencyContactName,
               phone: validatedData.emergencyContactPhone,

@@ -16,7 +16,7 @@ export type Student = {
   name: string;
   dob: string;
   gender: string;
-  avatar: ImagePlaceholder;
+  avatar?: ImagePlaceholder;
   
   emergencyContact: {
     name: string;

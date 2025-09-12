@@ -45,8 +45,8 @@ export default async function StudentsPage() {
                 <TableRow key={student.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={student.avatar.imageUrl} alt={student.name} data-ai-hint={student.avatar.imageHint} />
-                      <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
+                      <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                   </TableCell>
                   <TableCell className="font-medium">
