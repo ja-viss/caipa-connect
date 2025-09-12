@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -40,7 +40,7 @@ interface AddAreaDialogProps {
 export function AddAreaDialog({ teachers, students }: AddAreaDialogProps) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const [state, action] = useFormState(createArea, undefined);
+  const [state, action] = useActionState(createArea, undefined);
 
   useEffect(() => {
     if (state?.success === false && state.error?.form) {
