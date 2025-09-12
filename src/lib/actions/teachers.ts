@@ -19,33 +19,32 @@ const teacherSchema = z.object({
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres.'),
 });
 
-export async function createTeacher(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
-  const validation = teacherSchema.safeParse(data);
+export async function createTeacher(prevState: any, formData: FormData): Promise<{ success: boolean; error?: any }> {
+  const validatedFields = teacherSchema.safeParse(
+    Object.fromEntries(formData.entries())
+  );
 
-  if (!validation.success) {
-    return { success: false, error: validation.error };
+  if (!validatedFields.success) {
+    return { success: false, error: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { fullName, email, password, phone, specialization } = validation.data;
+  const { fullName, email, password, phone, specialization } = validatedFields.data;
 
   try {
     const db = await getDb();
     
     // First, create the user account
-    const formData = new FormData();
-    formData.append('fullName', fullName);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('role', 'teacher');
+    const userFormData = new FormData();
+    userFormData.append('fullName', fullName);
+    userFormData.append('email', email);
+    userFormData.append('password', password);
+    userFormData.append('role', 'teacher');
 
-    const userResult = await createUser(undefined, formData);
+    const userResult = await createUser(undefined, userFormData);
 
     if (userResult?.error) {
-        // We need to handle the case where the user might already exist
-        if (userResult.error.email) {
-             return { success: false, error: 'Un usuario con este correo electrónico ya existe.' };
-        }
-       return { success: false, error: 'No se pudo crear la cuenta de usuario para el docente.' };
+        // Forward the specific error from createUser
+        return { success: false, error: userResult.error };
     }
 
     // If user is created successfully, create the teacher profile
@@ -58,12 +57,14 @@ export async function createTeacher(data: unknown): Promise<{ success: boolean; 
     };
 
     await db.collection('teachers').insertOne(newTeacher);
-    revalidatePath('/admin/teachers');
-    return { success: true };
+  
   } catch (error) {
     console.error('Error creating teacher:', error);
-    return { success: false, error: 'No se pudo crear el docente.' };
+    return { success: false, error: { form: ['No se pudo crear el docente.'] }};
   }
+  
+  revalidatePath('/admin/teachers');
+  redirect('/admin/teachers');
 }
 
 export async function getTeachers(): Promise<Teacher[]> {

@@ -85,7 +85,7 @@ export async function createUser(prevState: any, formData: FormData) {
 
         if (existingUser) {
             return {
-                error: { email: ['Ya existe un usuario con este correo electrónico.'] },
+                error: { email: ['Un usuario con este correo electrónico ya existe.'] },
             };
         }
 
@@ -106,5 +106,8 @@ export async function createUser(prevState: any, formData: FormData) {
         };
     }
     
-    redirect('/dashboard');
+    // Only redirect if the role is not 'teacher', as teacher creation is handled within a dialog
+    if (role !== 'teacher') {
+      redirect('/dashboard');
+    }
 }
