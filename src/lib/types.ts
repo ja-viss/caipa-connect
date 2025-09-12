@@ -128,3 +128,19 @@ export type Area = {
   teacherIds?: string[];
   studentIds?: string[];
 };
+
+export type ScheduleEntry = {
+  id: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  areaId: string;
+};
+
+export type Classroom = {
+  _id?: ObjectId;
+  id: string;
+  name: string;
+  building: string;
+  schedule: ScheduleEntry[];
+};
