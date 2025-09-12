@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useState, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -44,7 +44,7 @@ export function EditAreaDialog({ area, allTeachers, allStudents }: EditAreaDialo
   const { toast } = useToast();
   
   const updateAreaWithId = updateArea.bind(null, area.id);
-  const [state, action] = useFormState(updateAreaWithId, undefined);
+  const [state, action] = useActionState(updateAreaWithId, undefined);
 
   useEffect(() => {
     if (state?.success === false && state.error?.form) {
