@@ -115,8 +115,8 @@ export function AddStudentDialog() {
               <TabsTrigger value="representative-info">Representante</TabsTrigger>
             </TabsList>
 
-            <ScrollArea className="h-[50vh] mt-4">
-            <div className="p-4">
+            <ScrollArea className="h-[60vh] md:h-[50vh] mt-4">
+            <div className="px-1 sm:px-4">
             <TabsContent value="student-info" className="space-y-4">
               <h3 className="font-semibold text-lg">Información Básica</h3>
                <div>
@@ -249,5 +249,3 @@ export function AddStudentDialog() {
     </Dialog>
   );
 }
-
-    

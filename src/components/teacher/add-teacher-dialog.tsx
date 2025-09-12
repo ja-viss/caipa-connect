@@ -65,8 +65,8 @@ export function AddTeacherDialog() {
           </DialogDescription>
         </DialogHeader>
         <form action={action}>
-          <ScrollArea className="h-[60vh] md:h-auto">
-           <div className="space-y-4 p-4">
+          <ScrollArea className="h-[60vh]">
+           <div className="space-y-4 px-1 sm:p-4">
                 <div>
                   <Label htmlFor="fullName">Nombre y Apellido</Label>
                   <Input id="fullName" name="fullName" required />
@@ -107,5 +107,3 @@ export function AddTeacherDialog() {
     </Dialog>
   );
 }
-
-    

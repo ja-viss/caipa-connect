@@ -95,8 +95,8 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-           <ScrollArea className="h-[60vh] md:h-auto">
-            <div className="space-y-4 p-4">
+           <ScrollArea className="h-[60vh]">
+            <div className="space-y-4 px-1 sm:p-4">
                  <div>
                   <Label htmlFor="fullName-edit">Nombre y Apellido</Label>
                   <Input id="fullName-edit" {...register('fullName')} />
@@ -135,5 +135,3 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
     </Dialog>
   );
 }
-
-    
