@@ -91,6 +91,16 @@ export type Event = {
     date: string;
 };
 
+export type Resource = {
+  _id?: ObjectId;
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  fileUrl: string;
+  thumbnail: ImagePlaceholder;
+};
+
 export type DashboardStats = {
   totalStudents: number;
   recentActivities: number;

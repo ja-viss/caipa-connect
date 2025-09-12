@@ -2,7 +2,7 @@
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
-import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats, Event } from '@/lib/types';
+import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats, Event, Resource } from '@/lib/types';
 import { PlaceHolderImages } from '../placeholder-images';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
@@ -68,7 +68,7 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
     try {
         const db = await getDb();
         
-        const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives' | 'avatar'> = {
+        const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives'> = {
             id: crypto.randomUUID(),
             name: validatedData.name,
             dob: validatedData.dob,
@@ -327,5 +327,82 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             recentConversations: [],
             upcomingEvents: [],
         };
+    }
+}
+
+async function seedResources() {
+    const db = await getDb();
+    const resourcesCollection = db.collection('resources');
+    const count = await resourcesCollection.countDocuments();
+    if (count === 0) {
+        console.log('Seeding resources...');
+        const resources: Omit<Resource, '_id'>[] = [
+            {
+                id: crypto.randomUUID(),
+                title: 'Guía de Comunicación para Niños con TEA',
+                description: 'Estrategias y actividades para mejorar la comunicación verbal y no verbal.',
+                category: 'Comunicación',
+                fileUrl: '#', 
+                thumbnail: {
+                    id: 'resource-comm',
+                    description: 'Communication guide thumbnail',
+                    imageUrl: 'https://picsum.photos/seed/resource1/600/400',
+                    imageHint: 'communication guide'
+                }
+            },
+            {
+                id: crypto.randomUUID(),
+                title: 'Actividades de Habilidades Sociales',
+                description: 'Juegos y ejercicios para practicar la interacción social y la comprensión de emociones.',
+                category: 'Habilidades Sociales',
+                fileUrl: '#',
+                thumbnail: {
+                    id: 'resource-social',
+                    description: 'Social skills thumbnail',
+                    imageUrl: 'https://picsum.photos/seed/resource2/600/400',
+                    imageHint: 'social skills'
+                }
+            },
+            {
+                id: crypto.randomUUID(),
+                title: 'Manejo de Conductas Desafiantes',
+                description: 'Técnicas de refuerzo positivo y estrategias para prevenir y manejar crisis.',
+                category: 'Conducta',
+                fileUrl: '#',
+                thumbnail: {
+                    id: 'resource-behavior',
+                    description: 'Behavior management thumbnail',
+                    imageUrl: 'https://picsum.photos/seed/resource3/600/400',
+                    imageHint: 'behavior management'
+                }
+            },
+             {
+                id: crypto.randomUUID(),
+                title: 'Plan de Alimentación y Nutrición',
+                description: 'Consejos y recetas para manejar las sensibilidades alimentarias comunes en niños con TEA.',
+                category: 'Salud',
+                fileUrl: '#',
+                thumbnail: {
+                    id: 'resource-health',
+                    description: 'Health and nutrition thumbnail',
+                    imageUrl: 'https://picsum.photos/seed/resource4/600/400',
+                    imageHint: 'nutrition health'
+                }
+            },
+        ];
+        await resourcesCollection.insertMany(resources);
+    }
+}
+
+
+export async function getResources(): Promise<Resource[]> {
+    try {
+        await seedResources(); // Seed data if the collection is empty
+        const db = await getDb();
+        const resources = await db.collection('resources').find({}).toArray();
+        return JSON.parse(JSON.stringify(resources));
+    } catch (error) {
+        console.error('Error fetching resources:', error);
+        return [];
     }
 }
