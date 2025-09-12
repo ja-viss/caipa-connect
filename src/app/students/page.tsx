@@ -5,10 +5,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Eye, Pencil } from "lucide-react";
 import type { Student } from "@/lib/types";
 import { AddStudentDialog } from "@/components/student/add-student-dialog";
 import { DeleteStudentAlert } from "@/components/student/delete-student-alert";
+import { EditStudentDialog } from "@/components/student/edit-student-dialog";
 
 export default async function StudentsPage() {
   const students: Student[] = await getStudents();
@@ -72,10 +73,7 @@ export default async function StudentsPage() {
                                 Ver Perfil
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem disabled>
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Editar
-                        </DropdownMenuItem>
+                        <EditStudentDialog student={student} />
                         <DropdownMenuSeparator />
                         <DeleteStudentAlert studentId={student.id} />
                       </DropdownMenuContent>

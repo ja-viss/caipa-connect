@@ -24,7 +24,7 @@ export async function getStudents(): Promise<Student[]> {
   }
 }
 
-const createStudentSchema = z.object({
+const studentSchema = z.object({
   // Student Info
   name: z.string().min(1, 'El nombre del estudiante es obligatorio.'),
   dob: z.string().min(1, 'La fecha de nacimiento es obligatoria.'),
@@ -57,7 +57,7 @@ const createStudentSchema = z.object({
 
 
 export async function createStudent(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
-    const validation = createStudentSchema.safeParse(data);
+    const validation = studentSchema.safeParse(data);
 
     if (!validation.success) {
       return { success: false, error: validation.error };
@@ -109,6 +109,67 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
         return { success: false, error: 'Failed to create student.' };
     }
 }
+
+export async function updateStudent(studentId: string, data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
+  if (!studentId) {
+    return { success: false, error: 'Student ID is required.' };
+  }
+  const validation = studentSchema.safeParse(data);
+
+  if (!validation.success) {
+    return { success: false, error: validation.error };
+  }
+
+  const validatedData = validation.data;
+
+  try {
+    const db = await getDb();
+    
+    const studentToUpdate = await db.collection('students').findOne({ id: studentId });
+    if (!studentToUpdate) {
+        return { success: false, error: 'Student not found.' };
+    }
+    
+    const updatedStudentData = {
+        name: validatedData.name,
+        dob: validatedData.dob,
+        gender: validatedData.gender,
+        emergencyContact: {
+            name: validatedData.emergencyContactName,
+            phone: validatedData.emergencyContactPhone,
+            relation: validatedData.emergencyContactRelation,
+        },
+        medicalInfo: {
+            diagnosis: validatedData.diagnosis,
+            conditions: validatedData.medicalConditions,
+            medications: validatedData.medications,
+            allergies: validatedData.allergies,
+        },
+        pedagogicalInfo: {
+            gradeLevel: validatedData.gradeLevel,
+            specializationArea: validatedData.specializationArea,
+            skillsAndInterests: validatedData.skillsAndInterests,
+            supportNeeds: validatedData.supportNeeds,
+        },
+        representative: {
+            name: validatedData.representativeName,
+            relation: validatedData.representativeRelation,
+            phone: validatedData.representativePhone,
+            email: validatedData.representativeEmail,
+            address: validatedData.representativeAddress,
+        },
+    };
+
+    await db.collection('students').updateOne({ id: studentId }, { $set: updatedStudentData });
+    revalidatePath('/students');
+    revalidatePath(`/students/${studentId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating student:', error);
+    return { success: false, error: 'Failed to update student.' };
+  }
+}
+
 
 
 export async function getStudentById(id: string): Promise<Student | null> {
