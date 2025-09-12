@@ -21,10 +21,11 @@ import { updateTeacher } from '@/lib/actions/teachers';
 import { Loader2, Pencil } from 'lucide-react';
 import type { Teacher } from '@/lib/types';
 import { DropdownMenuItem } from '../ui/dropdown-menu';
+import { ScrollArea } from '../ui/scroll-area';
 
 const updateTeacherSchema = z.object({
   fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
-  ci: z.string().min(1, 'La cédula de identidad es obligatoria.'),
+  ci: z.string().regex(/^\d+$/, 'La cédula de identidad solo debe contener números.').min(1, 'La cédula de identidad es obligatoria.'),
   email: z.string().email('Correo electrónico inválido.'),
   phone: z.string().min(1, 'El teléfono es obligatorio.'),
   specialization: z.string().min(1, 'La especialización es obligatoria.'),
@@ -94,7 +95,8 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-4 py-4">
+           <ScrollArea className="h-[60vh] md:h-auto">
+            <div className="space-y-4 p-4">
                  <div>
                   <Label htmlFor="fullName-edit">Nombre y Apellido</Label>
                   <Input id="fullName-edit" {...register('fullName')} />
@@ -121,7 +123,8 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
                   {errors.specialization && <p className="text-sm text-destructive mt-1">{errors.specialization.message}</p>}
                </div>
             </div>
-          <DialogFooter>
+          </ScrollArea>
+          <DialogFooter className="pt-4">
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Guardar Cambios
@@ -132,3 +135,5 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
     </Dialog>
   );
 }
+
+    

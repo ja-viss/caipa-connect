@@ -48,7 +48,7 @@ const studentSchema = z.object({
   
   // Representative Info
   representativeName: z.string().min(1, 'El nombre del representante es obligatorio.'),
-  representativeCi: z.string().min(1, 'La cédula de identidad es obligatoria.'),
+  representativeCi: z.string().regex(/^\d+$/, 'La cédula de identidad solo debe contener números.').min(1, 'La cédula de identidad es obligatoria.'),
   representativeRelation: z.string().min(1, 'La relación con el estudiante es obligatoria.'),
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
@@ -108,7 +108,7 @@ export function AddStudentDialog() {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Tabs defaultValue="student-info" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
               <TabsTrigger value="student-info">Estudiante</TabsTrigger>
               <TabsTrigger value="medical-info">Info. Médica</TabsTrigger>
               <TabsTrigger value="pedagogical-info">Info. Pedagógica</TabsTrigger>
@@ -249,3 +249,5 @@ export function AddStudentDialog() {
     </Dialog>
   );
 }
+
+    

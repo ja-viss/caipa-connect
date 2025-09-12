@@ -18,6 +18,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { createTeacher } from '@/lib/actions/teachers';
 import { Loader2 } from 'lucide-react';
+import { ScrollArea } from '../ui/scroll-area';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -64,7 +65,8 @@ export function AddTeacherDialog() {
           </DialogDescription>
         </DialogHeader>
         <form action={action}>
-           <div className="space-y-4 py-4">
+          <ScrollArea className="h-[60vh] md:h-auto">
+           <div className="space-y-4 p-4">
                 <div>
                   <Label htmlFor="fullName">Nombre y Apellido</Label>
                   <Input id="fullName" name="fullName" required />
@@ -96,7 +98,8 @@ export function AddTeacherDialog() {
                   {state?.error?.password && <p className="text-sm text-destructive mt-1">{state.error.password[0]}</p>}
                 </div>
             </div>
-          <DialogFooter>
+          </ScrollArea>
+          <DialogFooter className="pt-4">
             <SubmitButton />
           </DialogFooter>
         </form>
@@ -104,3 +107,5 @@ export function AddTeacherDialog() {
     </Dialog>
   );
 }
+
+    
