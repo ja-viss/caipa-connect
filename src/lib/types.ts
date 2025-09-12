@@ -119,3 +119,12 @@ export type Teacher = {
     phone: string;
     specialization: string;
 };
+
+export type Area = {
+  _id?: ObjectId;
+  id: string;
+  name: string;
+  description: string;
+  teacherIds?: string[];
+  studentIds?: string[];
+};
