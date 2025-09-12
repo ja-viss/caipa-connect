@@ -40,6 +40,7 @@ export type Student = {
 
   representative: {
     name: string;
+    ci: string;
     relation: string;
     phone: string;
     email: string;
@@ -113,6 +114,7 @@ export type Teacher = {
     _id?: ObjectId;
     id: string;
     fullName: string;
+    ci: string;
     email: string;
     phone: string;
     specialization: string;

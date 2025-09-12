@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import type { Teacher } from '@/lib/types';
 import { z } from 'zod';
 import { createUser } from './users';
+import { redirect } from 'next/navigation';
+
 
 async function getDb() {
   const client = await clientPromise;
@@ -13,6 +15,7 @@ async function getDb() {
 
 const teacherSchema = z.object({
   fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
+  ci: z.string().min(1, 'La cédula de identidad es obligatoria.'),
   email: z.string().email('Correo electrónico inválido.'),
   phone: z.string().min(1, 'El teléfono es obligatorio.'),
   specialization: z.string().min(1, 'La especialización es obligatoria.'),
@@ -28,7 +31,7 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
     return { success: false, error: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { fullName, email, password, phone, specialization } = validatedFields.data;
+  const { fullName, email, password, phone, specialization, ci } = validatedFields.data;
 
   try {
     const db = await getDb();
@@ -51,6 +54,7 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
     const newTeacher: Omit<Teacher, '_id'> = {
       id: crypto.randomUUID(),
       fullName,
+      ci,
       email,
       phone,
       specialization,
@@ -64,7 +68,7 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
   }
   
   revalidatePath('/admin/teachers');
-  redirect('/admin/teachers');
+  return { success: true };
 }
 
 export async function getTeachers(): Promise<Teacher[]> {
@@ -80,6 +84,7 @@ export async function getTeachers(): Promise<Teacher[]> {
 
 const updateTeacherSchema = z.object({
     fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
+    ci: z.string().min(1, 'La cédula de identidad es obligatoria.'),
     email: z.string().email('Correo electrónico inválido.'),
     phone: z.string().min(1, 'El teléfono es obligatorio.'),
     specialization: z.string().min(1, 'La especialización es obligatoria.'),

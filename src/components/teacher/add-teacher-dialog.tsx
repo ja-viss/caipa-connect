@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, useActionState } from 'react';
+import { useEffect, useState } from 'react';
+import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -68,6 +69,11 @@ export function AddTeacherDialog() {
                   <Label htmlFor="fullName">Nombre y Apellido</Label>
                   <Input id="fullName" name="fullName" required />
                   {state?.error?.fullName && <p className="text-sm text-destructive mt-1">{state.error.fullName[0]}</p>}
+               </div>
+               <div>
+                  <Label htmlFor="ci">Cédula de Identidad</Label>
+                  <Input id="ci" name="ci" type="text" required />
+                  {state?.error?.ci && <p className="text-sm text-destructive mt-1">{state.error.ci[0]}</p>}
                </div>
                <div>
                   <Label htmlFor="email">Correo Electrónico</Label>

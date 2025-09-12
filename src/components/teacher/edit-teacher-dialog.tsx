@@ -24,6 +24,7 @@ import { DropdownMenuItem } from '../ui/dropdown-menu';
 
 const updateTeacherSchema = z.object({
   fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
+  ci: z.string().min(1, 'La cédula de identidad es obligatoria.'),
   email: z.string().email('Correo electrónico inválido.'),
   phone: z.string().min(1, 'El teléfono es obligatorio.'),
   specialization: z.string().min(1, 'La especialización es obligatoria.'),
@@ -47,6 +48,7 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
     resolver: zodResolver(updateTeacherSchema),
     defaultValues: {
       fullName: teacher.fullName,
+      ci: teacher.ci,
       email: teacher.email,
       phone: teacher.phone,
       specialization: teacher.specialization,
@@ -97,6 +99,11 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
                   <Label htmlFor="fullName-edit">Nombre y Apellido</Label>
                   <Input id="fullName-edit" {...register('fullName')} />
                   {errors.fullName && <p className="text-sm text-destructive mt-1">{errors.fullName.message}</p>}
+               </div>
+               <div>
+                  <Label htmlFor="ci-edit">Cédula de Identidad</Label>
+                  <Input id="ci-edit" {...register('ci')} />
+                  {errors.ci && <p className="text-sm text-destructive mt-1">{errors.ci.message}</p>}
                </div>
                <div>
                   <Label htmlFor="email-edit">Correo Electrónico</Label>

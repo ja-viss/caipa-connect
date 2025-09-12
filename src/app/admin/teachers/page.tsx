@@ -28,6 +28,7 @@ export default async function TeacherManagementPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nombre</TableHead>
+                <TableHead>Cédula</TableHead>
                 <TableHead>Correo Electrónico</TableHead>
                 <TableHead className="hidden md:table-cell">Especialización</TableHead>
                 <TableHead>
@@ -39,6 +40,7 @@ export default async function TeacherManagementPage() {
               {teachers.map((teacher) => (
                 <TableRow key={teacher.id}>
                   <TableCell className="font-medium">{teacher.fullName}</TableCell>
+                  <TableCell>{teacher.ci}</TableCell>
                   <TableCell>{teacher.email}</TableCell>
                   <TableCell className="hidden md:table-cell">{teacher.specialization}</TableCell>
                   <TableCell className="text-right">

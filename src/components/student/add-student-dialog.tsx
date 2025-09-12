@@ -48,6 +48,7 @@ const studentSchema = z.object({
   
   // Representative Info
   representativeName: z.string().min(1, 'El nombre del representante es obligatorio.'),
+  representativeCi: z.string().min(1, 'La cédula de identidad es obligatoria.'),
   representativeRelation: z.string().min(1, 'La relación con el estudiante es obligatoria.'),
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
@@ -206,6 +207,11 @@ export function AddStudentDialog() {
                   <Label htmlFor="representativeName">Nombre y Apellido</Label>
                   <Input id="representativeName" {...register('representativeName')} />
                   {errors.representativeName && <p className="text-sm text-destructive mt-1">{errors.representativeName.message}</p>}
+               </div>
+                <div>
+                  <Label htmlFor="representativeCi">Cédula de Identidad</Label>
+                  <Input id="representativeCi" {...register('representativeCi')} />
+                  {errors.representativeCi && <p className="text-sm text-destructive mt-1">{errors.representativeCi.message}</p>}
                </div>
                 <div>
                   <Label htmlFor="representativeRelation">Relación con el Estudiante</Label>
