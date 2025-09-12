@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useState, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -31,7 +31,7 @@ function SubmitButton() {
 export function AddTeacherDialog() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const [state, action] = useFormState(createTeacher, undefined);
+  const [state, action] = useActionState(createTeacher, undefined);
 
   useEffect(() => {
     if (state?.success === false && state.error?.form) {
