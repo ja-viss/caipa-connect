@@ -385,7 +385,7 @@ async function seedResources() {
             title: '¿Qué es el TDAH? Síntomas y Causas',
             description: 'Un artículo completo de la Mayo Clinic que explica los fundamentos del Trastorno por Déficit de Atención e Hiperactividad.',
             category: 'Información General',
-            fileUrl: 'https://www.mayoclinic.org/es/diseases-conditions/adult-attention-deficit-hyperactivity-disorder/symptoms-causes/syc-20350878', 
+            fileUrl: 'https://www.mayoclinic.org/es/diseases-conditions/adhd/symptoms-causes/syc-20350878', 
             thumbnail: {
                 id: 'resource-tdah-1',
                 description: 'Cerebro con conexiones neuronales',
