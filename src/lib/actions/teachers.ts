@@ -152,10 +152,11 @@ export async function getTeacherData() {
 
     // Get all student IDs from the teacher's assigned areas
     const allStudentIdsInAreas = assignedAreas.flatMap(area => area.studentIds || []);
+    const uniqueStudentIds = [...new Set(allStudentIdsInAreas)];
     
     // Fetch all students whose IDs are in the list
     const assignedStudents = await db.collection('students').find({
-      id: { $in: allStudentIdsInAreas }
+      id: { $in: uniqueStudentIds }
     }).toArray();
     
      const assignedClassrooms = await db.collection('classrooms').find({

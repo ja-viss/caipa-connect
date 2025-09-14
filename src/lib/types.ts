@@ -10,7 +10,6 @@ export type User = {
   email: string;
   password?: string; // Should be hashed in a real app
   role: 'admin' | 'teacher' | 'representative';
-  teacherId?: string;
 };
 
 export type Student = {
