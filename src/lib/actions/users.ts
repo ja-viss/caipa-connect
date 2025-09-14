@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import clientPromise from '@/lib/mongodb';
 import type { User } from '@/lib/types';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { SignJWT, jwtVerify } from 'jose';
 
 const loginSchema = z.object({
   email: z.string().email('Correo electrónico inválido.'),
@@ -32,6 +34,34 @@ async function getDb() {
   return client.db('school');
 }
 
+const secretKey = process.env.SESSION_SECRET || 'fallback-secret-key';
+const key = new TextEncoder().encode(secretKey);
+
+async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('1h')
+    .sign(key);
+}
+
+async function decrypt(input: string): Promise<any> {
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ['HS256'],
+    });
+    return payload;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function getSession() {
+  const session = cookies().get('session')?.value;
+  if (!session) return null;
+  return await decrypt(session);
+}
+
 export async function loginUser(prevState: any, formData: FormData) {
   const validatedFields = loginSchema.safeParse(
     Object.fromEntries(formData.entries())
@@ -44,27 +74,30 @@ export async function loginUser(prevState: any, formData: FormData) {
   }
 
   const { email, password } = validatedFields.data;
-  let userRole: User['role'] | undefined;
+  let user: User | null = null;
 
   try {
     const db = await getDb();
-    const user = await db.collection('users').findOne({ email });
+    const foundUser = await db.collection('users').findOne({ email });
 
-    if (!user) {
+    if (!foundUser) {
       return {
         error: { form: ['El correo electrónico o la contraseña son incorrectos.'] },
       };
     }
     
-    // In a real app, you should hash passwords and compare them securely.
-    // For this demo, we'll do a simple string comparison.
-    if (user.password !== password) {
+    if (foundUser.password !== password) {
          return {
             error: { form: ['El correo electrónico o la contraseña son incorrectos.'] },
         };
     }
     
-    userRole = user.role;
+    user = {
+        id: foundUser.id,
+        fullName: foundUser.fullName,
+        email: foundUser.email,
+        role: foundUser.role,
+    };
 
   } catch (error) {
     console.error(error);
@@ -73,10 +106,16 @@ export async function loginUser(prevState: any, formData: FormData) {
     };
   }
 
-  if (userRole === 'representative') {
-      redirect('/representative/dashboard');
-  } else {
-      redirect('/dashboard');
+  if (user) {
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const session = await encrypt({ user, expires });
+    cookies().set('session', session, { expires, httpOnly: true });
+
+    if (user.role === 'representative') {
+        redirect('/representative/dashboard');
+    } else {
+        redirect('/dashboard');
+    }
   }
 }
 
@@ -121,8 +160,8 @@ export async function createUser(prevState: any, formData: FormData) {
         };
     }
     
-    // Only redirect if it's a new user registration, not a programmatic creation
-    if (role !== 'teacher' && role !== 'representative') {
+    // Programmatic creations (like for teachers/reps) shouldn't redirect
+    if (prevState !== undefined) {
       redirect('/dashboard');
     }
 }

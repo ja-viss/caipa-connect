@@ -6,18 +6,17 @@ import type { Student, ActivityLog, ProgressReport, Event } from "@/lib/types";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { User, Calendar, FileText, Activity } from "lucide-react";
-
-// This is a mock function to simulate getting the current user's email
-// In a real app with authentication, you would get this from the session.
-const getCurrentUserEmail = async () => {
-    // For now, let's hardcode an email of a representative that exists in the DB.
-    // This will need to be replaced with actual session logic.
-    // Let's assume 'ana.gomez@email.com' is a representative.
-    return 'ana.gomez@email.com';
-};
+import { getSession } from "@/lib/actions/users";
+import { redirect } from "next/navigation";
 
 export default async function RepresentativeDashboard() {
-  const userEmail = await getCurrentUserEmail();
+  const session = await getSession();
+  
+  if (!session?.user?.email) {
+    redirect('/login');
+  }
+
+  const userEmail = session.user.email;
   const student: Student | null = await getStudentByRepEmail(userEmail);
 
   if (!student) {
