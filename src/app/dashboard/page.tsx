@@ -4,15 +4,39 @@
 // and `/representative/dashboard` for representatives.
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, FileText } from 'lucide-react';
+import { Activity, Users, FileText, AlertTriangle } from 'lucide-react';
 import { getDashboardStats } from "@/lib/actions/students";
-import type { Conversation, Event } from "@/lib/types";
+import type { Conversation, Event, DashboardStats } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 export default async function Dashboard() {
-  const stats = await getDashboardStats();
+  let stats: DashboardStats | null = null;
+  let error: string | null = null;
+
+  try {
+    stats = await getDashboardStats();
+  } catch (e) {
+    console.error("Failed to fetch dashboard stats:", e);
+    error = "No se pudieron cargar las estadísticas del panel de control. Por favor, inténtelo de nuevo más tarde.";
+  }
+
+  if (error || !stats) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            Error al Cargar el Panel
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">{error || "Ocurrió un error desconocido."}</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">
