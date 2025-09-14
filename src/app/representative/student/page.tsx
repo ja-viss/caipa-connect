@@ -7,6 +7,7 @@ import { Mail, User, Phone, Home, Stethoscope, Pill, ShieldAlert, HeartPulse, Gr
 import type { Student } from '@/lib/types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { EditStudentDialog } from '@/components/student/edit-student-dialog';
 
 export default async function RepresentativeStudentProfilePage() {
   const session = await getSession();
@@ -22,9 +23,12 @@ export default async function RepresentativeStudentProfilePage() {
   
   return (
     <div className="flex flex-col gap-8">
-        <div>
-            <h1 className="text-3xl font-bold text-foreground">Perfil de Mi Estudiante</h1>
-            <p className="text-muted-foreground">Información completa sobre {student.name}.</p>
+        <div className="flex items-center justify-between">
+            <div>
+                <h1 className="text-3xl font-bold text-foreground">Perfil de Mi Estudiante</h1>
+                <p className="text-muted-foreground">Información completa sobre {student.name}.</p>
+            </div>
+            <EditStudentDialog student={student} />
         </div>
         <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-1 flex flex-col gap-8">

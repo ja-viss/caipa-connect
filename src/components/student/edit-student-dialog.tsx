@@ -125,10 +125,19 @@ export function EditStudentDialog({ student }: EditStudentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+        {/* This component can be triggered by a DropdownMenuItem or a regular Button */}
+        {/* We check for a truthy student.id to decide which trigger to render */}
+        {student.id ? (
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <Pencil className="mr-2 h-4 w-4" />
             Editar
-        </DropdownMenuItem>
+          </DropdownMenuItem>
+        ) : (
+          <Button>
+            <Pencil className="mr-2 h-4 w-4" />
+            Editar Información
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>

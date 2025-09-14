@@ -90,6 +90,17 @@ export async function getTeachers(): Promise<Teacher[]> {
     }
 }
 
+export async function getTeacherById(teacherId: string): Promise<Teacher | null> {
+    try {
+        const db = await getDb();
+        const teacher = await db.collection('teachers').findOne({ id: teacherId });
+        return teacher ? JSON.parse(JSON.stringify(teacher)) : null;
+    } catch (error) {
+        console.error('Error fetching teacher by id:', error);
+        return null;
+    }
+}
+
 const updateTeacherSchema = z.object({
     fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
     ci: z.string().min(1, 'La cédula de identidad es obligatoria.'),
@@ -115,6 +126,37 @@ export async function updateTeacher(teacherId: string, data: unknown): Promise<{
         return { success: false, error: 'No se pudo actualizar el docente.' };
     }
 }
+
+
+const teacherProfileSchema = z.object({
+  phone: z.string().min(1, 'El teléfono es obligatorio.'),
+  specialization: z.string().min(1, 'La especialización es obligatoria.'),
+});
+
+
+export async function updateTeacherProfile(teacherId: string, data: unknown): Promise<{ success: boolean, error?: string | z.ZodError }> {
+    const session = await getSession();
+    if (!session?.user || session.user.role !== 'teacher' || session.user.teacherId !== teacherId) {
+        return { success: false, error: 'No autorizado.' };
+    }
+
+    const validation = teacherProfileSchema.safeParse(data);
+
+    if (!validation.success) {
+        return { success: false, error: validation.error };
+    }
+
+    try {
+        const db = await getDb();
+        await db.collection('teachers').updateOne({ id: teacherId }, { $set: validation.data });
+        revalidatePath('/settings');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating teacher profile:', error);
+        return { success: false, error: 'No se pudo actualizar el perfil.' };
+    }
+}
+
 
 export async function deleteTeacher(teacherId: string): Promise<{ success: boolean; error?: string }> {
     try {

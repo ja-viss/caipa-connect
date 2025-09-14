@@ -231,6 +231,51 @@ export async function updateUser(userId: string, prevState: any, formData: FormD
     }
 }
 
+const userProfileSchema = z.object({
+  fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
+  password: z.string().optional(),
+}).refine(data => !data.password || data.password.length >= 6, {
+  message: 'La nueva contraseña debe tener al menos 6 caracteres.',
+  path: ['password'],
+});
+
+export async function updateUserProfile(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
+    const session = await getSession();
+    if (!session?.user) {
+        return { success: false, error: 'No autorizado.' };
+    }
+
+    const validation = userProfileSchema.safeParse(data);
+    if (!validation.success) {
+        return { success: false, error: validation.error };
+    }
+
+    const { fullName, password } = validation.data;
+    
+    try {
+        const db = await getDb();
+        const updateData: { fullName: string, password?: string } = { fullName };
+        if (password) {
+            updateData.password = password; // HASH THIS in a real app
+        }
+        
+        await db.collection('users').updateOne({ id: session.user.id }, { $set: updateData });
+
+        // Update name in related profiles if necessary
+        if (session.user.role === 'teacher') {
+            await db.collection('teachers').updateOne({ id: session.user.teacherId }, { $set: { fullName } });
+        } else if (session.user.role === 'representative') {
+            await db.collection('students').updateOne({ 'representative.email': session.user.email }, { $set: { 'representative.name': fullName } });
+        }
+
+        revalidatePath('/settings');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return { success: false, error: 'No se pudo actualizar el perfil.' };
+    }
+}
+
 
 export async function deleteUser(userId: string, userRole: User['role'], userEmail: string): Promise<{ success: boolean; error?: string }> {
     try {
