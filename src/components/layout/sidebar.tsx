@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { LayoutDashboard, Users, MessageSquare, Shield, BookOpen, Settings, Contact, Shapes, Send, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Shield, BookOpen, Settings, Contact, Shapes, Send, FileText, Building } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
@@ -16,7 +16,7 @@ const navItems = [
 const adminNavItems = [
   { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
   { href: '/messages', label: 'Mensajería', icon: Send },
-  { href: '/admin/classrooms', label: 'Aulas', icon: Users },
+  { href: '/admin/classrooms', label: 'Aulas', icon: Building },
   { href: '/admin/teachers', label: 'Docentes', icon: Contact },
   { href: '/admin/areas', label: 'Áreas', icon: Shapes },
   { href: '/reports', label: 'Generar Informes', icon: FileText },
