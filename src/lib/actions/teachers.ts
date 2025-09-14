@@ -2,9 +2,9 @@
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
-import type { Teacher } from '@/lib/types';
+import type { Teacher, Student, Area, Classroom } from '@/lib/types';
 import { z } from 'zod';
-import { createUser } from './users';
+import { createUser, getSession } from './users';
 import { redirect } from 'next/navigation';
 
 
@@ -132,4 +132,44 @@ export async function deleteTeacher(teacherId: string): Promise<{ success: boole
         console.error('Error deleting teacher:', error);
         return { success: false, error: 'No se pudo eliminar el docente.' };
     }
+}
+
+export async function getTeacherData() {
+  const session = await getSession();
+  if (!session?.user || session.user.role !== 'teacher' || !session.user.teacherId) {
+    return null;
+  }
+
+  const teacherId = session.user.teacherId;
+
+  try {
+    const db = await getDb();
+    const teacher = await db.collection('teachers').findOne({ id: teacherId });
+    if (!teacher) {
+        return null;
+    }
+
+    const assignedAreas = await db.collection('areas').find({ teacherIds: teacherId }).toArray();
+    const assignedAreaIds = assignedAreas.map(a => a.id);
+    
+    const assignedStudents = await db.collection('students').find({
+        pedagogicalInfo: { $exists: true },
+        'pedagogicalInfo.specializationArea': { $in: assignedAreas.map(a => a.name) } // This is an approximation
+    }).toArray();
+    
+     const assignedClassrooms = await db.collection('classrooms').find({
+      'schedule.areaId': { $in: assignedAreaIds }
+    }).toArray();
+
+
+    return {
+      teacher: JSON.parse(JSON.stringify(teacher)) as Teacher,
+      assignedAreas: JSON.parse(JSON.stringify(assignedAreas)) as Area[],
+      assignedClassrooms: JSON.parse(JSON.stringify(assignedClassrooms)) as Classroom[],
+      assignedStudents: JSON.parse(JSON.stringify(assignedStudents)) as Student[],
+    };
+  } catch (error) {
+    console.error('Error fetching teacher data:', error);
+    return null;
+  }
 }

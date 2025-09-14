@@ -12,8 +12,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  // Check if the path is NOT a representative path
-  if (!pathname.startsWith('/representative')) {
+  // Check if the path is NOT a representative or teacher path
+  if (!pathname.startsWith('/representative') && !pathname.startsWith('/teacher')) {
      return (
         <div className="flex min-h-screen w-full">
             <Sidebar />
@@ -25,6 +25,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
      );
   }
   
-  // For representative layout, let the nested layout handle it.
+  // For representative or teacher layouts, let the nested layout handle it.
   return <>{children}</>;
 }

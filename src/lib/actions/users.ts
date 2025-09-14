@@ -115,6 +115,8 @@ export async function loginUser(prevState: any, formData: FormData) {
 
     if (user.role === 'representative') {
         redirect('/representative/dashboard');
+    } else if (user.role === 'teacher') {
+        redirect('/teacher/dashboard');
     } else {
         redirect('/dashboard');
     }
