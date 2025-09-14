@@ -1,12 +1,15 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginUser } from '@/lib/actions/users';
+import { testDbConnection } from '@/app/actions';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -19,9 +22,29 @@ function SubmitButton() {
 
 export function LoginForm() {
   const [state, action] = useActionState(loginUser, undefined);
+  const [isTesting, setIsTesting] = useState(false);
+  const { toast } = useToast();
+
+  const handleTestConnection = async () => {
+    setIsTesting(true);
+    const result = await testDbConnection();
+    if (result.success) {
+      toast({
+        title: 'Éxito',
+        description: result.message,
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: result.message,
+        variant: 'destructive',
+      });
+    }
+    setIsTesting(false);
+  };
 
   return (
-    <div className="mx-auto grid w-[350px] gap-6">
+    <div className="mx-auto grid w-full max-w-sm gap-6 px-4">
       <div className="grid gap-2 text-center">
         <h1 className="text-3xl font-bold">Iniciar Sesión</h1>
         <p className="text-balance text-muted-foreground">
@@ -56,6 +79,10 @@ export function LoginForm() {
         {state?.error?.form && <p className="text-sm text-destructive">{state.error.form[0]}</p>}
         <SubmitButton />
       </form>
+       <Button variant="outline" onClick={handleTestConnection} disabled={isTesting} className="w-full">
+         {isTesting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+         Probar Conexión DB
+       </Button>
       <div className="mt-4 text-center text-sm">
         ¿No tienes una cuenta?{' '}
         <Link href="/register" className="underline">
