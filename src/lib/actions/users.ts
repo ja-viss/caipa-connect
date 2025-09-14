@@ -151,12 +151,16 @@ export async function loginUser(prevState: any, formData: FormData) {
     switch(user.role) {
         case 'representative':
             redirect('/representative/dashboard');
+            break;
         case 'teacher':
             redirect('/teacher/dashboard');
+            break;
         case 'admin':
             redirect('/dashboard');
+            break;
         default:
             redirect('/dashboard');
+            break;
     }
   }
 }
