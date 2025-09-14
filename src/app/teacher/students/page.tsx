@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, Search } from "lucide-react";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
+import { StudentProfileDialog } from '@/components/student/student-profile-dialog';
 
 export default function TeacherStudentsPage() {
   const [data, setData] = useState<{ teacher: Teacher | null, assignedStudents: Student[] } | null>(null);
@@ -101,12 +102,7 @@ export default function TeacherStudentsPage() {
                     <TableCell>{student.representative.name}</TableCell>
                     <TableCell className="hidden md:table-cell">{student.pedagogicalInfo.specializationArea}</TableCell>
                     <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/students/${student.id}`}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Ver Perfil
-                        </Link>
-                      </Button>
+                      <StudentProfileDialog student={student} />
                     </TableCell>
                   </TableRow>
                 ))
