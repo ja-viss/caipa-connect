@@ -9,11 +9,11 @@ export default function LoginPage() {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/happy-kids-login/1200/800"
-          alt="Imagen de niños aprendiendo en un ambiente de apoyo"
+          src="https://picsum.photos/seed/happy-kids-login-2/1200/800"
+          alt="Imagen de niños felices aprendiendo en un ambiente de apoyo"
           width="1920"
           height="1080"
-          data-ai-hint="children learning"
+          data-ai-hint="happy children learning"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
