@@ -34,14 +34,14 @@ async function getDb() {
   return client.db('school');
 }
 
-const secretKey = process.env.SESSION_SECRET || 'fallback-secret-key';
+const secretKey = process.env.SESSION_SECRET || 'fallback-secret-for-jwt-very-long-and-secure';
 const key = new TextEncoder().encode(secretKey);
 
 async function encrypt(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('1h')
+    .setExpirationTime('1h') // Las sesiones expiran en 1 hora
     .sign(key);
 }
 
@@ -52,15 +52,36 @@ async function decrypt(input: string): Promise<any> {
     });
     return payload;
   } catch (e) {
+    // Si el token es inválido o ha expirado, retorna null
     return null;
   }
 }
 
 export async function getSession() {
-  const session = cookies().get('session')?.value;
+  const sessionCookie = cookies().get('session')?.value;
+  if (!sessionCookie) return null;
+  const session = await decrypt(sessionCookie);
   if (!session) return null;
-  return await decrypt(session);
+
+  // Refrescar la sesión si está por expirar (opcional, pero buena práctica)
+  const expires = new Date(session.expires);
+  const now = new Date();
+  const halfHour = 30 * 60 * 1000;
+  if (expires.getTime() - now.getTime() < halfHour) {
+     await createSession(session.user);
+  }
+
+  return session;
 }
+
+
+async function createSession(user: Omit<User, 'password' | '_id'>) {
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora desde ahora
+    const sessionPayload = { user, expires };
+    const session = await encrypt(sessionPayload);
+    cookies().set('session', session, { expires, httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+}
+
 
 export async function loginUser(prevState: any, formData: FormData) {
   const validatedFields = loginSchema.safeParse(
@@ -74,7 +95,7 @@ export async function loginUser(prevState: any, formData: FormData) {
   }
 
   const { email, password } = validatedFields.data;
-  let user: User | null = null;
+  let user: Omit<User, 'password' | '_id'> | null = null;
 
   try {
     const db = await getDb();
@@ -86,6 +107,9 @@ export async function loginUser(prevState: any, formData: FormData) {
       };
     }
     
+    // IMPORTANTE: En una aplicación real, NUNCA almacenes contraseñas en texto plano.
+    // Usa una librería como `bcrypt` para hashear y comparar contraseñas.
+    // Ejemplo: const passwordMatch = await bcrypt.compare(password, foundUser.password);
     if (foundUser.password !== password) {
          return {
             error: { form: ['El correo electrónico o la contraseña son incorrectos.'] },
@@ -98,7 +122,7 @@ export async function loginUser(prevState: any, formData: FormData) {
       if (!teacherProfile) {
         return { error: { form: ['No se encontró un perfil de docente para este usuario.'] } };
       }
-      foundUser.teacherId = teacherProfile.id; // Attach teacherId for session
+      foundUser.teacherId = teacherProfile.id;
     } else if (foundUser.role === 'representative') {
       const studentProfile = await db.collection('students').findOne({ 'representative.email': foundUser.email });
       if (!studentProfile) {
@@ -111,27 +135,28 @@ export async function loginUser(prevState: any, formData: FormData) {
         fullName: foundUser.fullName,
         email: foundUser.email,
         role: foundUser.role,
-        teacherId: foundUser.teacherId, // Will be undefined for non-teachers, which is fine
+        teacherId: foundUser.teacherId,
     };
 
   } catch (error) {
-    console.error(error);
+    console.error("Error durante el inicio de sesión:", error);
     return {
       error: { form: ['Ocurrió un error en el servidor. Inténtalo de nuevo.'] },
     };
   }
 
   if (user) {
-    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-    const session = await encrypt({ user, expires });
-    cookies().set('session', session, { expires, httpOnly: true });
-
-    if (user.role === 'representative') {
-        redirect('/representative/dashboard');
-    } else if (user.role === 'teacher') {
-        redirect('/teacher/dashboard');
-    } else {
-        redirect('/dashboard');
+    await createSession(user);
+    
+    switch(user.role) {
+        case 'representative':
+            redirect('/representative/dashboard');
+        case 'teacher':
+            redirect('/teacher/dashboard');
+        case 'admin':
+            redirect('/dashboard');
+        default:
+            redirect('/dashboard');
     }
   }
 }
@@ -160,21 +185,23 @@ export async function createUser(prevState: any, formData: FormData) {
             };
         }
 
+        // IMPORTANTE: En una aplicación real, hashea la contraseña antes de guardarla.
+        // const hashedPassword = await bcrypt.hash(password, 10);
         const newUser: Omit<User, '_id'> = {
             id: crypto.randomUUID(),
             fullName,
             email,
-            password, // Again, hash this in a real app
+            password, // Debería ser hashedPassword
             role,
         };
 
         await db.collection('users').insertOne(newUser);
         
-        // Return the created user's ID for linking profiles
+        revalidatePath('/admin/users');
         return { success: true, userId: newUser.id };
 
     } catch (error) {
-        console.error(error);
+        console.error("Error creando usuario:", error);
         return {
             error: { form: ['Ocurrió un error en el servidor. Inténtalo de nuevo.'] },
         };
@@ -212,7 +239,6 @@ export async function updateUser(userId: string, prevState: any, formData: FormD
 
         await db.collection('users').updateOne({ id: userId }, { $set: { fullName, role } });
 
-        // If user is a representative, update their name in the associated student records.
         if (user.role === 'representative' || role === 'representative') {
              await db.collection('students').updateMany(
                 { 'representative.email': user.email },
@@ -256,12 +282,12 @@ export async function updateUserProfile(data: unknown): Promise<{ success: boole
         const db = await getDb();
         const updateData: { fullName: string, password?: string } = { fullName };
         if (password) {
-            updateData.password = password; // HASH THIS in a real app
+            // IMPORTANTE: Hashear contraseña en una app real
+            updateData.password = password;
         }
         
         await db.collection('users').updateOne({ id: session.user.id }, { $set: updateData });
 
-        // Update name in related profiles if necessary
         if (session.user.role === 'teacher') {
             await db.collection('teachers').updateOne({ id: session.user.teacherId }, { $set: { fullName } });
         } else if (session.user.role === 'representative') {
@@ -269,6 +295,10 @@ export async function updateUserProfile(data: unknown): Promise<{ success: boole
         }
 
         revalidatePath('/settings');
+        // Actualizar la sesión con el nuevo nombre
+        const updatedUser = { ...session.user, fullName };
+        await createSession(updatedUser);
+
         return { success: true };
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -281,19 +311,16 @@ export async function deleteUser(userId: string, userRole: User['role'], userEma
     try {
         const db = await getDb();
         
-        // Delete the user
         const result = await db.collection('users').deleteOne({ id: userId });
         if (result.deletedCount === 0) {
             return { success: false, error: 'Usuario no encontrado.' };
         }
 
-        // If the user was a teacher, delete their teacher profile
         if (userRole === 'teacher') {
             await db.collection('teachers').deleteOne({ email: userEmail });
             revalidatePath('/admin/teachers');
         }
 
-        // If the user was a representative, find and delete associated students
         if (userRole === 'representative') {
             const students = await db.collection('students').find({ 'representative.email': userEmail }).toArray();
             if (students.length > 0) {
