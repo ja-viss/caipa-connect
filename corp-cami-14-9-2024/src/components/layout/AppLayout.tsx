@@ -1,27 +1,18 @@
 'use server';
 
-import { usePathname } from 'next/navigation';
 import { Sidebar } from './sidebar';
 import Header from './header';
 import { getSession } from '@/lib/actions/users';
-import type { User } from '@/lib/types';
 import { TeacherSidebar } from './teacher-sidebar';
 import { RepresentativeSidebar } from './representative-sidebar';
-import { redirect } from 'next/navigation';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  // Nota: usePathname() no funciona en Server Components.
-  // La lógica para páginas de autenticación se manejará directamente
-  // en las páginas o mediante middleware si es necesario.
-  // Por ahora, el chequeo de sesión protege las rutas internas.
-
   const session = await getSession();
 
+  // Si no hay sesión de usuario, no se renderiza el layout principal.
+  // Las páginas como /login y /register se mostrarán directamente.
+  // Las páginas protegidas deberían tener su propia lógica de redirección si se accede sin sesión.
   if (!session?.user) {
-    // Si no hay sesión, idealmente deberíamos estar en /login o /register.
-    // Si se intenta acceder a una ruta protegida, las páginas mismas
-    // o un middleware deberían redirigir. Para este layout, si no hay sesión,
-    // no mostramos la estructura principal.
     return <>{children}</>;
   }
   
