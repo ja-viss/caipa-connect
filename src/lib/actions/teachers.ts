@@ -32,19 +32,16 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
   }
 
   const { fullName, email, password, phone, specialization, ci } = validatedFields.data;
-  const teacherId = crypto.randomUUID();
 
   try {
     const db = await getDb();
     
-    // First, create the user account, passing the teacherId to be stored.
+    // First, create the user account for the teacher.
     const userFormData = new FormData();
     userFormData.append('fullName', fullName);
     userFormData.append('email', email);
     userFormData.append('password', password);
     userFormData.append('role', 'teacher');
-    userFormData.append('teacherId', teacherId);
-
 
     const userResult = await createUser(undefined, userFormData);
 
@@ -55,7 +52,7 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
 
     // If user is created successfully, create the teacher profile
     const newTeacher: Omit<Teacher, '_id'> = {
-      id: teacherId,
+      id: crypto.randomUUID(),
       fullName,
       ci,
       email,
@@ -136,19 +133,20 @@ export async function deleteTeacher(teacherId: string): Promise<{ success: boole
 
 export async function getTeacherData() {
   const session = await getSession();
-  if (!session?.user || session.user.role !== 'teacher' || !session.user.teacherId) {
+  if (!session?.user || session.user.role !== 'teacher' || !session.user.email) {
     return null;
   }
 
-  const teacherId = session.user.teacherId;
+  const userEmail = session.user.email;
 
   try {
     const db = await getDb();
-    const teacher = await db.collection('teachers').findOne({ id: teacherId });
+    const teacher = await db.collection('teachers').findOne({ email: userEmail });
     if (!teacher) {
         return null;
     }
 
+    const teacherId = teacher.id;
     const assignedAreas = await db.collection('areas').find({ teacherIds: teacherId }).toArray();
     const assignedAreaIds = assignedAreas.map(a => a.id);
     

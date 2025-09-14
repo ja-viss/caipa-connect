@@ -20,7 +20,6 @@ const registerSchema = z.object({
   role: z.enum(['admin', 'teacher', 'representative'], {
     errorMap: () => ({ message: 'Por favor, selecciona un rol válido.' }),
   }),
-  teacherId: z.string().optional(),
 });
 
 const updateUserSchema = z.object({
@@ -98,7 +97,6 @@ export async function loginUser(prevState: any, formData: FormData) {
         fullName: foundUser.fullName,
         email: foundUser.email,
         role: foundUser.role,
-        teacherId: foundUser.teacherId, // Explicitly include teacherId
     };
 
   } catch (error) {
@@ -135,7 +133,7 @@ export async function createUser(prevState: any, formData: FormData) {
         };
     }
 
-    const { fullName, email, password, role, teacherId } = validatedFields.data;
+    const { fullName, email, password, role } = validatedFields.data;
 
     try {
         const db = await getDb();
@@ -153,7 +151,6 @@ export async function createUser(prevState: any, formData: FormData) {
             email,
             password, // Again, hash this in a real app
             role,
-            teacherId: role === 'teacher' ? teacherId : undefined,
         };
 
         await db.collection('users').insertOne(newUser);
