@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       setSession(sessionData);
       setLoading(false);
     });
-  }, []); // Re-check session only once on component mount
+  }, []);
 
   const isAuthPage = pathname === '/login' || pathname === '/register';
 
@@ -29,7 +29,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     // You can return a loading spinner here if you want
-    return null;
+    return (
+        <div className="flex min-h-screen w-full items-center justify-center">
+            {/* You can replace this with a more sophisticated spinner component */}
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+    );
   }
   
   const userRole = session?.user?.role;

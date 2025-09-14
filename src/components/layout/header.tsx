@@ -24,30 +24,71 @@ import {
   Settings,
   Contact,
   Shapes,
-  Send
+  Send,
+  Building,
+  FileText,
+  User,
+  Circle
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { getSession } from '@/lib/actions/users';
 import { useEffect, useState } from 'react';
+import type { User as UserType } from '@/lib/types';
 
-const navItems = [
-  { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
-  { href: '/students', label: 'Estudiantes', icon: Users },
-  { href: '/resources', label: 'Recursos', icon: BookOpen },
-];
 
-const adminNavItems = [
-  { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
-  { href: '/messages', label: 'Mensajería', icon: Send },
-  { href: '/admin/classrooms', label: 'Aulas', icon: Users },
-  { href: '/admin/teachers', label: 'Docentes', icon: Contact },
-  { href: '/admin/areas', label: 'Áreas', icon: Shapes },
-];
+const getNavItemsByRole = (role: UserType['role'] | undefined) => {
+    const baseNavItems = [
+        { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
+        { href: '/students', label: 'Estudiantes', icon: Users },
+        { href: '/resources', label: 'Recursos', icon: BookOpen },
+    ];
+    
+    const adminNavItems = [
+        ...baseNavItems,
+        { isSeparator: true },
+        { title: 'Admin' },
+        { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
+        { href: '/messages', label: 'Mensajería', icon: Send },
+        { href: '/admin/classrooms', label: 'Aulas', icon: Users },
+        { href: '/admin/teachers', label: 'Docentes', icon: Contact },
+        { href: '/admin/areas', label: 'Áreas', icon: Shapes },
+        { href: '/reports', label: 'Generar Informes', icon: FileText },
+    ];
+
+    const teacherNavItems = [
+        { href: '/teacher/dashboard', label: 'Panel', icon: LayoutDashboard },
+        { href: '/teacher/students', label: 'Mis Estudiantes', icon: Users },
+        { href: '/teacher/areas-classrooms', label: 'Áreas y Aulas', icon: Building },
+        { href: '/reports', label: 'Generar Informes', icon: FileText },
+        { href: '/resources', label: 'Recursos', icon: BookOpen },
+        { href: '/messages', label: 'Mensajería', icon: Send },
+    ];
+
+    const representativeNavItems = [
+        { href: '/representative/dashboard', label: 'Panel', icon: LayoutDashboard },
+        { href: '/representative/student', label: 'Mi Estudiante', icon: User },
+        { href: '/representative/areas-teachers', label: 'Áreas y Docentes', icon: Shapes },
+        { href: '/representative/reports', label: 'Informes', icon: FileText },
+        { href: '/resources', label: 'Recursos', icon: BookOpen },
+        { href: '/representative/messages', label: 'Mensajes', icon: Send, badge: false }, // Badge logic can be added here if needed
+    ];
+
+    switch (role) {
+        case 'admin':
+            return adminNavItems;
+        case 'teacher':
+            return teacherNavItems;
+        case 'representative':
+            return representativeNavItems;
+        default:
+            return []; // Return no items if role is unknown or not available
+    }
+}
 
 
 export default function Header() {
   const router = useRouter();
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<{ user: UserType } | null>(null);
 
   useEffect(() => {
     getSession().then(setSession);
@@ -60,6 +101,9 @@ export default function Header() {
 
   const userName = session?.user?.fullName || 'Usuario';
   const userInitials = userName.split(' ').map(n => n[0]).join('');
+  const navItems = getNavItemsByRole(session?.user?.role);
+  const homeLink = session?.user?.role === 'teacher' ? '/teacher/dashboard' : session?.user?.role === 'representative' ? '/representative/dashboard' : '/dashboard';
+
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
@@ -71,12 +115,12 @@ export default function Header() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
-          <SheetHeader className="sr-only">
-            <SheetTitle>Menú de Navegación</SheetTitle>
-          </SheetHeader>
+           <SheetHeader>
+                <SheetTitle className="sr-only">Menú de Navegación</SheetTitle>
+           </SheetHeader>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="/"
+              href={homeLink}
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <svg
@@ -95,21 +139,25 @@ export default function Header() {
               </svg>
               <span className="sr-only">CAIPA Connect</span>
             </Link>
-            {navItems.map((item) => (
-                 <Link key={item.href} href={item.href} className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+            {navItems.map((item, index) => {
+              if (item.isSeparator) {
+                return <hr key={`sep-${index}`} className="my-2 border-border" />;
+              }
+              if (item.title) {
+                 return <p key={`title-${index}`} className="px-2.5 text-sm font-semibold text-muted-foreground">{item.title}</p>
+              }
+              return (
+                 <Link key={item.href} href={item.href!} className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
                     <item.icon className="h-5 w-5" />
                     {item.label}
                 </Link>
-            ))}
-             <div className="px-2.5 my-2">
-                <hr className="border-border" />
-            </div>
-            {adminNavItems.map((item) => (
-                 <Link key={item.href} href={item.href} className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
-                    <item.icon className="h-5 w-5" />
-                    {item.label}
-                </Link>
-            ))}
+              )
+            })}
+             <hr className="my-2 border-border" />
+             <Link href="/settings" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                <Settings className="h-5 w-5" />
+                Configuración
+            </Link>
           </nav>
         </SheetContent>
       </Sheet>
