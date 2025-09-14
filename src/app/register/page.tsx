@@ -6,7 +6,7 @@ export default function RegisterPage() {
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/children-register/1200/800"
+          src="https://picsum.photos/seed/happy-kids-register/1200/800"
           alt="Imagen de niños felices colaborando"
           width="1920"
           height="1080"

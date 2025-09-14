@@ -9,7 +9,7 @@ export default function LoginPage() {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/children-login/1200/800"
+          src="https://picsum.photos/seed/happy-kids-login/1200/800"
           alt="Imagen de niños aprendiendo en un ambiente de apoyo"
           width="1920"
           height="1080"
