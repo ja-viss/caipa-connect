@@ -1,20 +1,11 @@
-import Header from "@/components/layout/header";
-import { TeacherSidebar } from "@/components/layout/teacher-sidebar";
+// This file is no longer needed to render the layout structure,
+// as it is now handled by the main AppLayout based on user role.
+// We keep it to potentially add teacher-specific context providers in the future.
 
 export default function TeacherLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="flex min-h-screen w-full">
-      <TeacherSidebar />
-      <div className="flex flex-col w-full md:ml-64">
-        <Header />
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 overflow-auto">
-            {children}
-        </main>
-      </div>
-    </div>
-  );
+  return <>{children}</>;
 }
