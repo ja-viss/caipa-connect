@@ -98,7 +98,7 @@ export async function loginUser(prevState: any, formData: FormData) {
         fullName: foundUser.fullName,
         email: foundUser.email,
         role: foundUser.role,
-        teacherId: foundUser.teacherId,
+        teacherId: foundUser.teacherId, // Explicitly include teacherId
     };
 
   } catch (error) {
