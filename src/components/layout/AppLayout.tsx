@@ -28,10 +28,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   if (loading) {
-    // You can return a loading spinner here if you want
     return (
         <div className="flex min-h-screen w-full items-center justify-center">
-            {/* You can replace this with a more sophisticated spinner component */}
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
     );
@@ -48,8 +46,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       case 'representative':
         return <RepresentativeSidebar />;
       default:
-        // Render nothing or a default sidebar if no role or no session
-        // This case should ideally redirect to login, which is handled by individual pages
         return null;
     }
   };
@@ -57,9 +53,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full">
       {renderSidebar()}
-      <div className="flex flex-col w-full md:ml-64">
+      <div className="flex flex-col flex-1 md:ml-64">
         <Header />
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 overflow-auto">{children}</main>
+        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24 lg:pt-28">
+          {children}
+        </main>
       </div>
     </div>
   );

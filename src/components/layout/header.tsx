@@ -16,7 +16,6 @@ import {
   PanelLeft,
   Search,
   Users,
-  MessageSquare,
   LayoutDashboard,
   Shield,
   BookOpen,
@@ -27,10 +26,9 @@ import {
   Building,
   FileText,
   User,
-  Circle,
   LogOut
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState } from 'react';
 import type { User as UserType } from '@/lib/types';
@@ -49,7 +47,7 @@ const getNavItemsByRole = (role: UserType['role'] | undefined) => {
         { title: 'Admin' },
         { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
         { href: '/messages', label: 'Mensajería', icon: Send },
-        { href: '/admin/classrooms', label: 'Aulas', icon: Users },
+        { href: '/admin/classrooms', label: 'Aulas', icon: Building },
         { href: '/admin/teachers', label: 'Docentes', icon: Contact },
         { href: '/admin/areas', label: 'Áreas', icon: Shapes },
         { href: '/reports', label: 'Generar Informes', icon: FileText },
@@ -70,7 +68,7 @@ const getNavItemsByRole = (role: UserType['role'] | undefined) => {
         { href: '/representative/areas-teachers', label: 'Áreas y Docentes', icon: Shapes },
         { href: '/representative/reports', label: 'Informes', icon: FileText },
         { href: '/resources', label: 'Recursos', icon: BookOpen },
-        { href: '/representative/messages', label: 'Mensajes', icon: Send, badge: false }, // Badge logic can be added here if needed
+        { href: '/representative/messages', label: 'Mensajes', icon: Send, badge: false },
     ];
 
     switch (role) {
@@ -81,7 +79,7 @@ const getNavItemsByRole = (role: UserType['role'] | undefined) => {
         case 'representative':
             return representativeNavItems;
         default:
-            return []; // Return no items if role is unknown or not available
+            return [];
     }
 }
 
@@ -100,7 +98,7 @@ export default function Header() {
 
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
+    <header className="fixed top-0 left-0 right-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:left-64 sm:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">
@@ -168,7 +166,6 @@ export default function Header() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
             <Avatar>
-              <AvatarImage src="" alt={userName} />
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
           </Button>
