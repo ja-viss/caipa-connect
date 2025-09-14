@@ -43,9 +43,9 @@ export default async function ResourcesPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {resources.map((resource) => (
             <ResourceDialog key={resource.id} resource={resource}>
-              <Card className="flex flex-col cursor-pointer hover:border-primary transition-colors h-full">
-                <CardHeader>
-                  <div className="relative h-40 w-full mb-4">
+              <Card className="flex flex-col cursor-pointer hover:border-primary transition-colors h-full group">
+                <CardHeader className="p-0">
+                  <div className="relative h-40 w-full">
                     <Image
                       src={resource.thumbnail.imageUrl}
                       alt={resource.title}
@@ -54,11 +54,11 @@ export default async function ResourcesPage() {
                       className="object-cover rounded-t-lg"
                     />
                   </div>
-                  <CardTitle>{resource.title}</CardTitle>
-                  <Badge variant="secondary" className="w-fit">{resource.category}</Badge>
                 </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-sm text-muted-foreground">{resource.description}</p>
+                <CardContent className="flex flex-col flex-1 p-4">
+                  <Badge variant="secondary" className="w-fit mb-2">{resource.category}</Badge>
+                  <CardTitle className="text-lg mb-2 group-hover:text-primary">{resource.title}</CardTitle>
+                  <p className="text-sm text-muted-foreground flex-1">{resource.description}</p>
                 </CardContent>
               </Card>
             </ResourceDialog>

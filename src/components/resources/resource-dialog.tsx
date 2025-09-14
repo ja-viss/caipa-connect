@@ -22,25 +22,28 @@ export function ResourceDialog({ resource, children }: ResourceDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-3xl">
-        <DialogHeader>
-          <div className="relative h-60 w-full mb-4">
+      <DialogContent className="sm:max-w-3xl p-0">
+        <ScrollArea className="max-h-[80vh]">
+            <div className="relative h-48 sm:h-64 w-full">
              <Image
                 src={resource.thumbnail.imageUrl}
                 alt={resource.title}
                 fill
                 data-ai-hint={resource.thumbnail.imageHint}
-                className="object-cover rounded-t-lg"
+                className="object-cover"
              />
-          </div>
-          <Badge variant="secondary" className="w-fit">{resource.category}</Badge>
-          <DialogTitle className="text-2xl">{resource.title}</DialogTitle>
-          <DialogDescription>{resource.description}</DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="h-[50vh] mt-4">
-          <div className="prose prose-sm dark:prose-invert whitespace-pre-wrap p-1">
-            {resource.content}
-          </div>
+             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            </div>
+            <div className="p-6">
+                <DialogHeader className="text-left">
+                    <Badge variant="secondary" className="w-fit mb-2">{resource.category}</Badge>
+                    <DialogTitle className="text-2xl sm:text-3xl">{resource.title}</DialogTitle>
+                    <DialogDescription className="text-base">{resource.description}</DialogDescription>
+                </DialogHeader>
+                <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap mt-4 text-foreground/80">
+                    {resource.content}
+                </div>
+            </div>
         </ScrollArea>
       </DialogContent>
     </Dialog>
