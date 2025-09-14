@@ -27,23 +27,13 @@ export function LoginForm() {
 
   const handleTestConnection = async () => {
     setIsTesting(true);
-    try {
-      const result = await testDbConnection();
-      if (result.success) {
-        toast({
-          title: 'Éxito',
-          description: result.message,
-        });
-      }
-    } catch (error) {
-        toast({
-            title: 'Error de Conexión',
-            description: 'No se pudo conectar a la base de datos. Revisa la consola del servidor para más detalles.',
-            variant: 'destructive',
-        });
-    } finally {
-        setIsTesting(false);
-    }
+    await testDbConnection();
+    // This will now only be reached if the connection is successful
+    toast({
+      title: 'Éxito',
+      description: 'Conexión a la base de datos exitosa.',
+    });
+    setIsTesting(false);
   };
 
   return (
