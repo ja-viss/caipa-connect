@@ -149,10 +149,13 @@ export async function getTeacherData() {
     const teacherId = teacher.id;
     const assignedAreas = await db.collection('areas').find({ teacherIds: teacherId }).toArray();
     const assignedAreaIds = assignedAreas.map(a => a.id);
+
+    // Get all student IDs from the teacher's assigned areas
+    const allStudentIdsInAreas = assignedAreas.flatMap(area => area.studentIds || []);
     
+    // Fetch all students whose IDs are in the list
     const assignedStudents = await db.collection('students').find({
-        pedagogicalInfo: { $exists: true },
-        'pedagogicalInfo.specializationArea': { $in: assignedAreas.map(a => a.name) } // This is an approximation
+      id: { $in: allStudentIdsInAreas }
     }).toArray();
     
      const assignedClassrooms = await db.collection('classrooms').find({
