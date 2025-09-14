@@ -162,6 +162,12 @@ export async function loginUser(prevState: any, formData: FormData) {
 }
 
 
+export async function logoutUser() {
+  cookies().delete('session');
+  redirect('/login');
+}
+
+
 export async function createUser(prevState: any, formData: FormData) {
     const validatedFields = registerSchema.safeParse(
         Object.fromEntries(formData.entries())

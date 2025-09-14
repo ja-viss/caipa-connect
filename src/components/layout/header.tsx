@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,10 +27,11 @@ import {
   Building,
   FileText,
   User,
-  Circle
+  Circle,
+  LogOut
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { getSession } from '@/lib/actions/users';
+import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState } from 'react';
 import type { User as UserType } from '@/lib/types';
 
@@ -87,17 +87,11 @@ const getNavItemsByRole = (role: UserType['role'] | undefined) => {
 
 
 export default function Header() {
-  const router = useRouter();
   const [session, setSession] = useState<{ user: UserType } | null>(null);
 
   useEffect(() => {
     getSession().then(setSession);
   }, []);
-
-  const handleLogout = () => {
-    // Implement logout logic here, e.g., clearing cookies and redirecting
-    router.push('/login');
-  };
 
   const userName = session?.user?.fullName || 'Usuario';
   const userInitials = userName.split(' ').map(n => n[0]).join('');
@@ -187,7 +181,14 @@ export default function Header() {
           </DropdownMenuItem>
           <DropdownMenuItem>Soporte</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>Cerrar Sesión</DropdownMenuItem>
+          <form action={logoutUser}>
+            <button type="submit" className="w-full">
+                <DropdownMenuItem>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Cerrar Sesión
+                </DropdownMenuItem>
+            </button>
+          </form>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
