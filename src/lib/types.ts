@@ -1,5 +1,7 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import type { ObjectId } from 'mongodb';
+import type { z } from 'zod';
+import type { GenerateEvaluationReportInputSchema } from '@/ai/flows/generate-evaluation-report';
 
 export type User = {
   _id?: ObjectId;
@@ -8,6 +10,7 @@ export type User = {
   email: string;
   password?: string; // Should be hashed in a real app
   role: 'admin' | 'teacher' | 'representative';
+  teacherId?: string;
 };
 
 export type Student = {
@@ -157,3 +160,5 @@ export type Classroom = {
   building: string;
   schedule: ScheduleEntry[];
 };
+
+export type GenerateEvaluationReportInput = z.infer<typeof GenerateEvaluationReportInputSchema>;

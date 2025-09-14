@@ -8,6 +8,11 @@ import {
   generateMessageDraft,
   type GenerateMessageDraftInput,
 } from '@/ai/flows/generate-message-draft';
+import { 
+    generateEvaluationReport,
+    GenerateEvaluationReportInputSchema,
+    type GenerateEvaluationReportInput,
+} from '@/ai/flows/generate-evaluation-report';
 import { z } from 'zod';
 
 const progressReportActionInputSchema = z.object({
@@ -52,4 +57,25 @@ export async function handleGenerateDraft(topic: string) {
         }
         return { success: false, error: errorMessage };
     }
+}
+
+
+export async function handleGenerateEvaluationReport(input: GenerateEvaluationReportInput) {
+  try {
+    const validatedInput = GenerateEvaluationReportInputSchema.parse(input);
+    if (!validatedInput.activityLogs.trim()) {
+        return { success: false, error: 'No se encontraron registros de actividad para el período y área seleccionados.', report: null };
+    }
+    const result = await generateEvaluationReport(validatedInput);
+    return { success: true, report: result.report };
+  } catch (error) {
+    console.error('Error generating evaluation report:', error);
+    let errorMessage = 'An unknown error occurred.';
+    if (error instanceof z.ZodError) {
+      errorMessage = 'Invalid input data.';
+    } else if (error instanceof Error) {
+        errorMessage = error.message;
+    }
+    return { success: false, error: errorMessage, report: null };
+  }
 }

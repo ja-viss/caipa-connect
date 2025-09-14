@@ -12,6 +12,7 @@ export function TeacherSidebar() {
     { href: '/teacher/dashboard', label: 'Panel', icon: LayoutDashboard },
     { href: '/teacher/students', label: 'Mis Estudiantes', icon: Users },
     { href: '/teacher/areas-classrooms', label: 'Áreas y Aulas', icon: Building },
+    { href: '/reports', label: 'Generar Informes', icon: FileText },
     { href: '/resources', label: 'Recursos', icon: BookOpen },
     { href: '/messages', label: 'Mensajería', icon: Send },
   ];

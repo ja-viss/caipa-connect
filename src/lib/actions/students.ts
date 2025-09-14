@@ -294,6 +294,23 @@ export async function getActivityLogsByStudentId(studentId: string): Promise<Act
     }
 }
 
+export async function getActivityLogsForReport(studentId: string, startDate: string, endDate: string): Promise<ActivityLog[]> {
+    try {
+        const db = await getDb();
+        const logs = await db.collection('activityLogs').find({
+            studentId: studentId,
+            date: {
+                $gte: new Date(startDate).toISOString(),
+                $lte: new Date(endDate).toISOString(),
+            }
+        }).sort({ date: 1 }).toArray();
+        return JSON.parse(JSON.stringify(logs));
+    } catch (error) {
+        console.error('Error fetching activity logs for report:', error);
+        return [];
+    }
+}
+
 export async function getProgressReportsByStudentId(studentId: string): Promise<ProgressReport[]> {
     try {
         const db = await getDb();
