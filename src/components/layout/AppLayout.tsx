@@ -53,9 +53,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full">
       {renderSidebar()}
-      <div className="flex flex-col flex-1 md:ml-64">
+      <div className="flex flex-col w-full md:ml-64">
         <Header />
-        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24 lg:pt-28">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20">
           {children}
         </main>
       </div>
