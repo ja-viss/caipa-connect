@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import clientPromise from '@/lib/mongodb';
-import type { User } from '@/lib/types';
+import type { User, Teacher } from '@/lib/types';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
@@ -92,11 +92,26 @@ export async function loginUser(prevState: any, formData: FormData) {
         };
     }
     
+    // Role-specific profile validation
+    if (foundUser.role === 'teacher') {
+      const teacherProfile = await db.collection('teachers').findOne({ email: foundUser.email });
+      if (!teacherProfile) {
+        return { error: { form: ['No se encontró un perfil de docente para este usuario.'] } };
+      }
+      foundUser.teacherId = teacherProfile.id; // Attach teacherId for session
+    } else if (foundUser.role === 'representative') {
+      const studentProfile = await db.collection('students').findOne({ 'representative.email': foundUser.email });
+      if (!studentProfile) {
+        return { error: { form: ['No se encontró un estudiante asociado a este representante.'] } };
+      }
+    }
+
     user = {
         id: foundUser.id,
         fullName: foundUser.fullName,
         email: foundUser.email,
         role: foundUser.role,
+        teacherId: foundUser.teacherId, // Will be undefined for non-teachers, which is fine
     };
 
   } catch (error) {
@@ -154,17 +169,15 @@ export async function createUser(prevState: any, formData: FormData) {
         };
 
         await db.collection('users').insertOne(newUser);
+        
+        // Return the created user's ID for linking profiles
+        return { success: true, userId: newUser.id };
 
     } catch (error) {
         console.error(error);
         return {
             error: { form: ['Ocurrió un error en el servidor. Inténtalo de nuevo.'] },
         };
-    }
-    
-    // Programmatic creations (like for teachers/reps) shouldn't redirect
-    if (prevState !== undefined) {
-      redirect('/dashboard');
     }
 }
 

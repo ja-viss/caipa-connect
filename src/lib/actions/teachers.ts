@@ -45,14 +45,16 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
 
     const userResult = await createUser(undefined, userFormData);
 
-    if (userResult?.error) {
+    if (userResult?.error || !userResult?.userId) {
         // Forward the specific error from createUser
-        return { success: false, error: userResult.error };
+        return { success: false, error: userResult?.error || { form: ['No se pudo crear la cuenta de usuario.'] } };
     }
+    
+    const teacherId = crypto.randomUUID();
 
     // If user is created successfully, create the teacher profile
     const newTeacher: Omit<Teacher, '_id'> = {
-      id: crypto.randomUUID(),
+      id: teacherId,
       fullName,
       ci,
       email,
@@ -61,6 +63,12 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
     };
 
     await db.collection('teachers').insertOne(newTeacher);
+
+    // Link the teacherId to the user account
+    await db.collection('users').updateOne(
+        { id: userResult.userId },
+        { $set: { teacherId: teacherId } }
+    );
   
   } catch (error) {
     console.error('Error creating teacher:', error);
@@ -133,20 +141,19 @@ export async function deleteTeacher(teacherId: string): Promise<{ success: boole
 
 export async function getTeacherData() {
   const session = await getSession();
-  if (!session?.user || session.user.role !== 'teacher' || !session.user.email) {
+  if (!session?.user || session.user.role !== 'teacher' || !session.user.teacherId) {
     return null;
   }
 
-  const userEmail = session.user.email;
+  const teacherId = session.user.teacherId;
 
   try {
     const db = await getDb();
-    const teacher = await db.collection('teachers').findOne({ email: userEmail });
+    const teacher = await db.collection('teachers').findOne({ id: teacherId });
     if (!teacher) {
         return null;
     }
 
-    const teacherId = teacher.id;
     const assignedAreas = await db.collection('areas').find({ teacherIds: teacherId }).toArray();
     const assignedAreaIds = assignedAreas.map(a => a.id);
 

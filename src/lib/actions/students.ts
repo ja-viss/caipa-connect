@@ -80,7 +80,7 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
 
         const userResult = await createUser(undefined, userFormData);
 
-        if (userResult?.error) {
+        if (userResult?.error || !userResult?.userId) {
             // Check if the error is for an existing email
             if (userResult.error.email) {
                  return { success: false, error: { representativeEmail: userResult.error.email } };
@@ -113,6 +113,7 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
               supportNeeds: validatedData.supportNeeds,
             },
             representative: {
+                userId: userResult.userId, // Link the user account
                 name: validatedData.representativeName,
                 ci: validatedData.representativeCi,
                 relation: validatedData.representativeRelation,
@@ -190,6 +191,7 @@ export async function updateStudent(studentId: string, data: unknown): Promise<{
             supportNeeds: validatedData.supportNeeds,
         },
         representative: {
+            ...studentToUpdate.representative, // Preserve existing fields like userId
             name: validatedData.representativeName,
             ci: validatedData.representativeCi,
             relation: validatedData.representativeRelation,

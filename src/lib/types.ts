@@ -10,6 +10,7 @@ export type User = {
   email: string;
   password?: string; // Should be hashed in a real app
   role: 'admin' | 'teacher' | 'representative';
+  teacherId?: string; // Add this to link to a teacher profile
 };
 
 export type Student = {
@@ -41,6 +42,7 @@ export type Student = {
   };
 
   representative: {
+    userId?: string; // Add this to link to a user account
     name: string;
     ci: string;
     relation: string;
