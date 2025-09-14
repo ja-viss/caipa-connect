@@ -50,7 +50,7 @@ const studentSchema = z.object({
   
   // Representative Info
   representativeName: z.string().min(1, 'El nombre del representante es obligatorio.'),
-  representativeCi: z.string().min(1, 'La cédula de identidad es obligatoria.'),
+  representativeCi: z.string().regex(/^\d+$/, 'La cédula de identidad solo debe contener números.').min(1, 'La cédula de identidad es obligatoria.'),
   representativeRelation: z.string().min(1, 'La relación con el estudiante es obligatoria.'),
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
@@ -374,72 +374,76 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 async function seedResources() {
     const db = await getDb();
     const resourcesCollection = db.collection('resources');
-    const count = await resourcesCollection.countDocuments();
-    if (count === 0) {
-        console.log('Seeding resources...');
-        const resources: Omit<Resource, '_id'>[] = [
-            {
-                id: crypto.randomUUID(),
-                title: 'Guía de Comunicación para Niños con TEA',
-                description: 'Estrategias y actividades para mejorar la comunicación verbal y no verbal.',
-                category: 'Comunicación',
-                fileUrl: '#', 
-                thumbnail: {
-                    id: 'resource-comm',
-                    description: 'Communication guide thumbnail',
-                    imageUrl: 'https://picsum.photos/seed/resource1/600/400',
-                    imageHint: 'communication guide'
-                }
-            },
-            {
-                id: crypto.randomUUID(),
-                title: 'Actividades de Habilidades Sociales',
-                description: 'Juegos y ejercicios para practicar la interacción social y la comprensión de emociones.',
-                category: 'Habilidades Sociales',
-                fileUrl: '#',
-                thumbnail: {
-                    id: 'resource-social',
-                    description: 'Social skills thumbnail',
-                    imageUrl: 'https://picsum.photos/seed/resource2/600/400',
-                    imageHint: 'social skills'
-                }
-            },
-            {
-                id: crypto.randomUUID(),
-                title: 'Manejo de Conductas Desafiantes',
-                description: 'Técnicas de refuerzo positivo y estrategias para prevenir y manejar crisis.',
-                category: 'Conducta',
-                fileUrl: '#',
-                thumbnail: {
-                    id: 'resource-behavior',
-                    description: 'Behavior management thumbnail',
-                    imageUrl: 'https://picsum.photos/seed/resource3/600/400',
-                    imageHint: 'behavior management'
-                }
-            },
-             {
-                id: crypto.randomUUID(),
-                title: 'Plan de Alimentación y Nutrición',
-                description: 'Consejos y recetas para manejar las sensibilidades alimentarias comunes en niños con TEA.',
-                category: 'Salud',
-                fileUrl: '#',
-                thumbnail: {
-                    id: 'resource-health',
-                    description: 'Health and nutrition thumbnail',
-                    imageUrl: 'https://picsum.photos/seed/resource4/600/400',
-                    imageHint: 'nutrition health'
-                }
-            },
-        ];
-        await resourcesCollection.insertMany(resources);
-    }
+    
+    // Clear existing resources to replace them with new ones
+    await resourcesCollection.deleteMany({});
+
+    console.log('Seeding TDAH resources...');
+    const resources: Omit<Resource, '_id'>[] = [
+        {
+            id: crypto.randomUUID(),
+            title: '¿Qué es el TDAH? Síntomas y Causas',
+            description: 'Un artículo completo de la Mayo Clinic que explica los fundamentos del Trastorno por Déficit de Atención e Hiperactividad.',
+            category: 'Información General',
+            fileUrl: 'https://www.mayoclinic.org/es/diseases-conditions/adult-attention-deficit-hyperactivity-disorder/symptoms-causes/syc-20350878', 
+            thumbnail: {
+                id: 'resource-tdah-1',
+                description: 'Cerebro con conexiones neuronales',
+                imageUrl: 'https://picsum.photos/seed/adhd1/600/400',
+                imageHint: 'brain neurons'
+            }
+        },
+        {
+            id: crypto.randomUUID(),
+            title: 'TDAH en Niños: Cómo Ayudarles',
+            description: 'Estrategias y consejos prácticos para padres y educadores sobre cómo apoyar a los niños con TDAH en casa y en la escuela.',
+            category: 'Estrategias',
+            fileUrl: 'https://childmind.org/article/como-ayudar-a-los-ninos-con-tdah/',
+            thumbnail: {
+                id: 'resource-tdah-2',
+                description: 'Niño concentrado en una tarea',
+                imageUrl: 'https://picsum.photos/seed/adhd2/600/400',
+                imageHint: 'child studying'
+            }
+        },
+        {
+            id: crypto.randomUUID(),
+            title: 'Manejo de la Conducta en el TDAH',
+            description: 'Técnicas de modificación de conducta y refuerzo positivo para manejar los comportamientos desafiantes asociados al TDAH.',
+            category: 'Conducta',
+            fileUrl: 'https://www.understood.org/es-mx/articles/behavior-therapy-for-kids-with-adhd-what-you-need-to-know',
+            thumbnail: {
+                id: 'resource-tdah-3',
+                description: 'Gráfico de recompensas o estrellas',
+                imageUrl: 'https://picsum.photos/seed/adhd3/600/400',
+                imageHint: 'reward chart'
+            }
+        },
+         {
+            id: crypto.randomUUID(),
+            title: 'TDAH y Alimentación: ¿Hay Conexión?',
+            description: 'Exploración sobre cómo la dieta y ciertos alimentos pueden influir en los síntomas del TDAH y recomendaciones nutricionales.',
+            category: 'Salud',
+            fileUrl: 'https://www.healthychildren.org/Spanish/health-issues/conditions/adhd/Paginas/adhd-and-nutrition.aspx',
+            thumbnail: {
+                id: 'resource-tdah-4',
+                description: 'Plato con alimentos saludables y coloridos',
+                imageUrl: 'https://picsum.photos/seed/adhd4/600/400',
+                imageHint: 'healthy food'
+            }
+        },
+    ];
+    await resourcesCollection.insertMany(resources);
 }
 
 
 export async function getResources(): Promise<Resource[]> {
     try {
-        await seedResources(); // Seed data if the collection is empty
         const db = await getDb();
+        const count = await db.collection('resources').countDocuments();
+        if (count === 0) {
+            await seedResources();
+        }
         const resources = await db.collection('resources').find({}).toArray();
         return JSON.parse(JSON.stringify(resources));
     } catch (error) {

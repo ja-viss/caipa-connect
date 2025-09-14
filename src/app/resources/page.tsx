@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { Download, Search } from 'lucide-react';
+import { ExternalLink, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -62,8 +62,8 @@ export default async function ResourcesPage() {
               <CardFooter>
                  <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" className="w-full">
                     <Button className="w-full">
-                        <Download className="mr-2 h-4 w-4" />
-                        Descargar
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Leer Más
                     </Button>
                 </a>
               </CardFooter>
