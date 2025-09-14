@@ -73,7 +73,7 @@ export default async function StudentsPage() {
                                 Ver Perfil
                             </Link>
                         </DropdownMenuItem>
-                        <EditStudentDialog student={student} />
+                        <EditStudentDialog student={student} asDropdownItem={true} />
                         <DropdownMenuSeparator />
                         <DeleteStudentAlert studentId={student.id} />
                       </DropdownMenuContent>

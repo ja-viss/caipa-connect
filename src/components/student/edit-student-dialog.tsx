@@ -63,9 +63,10 @@ type StudentFormValues = z.infer<typeof studentSchema>;
 
 interface EditStudentDialogProps {
   student: Student;
+  asDropdownItem?: boolean;
 }
 
-export function EditStudentDialog({ student }: EditStudentDialogProps) {
+export function EditStudentDialog({ student, asDropdownItem = false }: EditStudentDialogProps) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const {
@@ -125,9 +126,7 @@ export function EditStudentDialog({ student }: EditStudentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {/* This component can be triggered by a DropdownMenuItem or a regular Button */}
-        {/* We check for a truthy student.id to decide which trigger to render */}
-        {student.id ? (
+        {asDropdownItem ? (
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <Pencil className="mr-2 h-4 w-4" />
             Editar

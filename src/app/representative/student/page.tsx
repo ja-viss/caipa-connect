@@ -1,3 +1,5 @@
+'use client';
+
 import { getStudentByRepEmail } from '@/lib/actions/students';
 import { getSession } from "@/lib/actions/users";
 import { notFound, redirect } from 'next/navigation';
@@ -8,17 +10,60 @@ import type { Student } from '@/lib/types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { EditStudentDialog } from '@/components/student/edit-student-dialog';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function RepresentativeStudentProfilePage() {
-  const session = await getSession();
-  if (!session?.user?.email) {
-    redirect('/login');
+export default function RepresentativeStudentProfilePage() {
+  const [student, setStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStudentData() {
+      const session = await getSession();
+      if (!session?.user?.email) {
+        redirect('/login');
+        return;
+      }
+
+      const studentData = await getStudentByRepEmail(session.user.email);
+      if (!studentData) {
+        notFound();
+        return;
+      }
+      
+      setStudent(studentData);
+      setLoading(false);
+    }
+
+    fetchStudentData();
+  }, []);
+
+  if (loading) {
+    return (
+        <div className="flex flex-col gap-8">
+            <div className="flex items-center justify-between">
+                <div>
+                    <Skeleton className="h-9 w-64" />
+                    <Skeleton className="h-5 w-80 mt-2" />
+                </div>
+                <Skeleton className="h-10 w-24" />
+            </div>
+             <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-1 flex flex-col gap-8">
+                    <Card><CardContent className="pt-6"><Skeleton className="h-48 w-full" /></CardContent></Card>
+                    <Card><CardHeader><Skeleton className="h-6 w-1/2" /></CardHeader><CardContent><Skeleton className="h-24 w-full" /></CardContent></Card>
+                </div>
+                 <div className="lg:col-span-2 flex flex-col gap-8">
+                    <Card><CardHeader><Skeleton className="h-6 w-1/2" /></CardHeader><CardContent><Skeleton className="h-40 w-full" /></CardContent></Card>
+                    <Card><CardHeader><Skeleton className="h-6 w-1/2" /></CardHeader><CardContent><Skeleton className="h-40 w-full" /></CardContent></Card>
+                 </div>
+            </div>
+        </div>
+    )
   }
 
-  const student: Student | null = await getStudentByRepEmail(session.user.email);
-  
   if (!student) {
-    notFound();
+    return null; // or some other placeholder
   }
   
   return (
@@ -28,7 +73,7 @@ export default async function RepresentativeStudentProfilePage() {
                 <h1 className="text-3xl font-bold text-foreground">Perfil de Mi Estudiante</h1>
                 <p className="text-muted-foreground">Información completa sobre {student.name}.</p>
             </div>
-            <EditStudentDialog student={student} />
+            <EditStudentDialog student={student} asDropdownItem={false} />
         </div>
         <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-1 flex flex-col gap-8">
