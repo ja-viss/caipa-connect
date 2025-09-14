@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -27,6 +27,8 @@ import {
   Send
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { getSession } from '@/lib/actions/users';
+import { useEffect, useState } from 'react';
 
 const navItems = [
   { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
@@ -45,10 +47,19 @@ const adminNavItems = [
 
 export default function Header() {
   const router = useRouter();
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    getSession().then(setSession);
+  }, []);
 
   const handleLogout = () => {
+    // Implement logout logic here, e.g., clearing cookies and redirecting
     router.push('/login');
   };
+
+  const userName = session?.user?.fullName || 'Usuario';
+  const userInitials = userName.split(' ').map(n => n[0]).join('');
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
@@ -60,6 +71,9 @@ export default function Header() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Menú de Navegación</SheetTitle>
+          </SheetHeader>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"
@@ -112,13 +126,13 @@ export default function Header() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
             <Avatar>
-              <AvatarImage src="https://picsum.photos/seed/user/200/200" alt="@shadcn" data-ai-hint="user avatar" />
-              <AvatarFallback>AD</AvatarFallback>
+              <AvatarImage src="" alt={userName} />
+              <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Sra. Davis</DropdownMenuLabel>
+          <DropdownMenuLabel>{userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href="/settings">Configuración</Link>
