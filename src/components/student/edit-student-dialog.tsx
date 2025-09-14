@@ -55,6 +55,7 @@ const studentSchema = z.object({
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
   representativeAddress: z.string().optional(),
+  representativePassword: z.string().optional(),
 });
 
 
@@ -258,6 +259,12 @@ export function EditStudentDialog({ student }: EditStudentDialogProps) {
                   <Input id="representativeEmail-edit" type="email" {...register('representativeEmail')} />
                   {errors.representativeEmail && <p className="text-sm text-destructive mt-1">{errors.representativeEmail.message}</p>}
                </div>
+                <div>
+                    <Label htmlFor="representativePassword-edit">Nueva Contraseña</Label>
+                    <Input id="representativePassword-edit" type="password" {...register('representativePassword')} />
+                    <p className="text-xs text-muted-foreground mt-1">Dejar en blanco para no cambiar la contraseña.</p>
+                    {errors.representativePassword && <p className="text-sm text-destructive mt-1">{errors.representativePassword.message}</p>}
+                </div>
                <div>
                   <Label htmlFor="representativeAddress-edit">Dirección de Residencia (Opcional)</Label>
                   <Input id="representativeAddress-edit" {...register('representativeAddress')} />

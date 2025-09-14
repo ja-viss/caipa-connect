@@ -136,8 +136,9 @@ export async function updateStudent(studentId: string, data: unknown): Promise<{
     return { success: false, error: 'Student ID is required.' };
   }
   
-  // Exclude password from update validation
-  const updateStudentSchema = studentSchema.omit({ representativePassword: true });
+  const updateStudentSchema = studentSchema.omit({ representativePassword: true }).extend({
+    representativePassword: z.string().optional(),
+  });
   const validation = updateStudentSchema.safeParse(data);
 
   if (!validation.success) {
@@ -154,6 +155,19 @@ export async function updateStudent(studentId: string, data: unknown): Promise<{
         return { success: false, error: 'Student not found.' };
     }
     
+    // Update Representative's User Account if it exists
+    const repUser = await db.collection('users').findOne({ email: validatedData.representativeEmail });
+    if (repUser) {
+        const userUpdateData: { fullName: string; password?: string } = {
+            fullName: validatedData.representativeName,
+        };
+        if (validatedData.representativePassword && validatedData.representativePassword.length >= 6) {
+            userUpdateData.password = validatedData.representativePassword; // Hash in real app
+        }
+        await db.collection('users').updateOne({ email: validatedData.representativeEmail }, { $set: userUpdateData });
+    }
+
+    // Update student's data
     const updatedStudentData = {
         name: validatedData.name,
         dob: validatedData.dob,
@@ -186,8 +200,11 @@ export async function updateStudent(studentId: string, data: unknown): Promise<{
     };
 
     await db.collection('students').updateOne({ id: studentId }, { $set: updatedStudentData });
+    
     revalidatePath('/students');
     revalidatePath(`/students/${studentId}`);
+    revalidatePath('/admin/users'); // Revalidate users page in case rep name changed
+    
     return { success: true };
   } catch (error) {
     console.error('Error updating student:', error);

@@ -139,10 +139,29 @@ export async function updateUser(userId: string, prevState: any, formData: FormD
     if (!validatedFields.success) {
         return { success: false, error: validatedFields.error.flatten().fieldErrors };
     }
+    
+    const { fullName, role } = validatedFields.data;
 
     try {
         const db = await getDb();
-        await db.collection('users').updateOne({ id: userId }, { $set: validatedFields.data });
+        const user = await db.collection('users').findOne({ id: userId });
+        if (!user) {
+            return { success: false, error: { form: ['Usuario no encontrado.'] } };
+        }
+
+        await db.collection('users').updateOne({ id: userId }, { $set: { fullName, role } });
+
+        // If user is a representative, update their name in the associated student records.
+        if (user.role === 'representative' || role === 'representative') {
+             await db.collection('students').updateMany(
+                { 'representative.email': user.email },
+                { $set: { 'representative.name': fullName } }
+            );
+            revalidatePath('/students');
+            revalidatePath('/students/[id]', 'layout');
+        }
+
+
         revalidatePath('/admin/users');
         return { success: true };
     } catch (error) {
