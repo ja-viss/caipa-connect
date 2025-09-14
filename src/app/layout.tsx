@@ -7,6 +7,7 @@ import AppLayout from '@/components/layout/AppLayout';
 export const metadata: Metadata = {
   title: 'CAIPA Connect',
   description: 'Una plataforma para que educadores y representantes se conecten y apoyen el progreso de los estudiantes.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
