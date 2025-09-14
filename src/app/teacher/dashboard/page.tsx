@@ -78,15 +78,9 @@ export default function TeacherDashboard() {
 
   return (
     <div className="flex flex-col gap-8">
-        <div className="flex items-center gap-4">
-             <Avatar className="h-20 w-20">
-              <AvatarImage src={`https://picsum.photos/seed/${teacher.id}/200`} alt={teacher.fullName} data-ai-hint="teacher avatar" />
-              <AvatarFallback className="text-3xl">{teacher.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div>
-                <h1 className="text-3xl font-bold text-foreground">Panel de Docente</h1>
-                <p className="text-muted-foreground">Bienvenido/a, {teacher.fullName}. Aquí tienes un resumen de tus asignaciones.</p>
-            </div>
+        <div>
+            <h1 className="text-3xl font-bold text-foreground">Panel de Docente</h1>
+            <p className="text-muted-foreground">Bienvenido/a, {teacher.fullName}. Aquí tienes un resumen de tus asignaciones.</p>
         </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

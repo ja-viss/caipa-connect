@@ -42,15 +42,9 @@ export default async function RepresentativeDashboard() {
 
   return (
     <div className="flex flex-col gap-8">
-        <div className="flex items-center gap-4">
-             <Avatar className="h-20 w-20">
-              <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
-              <AvatarFallback className="text-3xl">{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div>
-                <h1 className="text-3xl font-bold text-foreground">Panel de {student.name}</h1>
-                <p className="text-muted-foreground">Bienvenido/a, {student.representative.name}. Aquí tienes un resumen del progreso de tu hijo/a.</p>
-            </div>
+        <div>
+            <h1 className="text-3xl font-bold text-foreground">Panel de {student.name}</h1>
+            <p className="text-muted-foreground">Bienvenido/a, {student.representative.name}. Aquí tienes un resumen del progreso de tu hijo/a.</p>
         </div>
       
       <div className="grid gap-6 lg:grid-cols-2">
