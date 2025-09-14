@@ -44,6 +44,7 @@ export async function loginUser(prevState: any, formData: FormData) {
   }
 
   const { email, password } = validatedFields.data;
+  let userRole: User['role'] | undefined;
 
   try {
     const db = await getDb();
@@ -62,6 +63,8 @@ export async function loginUser(prevState: any, formData: FormData) {
             error: { form: ['El correo electrónico o la contraseña son incorrectos.'] },
         };
     }
+    
+    userRole = user.role;
 
   } catch (error) {
     console.error(error);
@@ -70,7 +73,11 @@ export async function loginUser(prevState: any, formData: FormData) {
     };
   }
 
-  redirect('/dashboard');
+  if (userRole === 'representative') {
+      redirect('/representative/dashboard');
+  } else {
+      redirect('/dashboard');
+  }
 }
 
 

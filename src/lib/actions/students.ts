@@ -228,6 +228,20 @@ export async function getStudentById(id: string): Promise<Student | null> {
     }
 }
 
+export async function getStudentByRepEmail(email: string): Promise<Student | null> {
+    try {
+        const db = await getDb();
+        const student = await db.collection('students').findOne({ 'representative.email': email });
+         if (!student) {
+            return null;
+        }
+        return JSON.parse(JSON.stringify(student)) as Student;
+    } catch (error) {
+        console.error('Error fetching student by representative email:', error);
+        return null;
+    }
+}
+
 export async function deleteStudent(studentId: string): Promise<{ success: boolean; error?: string }> {
     if (!studentId) {
         return { success: false, error: 'Student ID is required.' };
@@ -302,6 +316,7 @@ export async function createActivityLog(logData: Omit<ActivityLog, 'id' | 'date'
         await db.collection('activityLogs').insertOne(newLog);
         revalidatePath(`/students/${logData.studentId}`);
         revalidatePath('/dashboard');
+        revalidatePath('/representative/dashboard');
         return { success: true };
     } catch (error) {
         console.error('Error creating activity log:', error);
@@ -320,6 +335,7 @@ export async function createProgressReport(reportData: Omit<ProgressReport, 'id'
         await db.collection('progressReports').insertOne(newReport);
         revalidatePath(`/students/${reportData.studentId}`);
         revalidatePath('/dashboard');
+        revalidatePath('/representative/dashboard');
         return { success: true };
     } catch (error) {
         console.error('Error creating progress report:', error);

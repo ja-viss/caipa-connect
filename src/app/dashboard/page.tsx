@@ -1,3 +1,8 @@
+// This is a placeholder file for role-based redirection.
+// The actual logic is handled in the `loginUser` server action
+// and the main dashboard content is now split between `/dashboard` for admins/teachers
+// and `/representative/dashboard` for representatives.
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Users, FileText } from 'lucide-react';
 import { getDashboardStats } from "@/lib/actions/students";
