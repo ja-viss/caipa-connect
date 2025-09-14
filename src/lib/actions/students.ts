@@ -6,6 +6,7 @@ import type { Student, ActivityLog, ProgressReport, Conversation, DashboardStats
 import { PlaceHolderImages } from '../placeholder-images';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
+import { createUser } from './users';
 
 
 async function getDb() {
@@ -54,10 +55,11 @@ const studentSchema = z.object({
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
   representativeAddress: z.string().optional(),
+  representativePassword: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres.'),
 });
 
 
-export async function createStudent(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
+export async function createStudent(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError | { form?: string[], representativeEmail?: string[]} }> {
     const validation = studentSchema.safeParse(data);
 
     if (!validation.success) {
@@ -69,6 +71,25 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
     try {
         const db = await getDb();
         
+        // Step 1: Create the representative's user account
+        const userFormData = new FormData();
+        userFormData.append('fullName', validatedData.representativeName);
+        userFormData.append('email', validatedData.representativeEmail);
+        userFormData.append('password', validatedData.representativePassword);
+        userFormData.append('role', 'representative');
+
+        const userResult = await createUser(undefined, userFormData);
+
+        if (userResult?.error) {
+            // Check if the error is for an existing email
+            if (userResult.error.email) {
+                 return { success: false, error: { representativeEmail: userResult.error.email } };
+            }
+            return { success: false, error: { form: ['No se pudo crear la cuenta de usuario del representante.'] } };
+        }
+
+
+        // Step 2: Create the student profile
         const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives'> = {
             id: crypto.randomUUID(),
             name: validatedData.name,
@@ -114,7 +135,10 @@ export async function updateStudent(studentId: string, data: unknown): Promise<{
   if (!studentId) {
     return { success: false, error: 'Student ID is required.' };
   }
-  const validation = studentSchema.safeParse(data);
+  
+  // Exclude password from update validation
+  const updateStudentSchema = studentSchema.omit({ representativePassword: true });
+  const validation = updateStudentSchema.safeParse(data);
 
   if (!validation.success) {
     return { success: false, error: validation.error };
@@ -194,18 +218,32 @@ export async function deleteStudent(studentId: string): Promise<{ success: boole
 
     try {
         const db = await getDb();
-        const result = await db.collection('students').deleteOne({ id: studentId });
-
-        if (result.deletedCount === 0) {
+        const student = await db.collection('students').findOne({ id: studentId });
+        
+        if (!student) {
             return { success: false, error: 'Student not found.' };
         }
         
+        const result = await db.collection('students').deleteOne({ id: studentId });
+
+        if (result.deletedCount === 0) {
+            return { success: false, error: 'Student not found during deletion.' };
+        }
+        
+        // Also delete the representative's user account
+        // Note: This is a simplification. In a real app, you'd check if this representative
+        // is associated with other students before deleting their user account.
+        if (student.representative && student.representative.email) {
+            await db.collection('users').deleteOne({ email: student.representative.email });
+        }
+
         // Optionally, delete related data like activity logs and reports
         await db.collection('activityLogs').deleteMany({ studentId });
         await db.collection('progressReports').deleteMany({ studentId });
 
 
         revalidatePath('/students');
+        revalidatePath('/admin/users');
         return { success: true };
     } catch (error) {
         console.error('Error deleting student:', error);

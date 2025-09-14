@@ -53,6 +53,7 @@ const studentSchema = z.object({
   representativePhone: z.string().min(1, 'El teléfono del representante es obligatorio.'),
   representativeEmail: z.string().email('Correo electrónico de representante inválido.'),
   representativeAddress: z.string().optional(),
+  representativePassword: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres.'),
 });
 
 
@@ -65,6 +66,7 @@ export function AddStudentDialog() {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<StudentFormValues>({
     resolver: zodResolver(studentSchema),
@@ -74,23 +76,27 @@ export function AddStudentDialog() {
     const result = await createStudent(data);
     if (result.success) {
       toast({
-        title: 'Estudiante Añadido',
-        description: 'El nuevo estudiante ha sido añadido exitosamente.',
+        title: 'Estudiante y Representante Creados',
+        description: 'El nuevo estudiante y la cuenta de su representante han sido creados exitosamente.',
       });
       reset();
       setOpen(false);
     } else {
-      let errorMessage = 'No se pudo añadir al estudiante.';
-      if (result.error instanceof z.ZodError) {
-        errorMessage = result.error.errors.map(e => e.message).join(', ');
-      } else if (typeof result.error === 'string') {
-        errorMessage = result.error;
-      }
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+        if (result.error && typeof result.error === 'object' && 'representativeEmail' in result.error) {
+            setError('representativeEmail', { type: 'manual', message: result.error.representativeEmail?.[0] });
+        } else {
+            let errorMessage = 'No se pudo añadir al estudiante.';
+            if (result.error instanceof z.ZodError) {
+              errorMessage = result.error.errors.map(e => e.message).join(', ');
+            } else if (typeof result.error === 'string') {
+              errorMessage = result.error;
+            }
+             toast({
+              title: 'Error',
+              description: errorMessage,
+              variant: 'destructive',
+            });
+        }
     }
   };
 
@@ -103,7 +109,7 @@ export function AddStudentDialog() {
         <DialogHeader>
           <DialogTitle>Añadir Nuevo Estudiante</DialogTitle>
           <DialogDescription>
-            Completa la información para añadir un nuevo estudiante al sistema.
+            Completa la información para añadir un nuevo estudiante y crear la cuenta de su representante.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -224,9 +230,14 @@ export function AddStudentDialog() {
                   {errors.representativePhone && <p className="text-sm text-destructive mt-1">{errors.representativePhone.message}</p>}
                </div>
                <div>
-                  <Label htmlFor="representativeEmail">Correo Electrónico</Label>
+                  <Label htmlFor="representativeEmail">Correo Electrónico (para inicio de sesión)</Label>
                   <Input id="representativeEmail" type="email" {...register('representativeEmail')} />
                   {errors.representativeEmail && <p className="text-sm text-destructive mt-1">{errors.representativeEmail.message}</p>}
+               </div>
+                <div>
+                  <Label htmlFor="representativePassword">Contraseña para la Cuenta</Label>
+                  <Input id="representativePassword" type="password" {...register('representativePassword')} />
+                  {errors.representativePassword && <p className="text-sm text-destructive mt-1">{errors.representativePassword.message}</p>}
                </div>
                <div>
                   <Label htmlFor="representativeAddress">Dirección de Residencia (Opcional)</Label>

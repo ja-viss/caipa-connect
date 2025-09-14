@@ -114,8 +114,8 @@ export async function createUser(prevState: any, formData: FormData) {
         };
     }
     
-    // Only redirect if the role is not 'teacher', as teacher creation is handled within a dialog
-    if (role !== 'teacher') {
+    // Only redirect if it's a new user registration, not a programmatic creation
+    if (role !== 'teacher' && role !== 'representative') {
       redirect('/dashboard');
     }
 }
@@ -168,8 +168,17 @@ export async function deleteUser(userId: string, userRole: User['role'], userEma
             revalidatePath('/admin/teachers');
         }
 
-        // If the user was a representative, you might want to remove them from any student records.
-        // For now, we just delete the user account.
+        // If the user was a representative, find and delete associated students
+        if (userRole === 'representative') {
+            const students = await db.collection('students').find({ 'representative.email': userEmail }).toArray();
+            if (students.length > 0) {
+                const studentIds = students.map(s => s.id);
+                await db.collection('students').deleteMany({ id: { $in: studentIds } });
+                await db.collection('activityLogs').deleteMany({ studentId: { $in: studentIds } });
+                await db.collection('progressReports').deleteMany({ studentId: { $in: studentIds } });
+                revalidatePath('/students');
+            }
+        }
         
         revalidatePath('/admin/users');
         return { success: true };
