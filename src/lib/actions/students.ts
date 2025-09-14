@@ -408,17 +408,40 @@ async function seedResources() {
     const db = await getDb();
     const resourcesCollection = db.collection('resources');
     
-    // Clear existing resources to replace them with new ones
     await resourcesCollection.deleteMany({});
 
-    console.log('Seeding TDAH resources...');
     const resources: Omit<Resource, '_id'>[] = [
         {
             id: crypto.randomUUID(),
             title: '¿Qué es el TDAH? Síntomas y Causas',
             description: 'Un artículo completo de la Mayo Clinic que explica los fundamentos del Trastorno por Déficit de Atención e Hiperactividad.',
             category: 'Información General',
-            fileUrl: 'https://www.mayoclinic.org/es/diseases-conditions/adhd/symptoms-causes/syc-20350878', 
+            content: `El trastorno por déficit de atención e hiperactividad (TDAH) es una de las afecciones neuroconductuales más comunes de la niñez. Usualmente se diagnostica por primera vez en la niñez y a menudo perdura hasta la adultez. Los niños con TDAH pueden tener problemas para prestar atención, controlar conductas impulsivas (pueden actuar sin pensar cuál será el resultado) o ser excesivamente activos.
+
+Signos y síntomas
+Es normal que a los niños les cueste trabajo concentrarse y comportarse bien de vez en cuando. Sin embargo, los niños con TDAH no van dejando atrás esas conductas a medida que crecen. Los síntomas continúan y pueden provocar dificultades en la escuela, el hogar o con los amigos.
+
+Un niño con TDAH puede presentar los siguientes comportamientos:
+- Fantasear mucho.
+- Olvidar o perder las cosas con mucha frecuencia.
+- Retorcerse o moverse nerviosamente.
+- Hablar mucho.
+- Cometer errores por descuido o correr riesgos innecesarios.
+- Tener problemas para resistir la tentación.
+- Tener problemas para respetar los turnos.
+- Tener dificultades para llevarse bien con los demás.
+
+Causas del TDAH
+Las causas y los factores de riesgo del TDAH se desconocen, pero investigaciones actuales muestran que la genética desempeña un papel importante. Estudios de gemelos, familias y adopción muestran que el TDAH tiene una fuerte base genética.
+
+Además de la genética, los científicos están estudiando otras posibles causas y factores de riesgo, entre ellos:
+- Lesión cerebral
+- Exposición ambiental (p. ej., al plomo)
+- Consumo de alcohol o tabaco durante el embarazo
+- Parto prematuro
+- Bajo peso al nacer
+
+La investigación no respalda las opiniones populares de que el TDAH se origina por comer demasiada azúcar, ver demasiada televisión, por la crianza de los hijos o por factores sociales y ambientales como la pobreza o el caos familiar.`,
             thumbnail: {
                 id: 'resource-tdah-1',
                 description: 'Cerebro con conexiones neuronales',
@@ -431,7 +454,19 @@ async function seedResources() {
             title: 'TDAH en Niños: Cómo Ayudarles',
             description: 'Estrategias y consejos prácticos para padres y educadores sobre cómo apoyar a los niños con TDAH en casa y en la escuela.',
             category: 'Estrategias',
-            fileUrl: 'https://childmind.org/article/como-ayudar-a-los-ninos-con-tdah/',
+            content: `Ayudar a un niño con TDAH puede ser un desafío, pero existen muchas estrategias efectivas. La clave es la consistencia y la paciencia.
+
+En Casa:
+1. Cree una rutina: Intente seguir el mismo horario todos los días, desde la hora de despertarse hasta la de acostarse. Incluya horarios para las comidas, las tareas y el juego.
+2. Organice las cosas de todos los días: Tenga un lugar para todo y mantenga la casa organizada. Esto incluye ropa, mochilas y juguetes.
+3. Use organizadores para las tareas escolares: Use carpetas y cuadernos para organizar las tareas escolares. Divida las tareas largas en partes más pequeñas.
+4. Sea claro y consistente: Los niños con TDAH necesitan reglas claras que puedan entender y seguir. Asegúrese de que las consecuencias por infringir las reglas sean consistentes.
+5. Dé elogios o recompensas cuando se sigan las reglas: Elogie o recompense el buen comportamiento de inmediato.
+
+En la Escuela:
+1. Hable con los maestros: Comuníquese regularmente con los maestros de su hijo. Averigüe cómo le está yendo y trabajen juntos para encontrar soluciones a cualquier problema.
+2. Solicite adaptaciones: Los niños con TDAH pueden ser elegibles para recibir adaptaciones especiales en la escuela, como más tiempo en los exámenes, instrucciones escritas o sentarse cerca del maestro.
+3. Fomente las habilidades sociales: Ayude a su hijo a desarrollar habilidades sociales. Enséñele a leer las expresiones faciales y el lenguaje corporal de las personas. Represente situaciones sociales con él.`,
             thumbnail: {
                 id: 'resource-tdah-2',
                 description: 'Niño concentrado en una tarea',
@@ -444,7 +479,17 @@ async function seedResources() {
             title: 'Manejo de la Conducta en el TDAH',
             description: 'Técnicas de modificación de conducta y refuerzo positivo para manejar los comportamientos desafiantes asociados al TDAH.',
             category: 'Conducta',
-            fileUrl: 'https://www.understood.org/es-mx/articles/behavior-therapy-for-kids-with-adhd-what-you-need-to-know',
+            content: `La terapia de conducta es un tratamiento eficaz para el TDAH que puede mejorar el comportamiento, el autocontrol y la autoestima de un niño. Se centra en enseñar a los niños nuevas formas de pensar y actuar.
+
+Principios clave de la terapia de conducta:
+1. Establecer metas específicas: En lugar de "pórtate bien", una meta específica podría ser "completa tu tarea de matemáticas antes de la cena".
+2. Proporcionar recompensas y consecuencias: Recompense a su hijo por alcanzar sus metas. Las consecuencias por mal comportamiento deben ser claras y consistentes.
+3. Usar un sistema de fichas o puntos: Los niños pueden ganar puntos o fichas por buen comportamiento y canjearlos por recompensas.
+4. Ignorar comportamientos levemente negativos: A veces, ignorar un comportamiento molesto pero no peligroso es más efectivo que prestarle atención.
+5. Tiempo fuera (Time-out): El tiempo fuera puede ser una consecuencia efectiva para el mal comportamiento. Le da al niño la oportunidad de calmarse.
+
+Trabajar con un terapeuta:
+Un terapeuta capacitado puede ayudarlo a crear un plan de manejo del comportamiento para su hijo. También pueden trabajar directamente con su hijo para enseñarle habilidades para manejar sus síntomas de TDAH. La terapia a menudo incluye a los padres, ya que la consistencia entre el hogar y la terapia es crucial.`,
             thumbnail: {
                 id: 'resource-tdah-3',
                 description: 'Gráfico de recompensas o estrellas',
@@ -457,7 +502,16 @@ async function seedResources() {
             title: 'TDAH y Alimentación: ¿Hay Conexión?',
             description: 'Exploración sobre cómo la dieta y ciertos alimentos pueden influir en los síntomas del TDAH y recomendaciones nutricionales.',
             category: 'Salud',
-            fileUrl: 'https://www.healthychildren.org/Spanish/health-issues/conditions/adhd/Paginas/adhd-and-nutrition.aspx',
+            content: `Aunque la investigación no ha demostrado que la comida cause TDAH, algunos estudios sugieren que ciertos alimentos pueden afectar el comportamiento de algunos niños con TDAH. Es importante recordar que la dieta por sí sola no es un tratamiento para el TDAH.
+
+Recomendaciones Nutricionales Generales:
+- Coma una dieta balanceada: Asegúrese de que su hijo coma una variedad de alimentos saludables, incluyendo frutas, verduras, granos integrales, proteínas magras y grasas saludables.
+- Evite los alimentos procesados: Los alimentos con alto contenido de azúcar, colorantes artificiales y conservantes pueden empeorar los síntomas en algunos niños.
+- Considere los ácidos grasos omega-3: Algunos estudios sugieren que los suplementos de omega-3 pueden ayudar a mejorar los síntomas del TDAH. Los omega-3 se encuentran en pescados como el salmón y el atún.
+- Hable con su médico: Antes de realizar cambios importantes en la dieta de su hijo o de darle suplementos, hable con su pediatra o un dietista registrado.
+
+Dietas de eliminación:
+Algunos padres prueban dietas de eliminación, en las que se eliminan ciertos alimentos (como el gluten, los lácteos o los colorantes artificiales) para ver si los síntomas mejoran. Si bien algunos padres informan mejoras, la evidencia científica es mixta. Este tipo de dieta debe realizarse bajo la supervisión de un profesional de la salud para garantizar que el niño reciba una nutrición adecuada.`,
             thumbnail: {
                 id: 'resource-tdah-4',
                 description: 'Plato con alimentos saludables y coloridos',

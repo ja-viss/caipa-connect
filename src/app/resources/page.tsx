@@ -1,12 +1,12 @@
 import { getResources } from '@/lib/actions/students';
 import type { Resource } from '@/lib/types';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { ExternalLink, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ResourceDialog } from '@/components/resources/resource-dialog';
 
 export default async function ResourcesPage() {
   const resources = await getResources();
@@ -42,32 +42,26 @@ export default async function ResourcesPage() {
       {resources.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {resources.map((resource) => (
-            <Card key={resource.id} className="flex flex-col">
-              <CardHeader>
-                <div className="relative h-40 w-full mb-4">
-                  <Image
-                    src={resource.thumbnail.imageUrl}
-                    alt={resource.title}
-                    fill
-                    data-ai-hint={resource.thumbnail.imageHint}
-                    className="object-cover rounded-t-lg"
-                  />
-                </div>
-                <CardTitle>{resource.title}</CardTitle>
-                <Badge variant="secondary" className="w-fit">{resource.category}</Badge>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <p className="text-sm text-muted-foreground">{resource.description}</p>
-              </CardContent>
-              <CardFooter>
-                 <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" className="w-full">
-                    <Button className="w-full">
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        Leer Más
-                    </Button>
-                </a>
-              </CardFooter>
-            </Card>
+            <ResourceDialog key={resource.id} resource={resource}>
+              <Card className="flex flex-col cursor-pointer hover:border-primary transition-colors h-full">
+                <CardHeader>
+                  <div className="relative h-40 w-full mb-4">
+                    <Image
+                      src={resource.thumbnail.imageUrl}
+                      alt={resource.title}
+                      fill
+                      data-ai-hint={resource.thumbnail.imageHint}
+                      className="object-cover rounded-t-lg"
+                    />
+                  </div>
+                  <CardTitle>{resource.title}</CardTitle>
+                  <Badge variant="secondary" className="w-fit">{resource.category}</Badge>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <p className="text-sm text-muted-foreground">{resource.description}</p>
+                </CardContent>
+              </Card>
+            </ResourceDialog>
           ))}
         </div>
       ) : (

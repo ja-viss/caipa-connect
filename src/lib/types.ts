@@ -111,7 +111,7 @@ export type Resource = {
   title: string;
   description: string;
   category: string;
-  fileUrl: string;
+  content: string;
   thumbnail: ImagePlaceholder;
 };
 
