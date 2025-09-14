@@ -1,9 +1,9 @@
 'use server';
 
 /**
- * @fileOverview Un agente de IA para generar informes de evaluación de estudiantes.
+ * @fileOverview Un agente de IA para mejorar la redacción de informes de evaluación de estudiantes.
  *
- * - generateEvaluationReport - Una función que genera un informe de evaluación.
+ * - generateEvaluationReport - Una función que mejora un borrador de informe de evaluación.
  * - GenerateEvaluationReportInput - El tipo de entrada para la función.
  * - GenerateEvaluationReportOutput - El tipo de retorno para la función.
  */
@@ -28,24 +28,22 @@ const prompt = ai.definePrompt({
   name: 'generateEvaluationReportPrompt',
   input: { schema: GenerateEvaluationReportInputSchema },
   output: { schema: GenerateEvaluationReportOutputSchema },
-  prompt: `Eres un psicopedagogo experto en redactar informes de evaluación para niños con TDAH. Tu tarea es analizar los registros de actividad y crear un informe de evaluación estructurado.
+  prompt: `Eres un psicopedagogo experto y un excelente redactor. Tu tarea es revisar y mejorar un borrador de informe de evaluación para un estudiante.
 
-Información del Estudiante:
-- Nombre: {{{studentName}}}
-- Área de Evaluación: {{{areaName}}}
-- Período de Evaluación: Desde {{{startDate}}} hasta {{{endDate}}}
+Título del Informe Original:
+{{{title}}}
 
-Registros de Actividad:
-{{{activityLogs}}}
+Borrador del Informe:
+{{{draft}}}
 
-Basado en la información y los registros proporcionados, redacta un informe de evaluación que incluya los siguientes puntos:
-1.  **Introducción:** Breve descripción del propósito del informe.
-2.  **Análisis de Desempeño:** Resume los logros y avances del estudiante en el área de {{{areaName}}} durante el período.
-3.  **Identificación de Desafíos:** Describe las dificultades y áreas de mejora observadas.
-4.  **Observaciones Generales:** Comentarios adicionales sobre el comportamiento, la participación y la actitud del estudiante.
-5.  **Recomendaciones:** Sugerencias concretas para padres y docentes para apoyar el desarrollo continuo del estudiante.
+Por favor, revisa el borrador proporcionado y mejóralo. Concéntrate en los siguientes puntos:
+1.  **Claridad y Coherencia:** Asegúrate de que las ideas estén expresadas de forma clara y lógica.
+2.  **Tono Profesional:** Ajusta el lenguaje para que sea objetivo, constructivo y apropiado para un informe dirigido a padres y docentes.
+3.  **Gramática y Ortografía:** Corrige cualquier error gramatical o de ortografía.
+4.  **Estructura:** Si es necesario, reestructura las oraciones o párrafos para mejorar el flujo del informe.
+5.  **Consistencia:** Mantén el título original del informe.
 
-El tono debe ser profesional, objetivo y constructivo. El informe debe ser claro y fácil de entender para los padres.`,
+Devuelve una versión mejorada y pulida del informe en el campo 'report'. No inventes información nueva; trabaja únicamente con el contenido del borrador proporcionado.`,
 });
 
 const generateEvaluationReportFlow = ai.defineFlow(

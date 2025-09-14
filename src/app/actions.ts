@@ -63,9 +63,6 @@ export async function handleGenerateDraft(topic: string) {
 export async function handleGenerateEvaluationReport(input: GenerateEvaluationReportInput) {
   try {
     const validatedInput = GenerateEvaluationReportInputSchema.parse(input);
-    if (!validatedInput.activityLogs.trim()) {
-        return { success: false, error: 'No se encontraron registros de actividad para el período y área seleccionados.', report: null };
-    }
     const result = await generateEvaluationReport(validatedInput);
     return { success: true, report: result.report };
   } catch (error) {

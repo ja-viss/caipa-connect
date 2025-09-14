@@ -7,15 +7,13 @@ import { z } from 'zod';
 
 // Esquemas para generate-evaluation-report.ts
 export const GenerateEvaluationReportInputSchema = z.object({
-  studentName: z.string().describe('El nombre del estudiante.'),
-  areaName: z.string().describe('El área de especialización que se está evaluando.'),
-  startDate: z.string().describe('La fecha de inicio del período de evaluación (formato YYYY-MM-DD).'),
-  endDate: z.string().describe('La fecha de fin del período de evaluación (formato YYYY-MM-DD).'),
-  activityLogs: z.string().describe('Una cadena de texto con los registros de actividad del estudiante durante el período seleccionado.'),
+  title: z.string().describe('El título del informe.'),
+  draft: z.string().describe('El borrador del contenido del informe escrito por el usuario.'),
 });
 
+
 export const GenerateEvaluationReportOutputSchema = z.object({
-  report: z.string().describe('El informe de evaluación generado.'),
+  report: z.string().describe('El informe de evaluación mejorado por la IA.'),
 });
 
 // Esquemas para generate-message-draft.ts
