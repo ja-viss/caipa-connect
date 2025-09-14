@@ -9,11 +9,11 @@ export default function LoginPage() {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/adhd-login/1200/800"
-          alt="Imagen de apoyo y concentración relacionada con el TDAH"
+          src="https://picsum.photos/seed/children-login/1200/800"
+          alt="Imagen de niños aprendiendo en un ambiente de apoyo"
           width="1920"
           height="1080"
-          data-ai-hint="adhd support"
+          data-ai-hint="children learning"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>

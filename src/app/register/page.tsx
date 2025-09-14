@@ -6,11 +6,11 @@ export default function RegisterPage() {
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/adhd-register/1200/800"
-          alt="Imagen descriptiva de colaboración y aprendizaje"
+          src="https://picsum.photos/seed/children-register/1200/800"
+          alt="Imagen de niños felices colaborando"
           width="1920"
           height="1080"
-          data-ai-hint="collaboration learning"
+          data-ai-hint="happy children"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
