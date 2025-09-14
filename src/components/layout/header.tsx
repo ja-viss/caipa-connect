@@ -120,7 +120,9 @@ export default function Header() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Sra. Davis</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Configuración</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/settings">Configuración</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>Soporte</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>Cerrar Sesión</DropdownMenuItem>
