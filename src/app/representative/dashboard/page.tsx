@@ -5,7 +5,7 @@ import { getUpcomingEvents } from "@/lib/actions/students";
 import type { Student, ActivityLog, ProgressReport, Event } from "@/lib/types";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { User, Calendar, FileText, Activity } from "lucide-react";
+import { Calendar, FileText, Activity } from "lucide-react";
 import { getSession } from "@/lib/actions/users";
 import { redirect } from "next/navigation";
 

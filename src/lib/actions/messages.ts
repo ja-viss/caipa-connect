@@ -48,6 +48,7 @@ export async function sendMessage(prevState: any, formData: FormData) {
 
     await db.collection('messages').insertOne(newMessage);
     revalidatePath('/messages');
+    revalidatePath('/representative/messages');
     return { success: true };
 
   } catch (error) {
@@ -66,4 +67,20 @@ export async function getMessages(): Promise<Message[]> {
     console.error('Error fetching messages:', error);
     return [];
   }
+}
+
+export async function getMessagesForRepresentative(repEmail: string): Promise<Message[]> {
+    try {
+        const db = await getDb();
+        const messages = await db.collection('messages').find({
+            $or: [
+                { 'recipient.type': 'all-reps' },
+                { 'recipient.type': 'rep', 'recipient.id': repEmail }
+            ]
+        }).sort({ timestamp: -1 }).toArray();
+        return JSON.parse(JSON.stringify(messages));
+    } catch (error) {
+        console.error('Error fetching messages for representative:', error);
+        return [];
+    }
 }
