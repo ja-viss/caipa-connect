@@ -39,9 +39,25 @@ export function LoginForm() {
   return (
     <div className="mx-auto grid w-full max-w-sm gap-6 px-4">
       <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-bold">Iniciar Sesión</h1>
+        <div className="flex justify-center items-center gap-2 mb-2">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-8 h-8 text-primary"
+            >
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+            </svg>
+            <h1 className="text-3xl font-bold">CAIPA Connect</h1>
+        </div>
         <p className="text-balance text-muted-foreground">
-          Ingresa tu correo electrónico para acceder a tu cuenta
+          Sistema de Control Automatizado para la Gestión Estudiantil.
         </p>
       </div>
       <form action={action} className="grid gap-4">
