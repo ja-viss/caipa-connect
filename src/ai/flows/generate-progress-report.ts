@@ -10,25 +10,14 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {
+  GenerateProgressReportInputSchema,
+  GenerateProgressReportOutputSchema,
+} from '@/ai/schemas';
 
-const GenerateProgressReportInputSchema = z.object({
-  studentName: z.string().describe('El nombre del estudiante.'),
-  dailyActivityLogs: z
-    .string()
-    .describe(
-      'Una lista de registros de actividad diaria para el estudiante. Cada entrada de registro debe incluir la fecha, actividades realizadas, logros, desafíos y observaciones.'
-    ),
-  learningObjectives: z
-    .string()
-    .describe('Los objetivos de aprendizaje para el estudiante.'),
-});
 export type GenerateProgressReportInput = z.infer<
   typeof GenerateProgressReportInputSchema
 >;
-
-const GenerateProgressReportOutputSchema = z.object({
-  progressReport: z.string().describe('El informe de progreso generado.'),
-});
 export type GenerateProgressReportOutput = z.infer<
   typeof GenerateProgressReportOutputSchema
 >;

@@ -10,18 +10,15 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {
+  GenerateMessageDraftInputSchema,
+  GenerateMessageDraftOutputSchema,
+} from '@/ai/schemas';
 
-const GenerateMessageDraftInputSchema = z.object({
-  topic: z.string().describe('El tema o idea principal del mensaje que se va a generar.'),
-});
+
 export type GenerateMessageDraftInput = z.infer<
   typeof GenerateMessageDraftInputSchema
 >;
-
-const GenerateMessageDraftOutputSchema = z.object({
-  subject: z.string().describe('El asunto generado para el mensaje.'),
-  body: z.string().describe('El cuerpo del mensaje generado.'),
-});
 export type GenerateMessageDraftOutput = z.infer<
   typeof GenerateMessageDraftOutputSchema
 >;

@@ -10,9 +10,9 @@ import {
 } from '@/ai/flows/generate-message-draft';
 import { 
     generateEvaluationReport,
-    GenerateEvaluationReportInputSchema,
     type GenerateEvaluationReportInput,
 } from '@/ai/flows/generate-evaluation-report';
+import { GenerateEvaluationReportInputSchema } from '@/ai/schemas';
 import { z } from 'zod';
 
 const progressReportActionInputSchema = z.object({

@@ -1,7 +1,7 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import type { ObjectId } from 'mongodb';
 import type { z } from 'zod';
-import type { GenerateEvaluationReportInputSchema } from '@/ai/flows/generate-evaluation-report';
+import type { GenerateEvaluationReportInputSchema } from '@/ai/schemas';
 
 export type User = {
   _id?: ObjectId;

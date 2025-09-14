@@ -10,19 +10,12 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import {
+  GenerateEvaluationReportInputSchema,
+  GenerateEvaluationReportOutputSchema,
+} from '@/ai/schemas';
 
-export const GenerateEvaluationReportInputSchema = z.object({
-  studentName: z.string().describe('El nombre del estudiante.'),
-  areaName: z.string().describe('El área de especialización que se está evaluando.'),
-  startDate: z.string().describe('La fecha de inicio del período de evaluación (formato YYYY-MM-DD).'),
-  endDate: z.string().describe('La fecha de fin del período de evaluación (formato YYYY-MM-DD).'),
-  activityLogs: z.string().describe('Una cadena de texto con los registros de actividad del estudiante durante el período seleccionado.'),
-});
 export type GenerateEvaluationReportInput = z.infer<typeof GenerateEvaluationReportInputSchema>;
-
-export const GenerateEvaluationReportOutputSchema = z.object({
-  report: z.string().describe('El informe de evaluación generado.'),
-});
 export type GenerateEvaluationReportOutput = z.infer<typeof GenerateEvaluationReportOutputSchema>;
 
 export async function generateEvaluationReport(
