@@ -21,6 +21,7 @@ import { Loader2, Send, Sparkles } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import type { Teacher, Student } from '@/lib/types';
 import { handleGenerateDraft } from '@/app/actions';
+import { ScrollArea } from '../ui/scroll-area';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -111,70 +112,73 @@ export function ComposeMessageDialog({ teachers, representatives }: ComposeMessa
             Selecciona el destinatario y escribe tu mensaje, o genera un borrador con IA.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-2">
-            <Label htmlFor="ai-topic">Tema para IA (Opcional)</Label>
-            <div className="flex gap-2">
-                <Input 
-                    id="ai-topic" 
-                    placeholder="Ej: Anuncio de reunión de padres"
-                    value={topic}
-                    onChange={(e) => setTopic(e.target.value)}
-                />
-                <Button variant="outline" onClick={handleGenerate} disabled={isGenerating}>
-                   {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                   <span className="sr-only">Generar Borrador</span>
-                </Button>
-            </div>
-        </div>
         <form action={action}>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <Label htmlFor="recipientType">Destinatario</Label>
-                     <Select name="recipientType" onValueChange={setRecipientType} required>
-                        <SelectTrigger id="recipientType">
-                            <SelectValue placeholder="Seleccionar destinatario..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all-teachers">Todos los Docentes</SelectItem>
-                            <SelectItem value="all-reps">Todos los Representantes</SelectItem>
-                            <SelectItem value="teacher">Un Docente Específico</SelectItem>
-                            <SelectItem value="rep">Un Representante Específico</SelectItem>
-                        </SelectContent>
-                    </Select>
-                     {state?.error?.recipientType && <p className="text-sm text-destructive mt-1">{state.error.recipientType[0]}</p>}
-                </div>
-                 {(recipientType === 'teacher' || recipientType === 'rep') && (
-                    <div>
-                        <Label htmlFor="recipientId">Seleccionar Específico</Label>
-                         <Select name="recipientId" required>
-                            <SelectTrigger id="recipientId">
-                                <SelectValue placeholder={`Seleccionar ${recipientType === 'teacher' ? 'docente' : 'representante'}...`} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {recipientType === 'teacher' && teachers.map(t => (
-                                    <SelectItem key={t.id} value={t.id}>{t.fullName}</SelectItem>
-                                ))}
-                                {recipientType === 'rep' && representatives.map(r => (
-                                    <SelectItem key={r.email} value={r.email}>{r.name} ({r.email})</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+            <ScrollArea className="h-[60vh] p-1">
+                <div className="space-y-4 px-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="ai-topic">Tema para IA (Opcional)</Label>
+                        <div className="flex gap-2">
+                            <Input 
+                                id="ai-topic" 
+                                placeholder="Ej: Anuncio de reunión de padres"
+                                value={topic}
+                                onChange={(e) => setTopic(e.target.value)}
+                            />
+                            <Button type="button" variant="outline" onClick={handleGenerate} disabled={isGenerating}>
+                            {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                            <span className="sr-only">Generar Borrador</span>
+                            </Button>
+                        </div>
                     </div>
-                )}
-            </div>
-             <div>
-                <Label htmlFor="subject">Asunto</Label>
-                <Input id="subject" name="subject" value={subject} onChange={(e) => setSubject(e.target.value)} required />
-                {state?.error?.subject && <p className="text-sm text-destructive mt-1">{state.error.subject[0]}</p>}
-            </div>
-            <div>
-                <Label htmlFor="body">Mensaje</Label>
-                <Textarea id="body" name="body" rows={8} value={body} onChange={(e) => setBody(e.target.value)} required />
-                 {state?.error?.body && <p className="text-sm text-destructive mt-1">{state.error.body[0]}</p>}
-            </div>
-          </div>
-          <DialogFooter>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="recipientType">Destinatario</Label>
+                            <Select name="recipientType" onValueChange={setRecipientType} required>
+                                <SelectTrigger id="recipientType">
+                                    <SelectValue placeholder="Seleccionar destinatario..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all-teachers">Todos los Docentes</SelectItem>
+                                    <SelectItem value="all-reps">Todos los Representantes</SelectItem>
+                                    <SelectItem value="teacher">Un Docente Específico</SelectItem>
+                                    <SelectItem value="rep">Un Representante Específico</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            {state?.error?.recipientType && <p className="text-sm text-destructive mt-1">{state.error.recipientType[0]}</p>}
+                        </div>
+                        {(recipientType === 'teacher' || recipientType === 'rep') && (
+                            <div>
+                                <Label htmlFor="recipientId">Seleccionar Específico</Label>
+                                <Select name="recipientId" required>
+                                    <SelectTrigger id="recipientId">
+                                        <SelectValue placeholder={`Seleccionar ${recipientType === 'teacher' ? 'docente' : 'representante'}...`} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {recipientType === 'teacher' && teachers.map(t => (
+                                            <SelectItem key={t.id} value={t.id}>{t.fullName}</SelectItem>
+                                        ))}
+                                        {recipientType === 'rep' && representatives.map(r => (
+                                            <SelectItem key={r.email} value={r.email}>{r.name} ({r.email})</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                    </div>
+                    <div>
+                        <Label htmlFor="subject">Asunto</Label>
+                        <Input id="subject" name="subject" value={subject} onChange={(e) => setSubject(e.target.value)} required />
+                        {state?.error?.subject && <p className="text-sm text-destructive mt-1">{state.error.subject[0]}</p>}
+                    </div>
+                    <div>
+                        <Label htmlFor="body">Mensaje</Label>
+                        <Textarea id="body" name="body" rows={8} value={body} onChange={(e) => setBody(e.target.value)} required />
+                        {state?.error?.body && <p className="text-sm text-destructive mt-1">{state.error.body[0]}</p>}
+                    </div>
+                </div>
+          </ScrollArea>
+          <DialogFooter className="pt-4 pr-4">
             <SubmitButton />
           </DialogFooter>
         </form>

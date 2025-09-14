@@ -119,3 +119,45 @@ export async function getUnreadMessagesCount(): Promise<number> {
         return 0;
     }
 }
+
+const updateMessageSchema = z.object({
+  subject: z.string().min(1, 'El asunto es obligatorio.'),
+  body: z.string().min(1, 'El cuerpo del mensaje es obligatorio.'),
+});
+
+export async function updateMessage(messageId: string, prevState: any, formData: FormData) {
+  const validatedFields = updateMessageSchema.safeParse(
+    Object.fromEntries(formData.entries())
+  );
+
+  if (!validatedFields.success) {
+    return { success: false, error: validatedFields.error.flatten().fieldErrors };
+  }
+  
+  try {
+    const db = await getDb();
+    await db.collection('messages').updateOne(
+        { id: messageId },
+        { $set: { subject: validatedFields.data.subject, body: validatedFields.data.body, readBy: [] } }
+    );
+    revalidatePath('/messages');
+    revalidatePath('/representative/messages');
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating message:', error);
+    return { success: false, error: { form: ['No se pudo actualizar el mensaje.'] }};
+  }
+}
+
+export async function deleteMessage(messageId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = await getDb();
+    await db.collection('messages').deleteOne({ id: messageId });
+    revalidatePath('/messages');
+    revalidatePath('/representative/messages');
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    return { success: false, error: 'No se pudo eliminar el mensaje.' };
+  }
+}

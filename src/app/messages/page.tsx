@@ -6,8 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, User, Bot, MessageSquare } from "lucide-react";
+import { Users, User, Bot, MessageSquare, MoreVertical } from "lucide-react";
 import { ComposeMessageDialog } from "@/components/messages/compose-message-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EditMessageDialog } from "@/components/messages/edit-message-dialog";
+import { DeleteMessageAlert } from "@/components/messages/delete-message-alert";
 
 function getRecipientName(message: Message, teachers: Teacher[], students: Student[]): string {
     switch (message.recipient.type) {
@@ -73,17 +81,28 @@ export default async function MessagesPage() {
                         {messages.map((message) => (
                             <div key={message.id} className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                                    <div>
+                                    <div className="flex-1">
                                         <p className="font-semibold text-lg">{message.subject}</p>
                                         <p className="text-sm text-muted-foreground">
                                             Para: {getRecipientName(message, teachers, students)}
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 self-start">
                                       {getRecipientBadge(message.recipient.type)}
                                       <span className="text-xs text-muted-foreground whitespace-nowrap">
                                         {new Date(message.timestamp).toLocaleString('es-VE')}
                                       </span>
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button variant="ghost" size="icon" className="h-6 w-6">
+                                            <MoreVertical className="h-4 w-4" />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                          <EditMessageDialog message={message} />
+                                          <DeleteMessageAlert messageId={message.id} />
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
                                     </div>
                                 </div>
                                 <div className="mt-4 p-3 bg-muted/50 rounded-md">
