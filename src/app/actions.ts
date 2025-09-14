@@ -80,14 +80,9 @@ export async function handleGenerateEvaluationReport(input: GenerateEvaluationRe
 }
 
 export async function testDbConnection() {
-  try {
-    const client = await clientPromise;
-    // Pinging the database to confirm connection
-    await client.db('admin').command({ ping: 1 });
-    console.log('Successfully connected to MongoDB.');
-    return { success: true, message: 'Conexión a la base de datos exitosa.' };
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
-    return { success: false, message: 'Error al conectar con la base de datos.' };
-  }
+  const client = await clientPromise;
+  // Pinging the database to confirm connection will throw an error if it fails
+  await client.db('admin').command({ ping: 1 });
+  console.log('Successfully connected to MongoDB.');
+  return { success: true, message: 'Conexión a la base de datos exitosa.' };
 }

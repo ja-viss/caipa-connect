@@ -27,20 +27,23 @@ export function LoginForm() {
 
   const handleTestConnection = async () => {
     setIsTesting(true);
-    const result = await testDbConnection();
-    if (result.success) {
-      toast({
-        title: 'Éxito',
-        description: result.message,
-      });
-    } else {
-      toast({
-        title: 'Error',
-        description: result.message,
-        variant: 'destructive',
-      });
+    try {
+      const result = await testDbConnection();
+      if (result.success) {
+        toast({
+          title: 'Éxito',
+          description: result.message,
+        });
+      }
+    } catch (error) {
+        toast({
+            title: 'Error de Conexión',
+            description: 'No se pudo conectar a la base de datos. Revisa la consola del servidor para más detalles.',
+            variant: 'destructive',
+        });
+    } finally {
+        setIsTesting(false);
     }
-    setIsTesting(false);
   };
 
   return (
