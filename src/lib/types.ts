@@ -78,6 +78,7 @@ export type Message = {
   subject: string;
   body: string;
   timestamp: string;
+  readBy: string[]; // Array of user emails who have read the message
 };
 
 

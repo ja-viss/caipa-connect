@@ -1,12 +1,23 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, User, Shapes, Contact, FileText, BookOpen, Send, Settings } from 'lucide-react';
+import { LayoutDashboard, User, Shapes, FileText, BookOpen, Send, Settings, Circle } from 'lucide-react';
+import { getUnreadMessagesCount } from '@/lib/actions/messages';
 
 export function RepresentativeSidebar() {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchUnreadCount() {
+        const count = await getUnreadMessagesCount();
+        setUnreadCount(count);
+    }
+    fetchUnreadCount();
+  }, [pathname]); // Refreshes count on navigation
 
   const navItems = [
     { href: '/representative/dashboard', label: 'Panel', icon: LayoutDashboard },
@@ -14,7 +25,7 @@ export function RepresentativeSidebar() {
     { href: '/representative/areas-teachers', label: 'Áreas y Docentes', icon: Shapes },
     { href: '/representative/reports', label: 'Informes', icon: FileText },
     { href: '/resources', label: 'Recursos', icon: BookOpen },
-    { href: '/representative/messages', label: 'Mensajes', icon: Send },
+    { href: '/representative/messages', label: 'Mensajes', icon: Send, badge: unreadCount > 0 },
   ];
 
   const isNavItemActive = (href: string) => {
@@ -49,12 +60,15 @@ export function RepresentativeSidebar() {
               key={item.label}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted/50',
+                'flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted/50',
                 isNavItemActive(item.href) && 'bg-muted text-primary font-semibold'
               )}
             >
-              <item.icon className="h-4 w-4" />
-              {item.label}
+              <div className="flex items-center gap-3">
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </div>
+              {item.badge && <Circle className="h-2 w-2 fill-destructive text-destructive" />}
             </Link>
           ))}
         </nav>

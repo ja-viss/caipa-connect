@@ -17,9 +17,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { sendMessage } from '@/lib/actions/messages';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, Sparkles } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import type { Teacher, Student } from '@/lib/types';
+import { handleGenerateDraft } from '@/app/actions';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -40,7 +41,12 @@ export function ComposeMessageDialog({ teachers, representatives }: ComposeMessa
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const [state, action] = useActionState(sendMessage, undefined);
+  
   const [recipientType, setRecipientType] = useState<string>('');
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [topic, setTopic] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   
   useEffect(() => {
     if (state?.success === false && state.error?.form) {
@@ -54,16 +60,40 @@ export function ComposeMessageDialog({ teachers, representatives }: ComposeMessa
         title: 'Mensaje Enviado',
         description: 'El mensaje ha sido enviado exitosamente.',
       });
-      setRecipientType('');
+      resetForm();
       setOpen(false);
     }
   }, [state, toast]);
+  
+  const resetForm = () => {
+    setRecipientType('');
+    setSubject('');
+    setBody('');
+    setTopic('');
+  }
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-        setRecipientType('');
+        resetForm();
     }
     setOpen(isOpen);
+  }
+
+  const handleGenerate = async () => {
+    if (!topic) {
+        toast({ title: 'Error', description: 'Por favor, introduce un tema para generar el borrador.', variant: 'destructive' });
+        return;
+    }
+    setIsGenerating(true);
+    const result = await handleGenerateDraft(topic);
+    if (result.success && result.draft) {
+        setSubject(result.draft.subject);
+        setBody(result.draft.body);
+        toast({ title: 'Borrador Generado', description: 'El borrador ha sido generado por la IA.' });
+    } else {
+        toast({ title: 'Error', description: result.error || 'No se pudo generar el borrador.', variant: 'destructive' });
+    }
+    setIsGenerating(false);
   }
 
   return (
@@ -78,9 +108,24 @@ export function ComposeMessageDialog({ teachers, representatives }: ComposeMessa
         <DialogHeader>
           <DialogTitle>Redactar Nuevo Mensaje</DialogTitle>
           <DialogDescription>
-            Selecciona el destinatario y escribe tu mensaje o anuncio.
+            Selecciona el destinatario y escribe tu mensaje, o genera un borrador con IA.
           </DialogDescription>
         </DialogHeader>
+        <div className="space-y-2">
+            <Label htmlFor="ai-topic">Tema para IA (Opcional)</Label>
+            <div className="flex gap-2">
+                <Input 
+                    id="ai-topic" 
+                    placeholder="Ej: Anuncio de reunión de padres"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                />
+                <Button variant="outline" onClick={handleGenerate} disabled={isGenerating}>
+                   {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                   <span className="sr-only">Generar Borrador</span>
+                </Button>
+            </div>
+        </div>
         <form action={action}>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -120,12 +165,12 @@ export function ComposeMessageDialog({ teachers, representatives }: ComposeMessa
             </div>
              <div>
                 <Label htmlFor="subject">Asunto</Label>
-                <Input id="subject" name="subject" required />
+                <Input id="subject" name="subject" value={subject} onChange={(e) => setSubject(e.target.value)} required />
                 {state?.error?.subject && <p className="text-sm text-destructive mt-1">{state.error.subject[0]}</p>}
             </div>
             <div>
                 <Label htmlFor="body">Mensaje</Label>
-                <Textarea id="body" name="body" rows={8} required />
+                <Textarea id="body" name="body" rows={8} value={body} onChange={(e) => setBody(e.target.value)} required />
                  {state?.error?.body && <p className="text-sm text-destructive mt-1">{state.error.body[0]}</p>}
             </div>
           </div>

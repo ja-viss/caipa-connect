@@ -4,6 +4,8 @@ import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import type { Message } from '../types';
+import { getSession } from './users';
+import { cookies } from 'next/headers';
 
 async function getDb() {
   const client = await clientPromise;
@@ -44,6 +46,7 @@ export async function sendMessage(prevState: any, formData: FormData) {
       subject,
       body,
       timestamp: new Date().toISOString(),
+      readBy: [],
     };
 
     await db.collection('messages').insertOne(newMessage);
@@ -78,9 +81,41 @@ export async function getMessagesForRepresentative(repEmail: string): Promise<Me
                 { 'recipient.type': 'rep', 'recipient.id': repEmail }
             ]
         }).sort({ timestamp: -1 }).toArray();
+        
+        // Mark messages as read for this user
+        const messageIds = messages.map(m => m.id);
+        await db.collection('messages').updateMany(
+            { id: { $in: messageIds }, readBy: { $ne: repEmail } },
+            { $addToSet: { readBy: repEmail } }
+        );
+
         return JSON.parse(JSON.stringify(messages));
     } catch (error) {
         console.error('Error fetching messages for representative:', error);
         return [];
+    }
+}
+
+
+export async function getUnreadMessagesCount(): Promise<number> {
+    const session = await getSession();
+    if (!session?.user?.email || session.user.role !== 'representative') {
+        return 0;
+    }
+    const repEmail = session.user.email;
+
+    try {
+        const db = await getDb();
+        const count = await db.collection('messages').countDocuments({
+            $or: [
+                { 'recipient.type': 'all-reps' },
+                { 'recipient.type': 'rep', 'recipient.id': repEmail }
+            ],
+            readBy: { $ne: repEmail }
+        });
+        return count;
+    } catch (error) {
+        console.error('Error fetching unread messages count:', error);
+        return 0;
     }
 }
