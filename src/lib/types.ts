@@ -8,6 +8,7 @@ export type User = {
   email: string;
   password?: string; // Should be hashed in a real app
   role: 'admin' | 'teacher' | 'representative';
+  teacherId?: string; // Only for users with 'teacher' role
 };
 
 export type Student = {

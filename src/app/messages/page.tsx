@@ -1,21 +1,22 @@
 import { getMessages } from "@/lib/actions/messages";
 import { getStudents } from "@/lib/actions/students";
 import { getTeachers } from "@/lib/actions/teachers";
-import type { Message, Student, Teacher } from "@/lib/types";
+import type { Message, Student, Teacher, User } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, User, Bot, MessageSquare, MoreVertical } from "lucide-react";
+import { Users, User as UserIcon, MessageSquare, MoreVertical } from "lucide-react";
 import { ComposeMessageDialog } from "@/components/messages/compose-message-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditMessageDialog } from "@/components/messages/edit-message-dialog";
 import { DeleteMessageAlert } from "@/components/messages/delete-message-alert";
+import { getSession } from "@/lib/actions/users";
+import { redirect } from "next/navigation";
 
 function getRecipientName(message: Message, teachers: Teacher[], students: Student[]): string {
     switch (message.recipient.type) {
@@ -41,9 +42,9 @@ function getRecipientBadge(type: Message['recipient']['type']) {
         case 'all-reps':
             return <Badge variant="secondary"><Users className="mr-1 h-3 w-3" />Representantes</Badge>;
         case 'teacher':
-            return <Badge variant="outline"><User className="mr-1 h-3 w-3" />Docente</Badge>;
+            return <Badge variant="outline"><UserIcon className="mr-1 h-3 w-3" />Docente</Badge>;
         case 'rep':
-            return <Badge variant="outline"><User className="mr-1 h-3 w-3" />Representante</Badge>;
+            return <Badge variant="outline"><UserIcon className="mr-1 h-3 w-3" />Representante</Badge>;
         default:
             return null;
     }
@@ -51,7 +52,14 @@ function getRecipientBadge(type: Message['recipient']['type']) {
 
 
 export default async function MessagesPage() {
-  const messages: Message[] = await getMessages();
+  const session = await getSession();
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  const { user } = session;
+
+  const messages: Message[] = await getMessages(user);
   const teachers: Teacher[] = await getTeachers();
   const students: Student[] = await getStudents();
 

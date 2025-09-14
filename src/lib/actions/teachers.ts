@@ -32,16 +32,19 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
   }
 
   const { fullName, email, password, phone, specialization, ci } = validatedFields.data;
+  const teacherId = crypto.randomUUID();
 
   try {
     const db = await getDb();
     
-    // First, create the user account
+    // First, create the user account, passing the teacherId to be stored.
     const userFormData = new FormData();
     userFormData.append('fullName', fullName);
     userFormData.append('email', email);
     userFormData.append('password', password);
     userFormData.append('role', 'teacher');
+    userFormData.append('teacherId', teacherId);
+
 
     const userResult = await createUser(undefined, userFormData);
 
@@ -52,7 +55,7 @@ export async function createTeacher(prevState: any, formData: FormData): Promise
 
     // If user is created successfully, create the teacher profile
     const newTeacher: Omit<Teacher, '_id'> = {
-      id: crypto.randomUUID(),
+      id: teacherId,
       fullName,
       ci,
       email,

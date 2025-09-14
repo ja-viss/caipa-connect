@@ -3,7 +3,7 @@
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import type { Message } from '../types';
+import type { Message, User } from '../types';
 import { getSession } from './users';
 import { cookies } from 'next/headers';
 
@@ -61,10 +61,22 @@ export async function sendMessage(prevState: any, formData: FormData) {
 }
 
 
-export async function getMessages(): Promise<Message[]> {
+export async function getMessages(user: User): Promise<Message[]> {
   try {
     const db = await getDb();
-    const messages = await db.collection('messages').find({}).sort({ timestamp: -1 }).toArray();
+    let query = {};
+    
+    if (user.role === 'teacher') {
+        query = {
+            $or: [
+                { 'recipient.type': 'all-teachers' },
+                { 'recipient.type': 'teacher', 'recipient.id': user.teacherId }
+            ]
+        };
+    }
+    // Admins will have an empty query, fetching all messages.
+
+    const messages = await db.collection('messages').find(query).sort({ timestamp: -1 }).toArray();
     return JSON.parse(JSON.stringify(messages));
   } catch (error) {
     console.error('Error fetching messages:', error);
