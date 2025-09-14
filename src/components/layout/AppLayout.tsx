@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       setSession(sessionData);
       setLoading(false);
     });
-  }, [pathname]); // Re-check session on path change if needed
+  }, []); // Re-check session only once on component mount
 
   const isAuthPage = pathname === '/login' || pathname === '/register';
 
@@ -44,7 +44,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         return <RepresentativeSidebar />;
       default:
         // Render nothing or a default sidebar if no role or no session
-        // This case should ideally redirect to login, handled by pages
+        // This case should ideally redirect to login, which is handled by individual pages
         return null;
     }
   };
