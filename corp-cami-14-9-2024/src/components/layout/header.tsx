@@ -117,6 +117,13 @@ export default function Header() {
     setIsSearchFocused(false);
   }
 
+  const handlePopoverOpenChange = (open: boolean) => {
+    // Only close if the popover is being forced to close, but not on focus shifts
+    if (!open) {
+        setIsSearchFocused(false);
+    }
+  }
+  
   const isSearchOpen = isSearchFocused && searchQuery.length > 0;
 
   return (
@@ -177,7 +184,7 @@ export default function Header() {
       </Sheet>
       
       <div className="relative ml-auto flex-1 md:grow-0">
-        <Popover open={isSearchOpen} onOpenChange={(open) => setIsSearchFocused(open && searchQuery.length > 0)}>
+        <Popover open={isSearchOpen} onOpenChange={handlePopoverOpenChange}>
             <PopoverAnchor asChild>
                  <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -188,11 +195,14 @@ export default function Header() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onFocus={() => setIsSearchFocused(true)}
-                        onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)}
+                        onBlur={() => setIsSearchFocused(false)}
                     />
                 </div>
             </PopoverAnchor>
-            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-1">
+            <PopoverContent 
+                className="w-[var(--radix-popover-trigger-width)] p-1"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+             >
                 <div className="flex flex-col space-y-1">
                     {searchResults.length > 0 ? (
                         searchResults.map((item) => (
@@ -200,6 +210,7 @@ export default function Header() {
                                 key={item.href}
                                 variant="ghost"
                                 className="justify-start"
+                                onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => handleSearchNavigation(item.href!)}
                             >
                                 <item.icon className="mr-2 h-4 w-4 text-muted-foreground" />
