@@ -21,7 +21,6 @@ export default async function StudentsPage() {
             <h1 className="text-3xl font-bold text-foreground">Estudiantes</h1>
             <p className="text-muted-foreground">Gestionar y ver perfiles de estudiantes.</p>
         </div>
-        <AddStudentDialog />
       </div>
       
       <Card>
@@ -85,6 +84,10 @@ export default async function StudentsPage() {
           </Table>
         </CardContent>
       </Card>
+      
+      <div className="flex justify-center">
+        <AddStudentDialog />
+      </div>
     </div>
   );
 }
