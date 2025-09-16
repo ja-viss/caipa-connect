@@ -85,7 +85,7 @@ export default async function StudentsPage() {
         </CardContent>
       </Card>
       
-      <div className="flex justify-center">
+      <div className="flex justify-end">
         <AddStudentDialog />
       </div>
     </div>
