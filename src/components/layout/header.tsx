@@ -11,10 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   PanelLeft,
-  Search,
   Users,
   LayoutDashboard,
   Shield,
@@ -30,7 +28,7 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { User as UserType } from '@/lib/types';
 
 
@@ -93,9 +91,8 @@ export default function Header() {
 
   const userName = session?.user?.fullName || 'Usuario';
   const userInitials = userName.split(' ').map(n => n[0]).join('');
-  const navItems = getNavItemsByRole(session?.user?.role);
+  const navItems = useMemo(() => getNavItemsByRole(session?.user?.role), [session?.user?.role]);
   const homeLink = session?.user?.role === 'teacher' ? '/teacher/dashboard' : session?.user?.role === 'representative' ? '/representative/dashboard' : '/dashboard';
-
 
   return (
     <header className="fixed top-0 left-0 md:left-64 right-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
@@ -154,40 +151,34 @@ export default function Header() {
         </SheetContent>
       </Sheet>
       
-      <div className="relative ml-auto flex-1 md:grow-0">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Buscar..."
-          className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[320px]"
-        />
+      <div className="ml-auto">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
+              <Avatar>
+                <AvatarFallback>{userInitials}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/settings">Configuración</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>Soporte</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <form action={logoutUser}>
+              <button type="submit" className="w-full">
+                  <DropdownMenuItem>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Cerrar Sesión
+                  </DropdownMenuItem>
+              </button>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-            <Avatar>
-              <AvatarFallback>{userInitials}</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{userName}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/settings">Configuración</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Soporte</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <form action={logoutUser}>
-            <button type="submit" className="w-full">
-                <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar Sesión
-                </DropdownMenuItem>
-            </button>
-          </form>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </header>
   );
 }
