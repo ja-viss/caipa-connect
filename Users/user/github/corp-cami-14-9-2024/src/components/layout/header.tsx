@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState } from 'react';
 import type { User as UserType } from '@/lib/types';
+import { ThemeToggle } from './theme-toggle';
 
 export default function Header() {
   const [session, setSession] = useState<{ user: UserType } | null>(null);
@@ -40,9 +41,12 @@ export default function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>{userName}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/settings">Configuración</Link>
-            </DropdownMenuItem>
+            <div className="flex items-center justify-between pr-2">
+              <DropdownMenuItem asChild>
+                <Link href="/settings">Configuración</Link>
+              </DropdownMenuItem>
+              <ThemeToggle />
+            </div>
             <DropdownMenuItem>Soporte</DropdownMenuItem>
             <DropdownMenuSeparator />
             <form action={logoutUser}>
