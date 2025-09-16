@@ -9,6 +9,7 @@ import { AddTeacherDialog } from "@/components/teacher/add-teacher-dialog";
 import { DeleteTeacherAlert } from "@/components/teacher/delete-teacher-alert";
 import { EditTeacherDialog } from "@/components/teacher/edit-teacher-dialog";
 import { ExportTeachersButton } from "@/components/teacher/export-teachers-button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function TeacherManagementPage() {
   const teachers: Teacher[] = await getTeachers();
@@ -24,45 +25,47 @@ export default async function TeacherManagementPage() {
       
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Cédula</TableHead>
-                <TableHead>Correo Electrónico</TableHead>
-                <TableHead className="hidden md:table-cell">Especialización</TableHead>
-                <TableHead>
-                  <span className="sr-only">Acciones</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {teachers.map((teacher) => (
-                <TableRow key={teacher.id}>
-                  <TableCell className="font-medium">{teacher.fullName}</TableCell>
-                  <TableCell>{teacher.ci}</TableCell>
-                  <TableCell>{teacher.email}</TableCell>
-                  <TableCell className="hidden md:table-cell">{teacher.specialization}</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Abrir menú de acciones</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <EditTeacherDialog teacher={teacher} />
-                        <DeleteTeacherAlert teacherId={teacher.id} />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+          <ScrollArea className="h-[calc(100vh-22rem)]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Cédula</TableHead>
+                  <TableHead>Correo Electrónico</TableHead>
+                  <TableHead className="hidden md:table-cell">Especialización</TableHead>
+                  <TableHead>
+                    <span className="sr-only">Acciones</span>
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {teachers.map((teacher) => (
+                  <TableRow key={teacher.id}>
+                    <TableCell className="font-medium">{teacher.fullName}</TableCell>
+                    <TableCell>{teacher.ci}</TableCell>
+                    <TableCell>{teacher.email}</TableCell>
+                    <TableCell className="hidden md:table-cell">{teacher.specialization}</TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Abrir menú de acciones</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <EditTeacherDialog teacher={teacher} />
+                          <DeleteTeacherAlert teacherId={teacher.id} />
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
         </CardContent>
       </Card>
       
