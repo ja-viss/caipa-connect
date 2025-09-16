@@ -69,6 +69,7 @@ export type ProgressReport = {
   studentId: string;
   date: string;
   content: string;
+  type: 'progress' | 'evaluation';
 };
 
 export type Message = {

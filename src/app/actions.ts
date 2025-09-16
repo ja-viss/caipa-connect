@@ -12,6 +12,7 @@ import {
     generateEvaluationReport,
     type GenerateEvaluationReportInput,
 } from '@/ai/flows/generate-evaluation-report';
+import { createEvaluationReport } from '@/lib/actions/students';
 import { GenerateEvaluationReportInputSchema } from '@/ai/schemas';
 import { z } from 'zod';
 import clientPromise from '@/lib/mongodb';
@@ -81,8 +82,21 @@ export async function handleGenerateEvaluationReport(input: GenerateEvaluationRe
 
 export async function testDbConnection() {
   const client = await clientPromise;
-  // Pinging the database to confirm connection will throw an error if it fails
   await client.db('admin').command({ ping: 1 });
   console.log('Successfully connected to MongoDB.');
   return { success: true, message: 'Conexión a la base de datos exitosa.' };
+}
+
+
+const saveEvaluationReportSchema = z.object({
+  studentId: z.string().min(1),
+  content: z.string().min(10),
+});
+
+export async function saveEvaluationReport(data: unknown) {
+    const validation = saveEvaluationReportSchema.safeParse(data);
+    if (!validation.success) {
+        return { success: false, error: 'Datos de informe inválidos.' };
+    }
+    return createEvaluationReport(validation.data);
 }

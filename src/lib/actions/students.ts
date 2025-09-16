@@ -316,10 +316,21 @@ export async function getActivityLogsForReport(studentId: string, startDate: str
 export async function getProgressReportsByStudentId(studentId: string): Promise<ProgressReport[]> {
     try {
         const db = await getDb();
-        const reports = await db.collection('progressReports').find({ studentId: studentId }).sort({ date: -1 }).toArray();
+        const reports = await db.collection('progressReports').find({ studentId: studentId, type: 'progress' }).sort({ date: -1 }).toArray();
         return JSON.parse(JSON.stringify(reports));
     } catch (error) {
         console.error('Error fetching progress reports:', error);
+        return [];
+    }
+}
+
+export async function getEvaluationReportsByStudentId(studentId: string): Promise<ProgressReport[]> {
+    try {
+        const db = await getDb();
+        const reports = await db.collection('progressReports').find({ studentId: studentId, type: 'evaluation' }).sort({ date: -1 }).toArray();
+        return JSON.parse(JSON.stringify(reports));
+    } catch (error) {
+        console.error('Error fetching evaluation reports:', error);
         return [];
     }
 }
@@ -343,13 +354,14 @@ export async function createActivityLog(logData: Omit<ActivityLog, 'id' | 'date'
     }
 }
 
-export async function createProgressReport(reportData: Omit<ProgressReport, 'id' | 'date' | '_id'>): Promise<{ success: boolean; error?: string }> {
+export async function createProgressReport(reportData: Omit<ProgressReport, 'id' | 'date' | '_id' | 'type'>): Promise<{ success: boolean; error?: string }> {
     try {
         const db = await getDb();
         const newReport = {
             ...reportData,
             id: crypto.randomUUID(),
             date: new Date().toISOString(),
+            type: 'progress'
         };
         await db.collection('progressReports').insertOne(newReport);
         revalidatePath(`/students/${reportData.studentId}`);
@@ -359,6 +371,24 @@ export async function createProgressReport(reportData: Omit<ProgressReport, 'id'
     } catch (error) {
         console.error('Error creating progress report:', error);
         return { success: false, error: 'Failed to create progress report.' };
+    }
+}
+
+export async function createEvaluationReport(reportData: { studentId: string; content: string }): Promise<{ success: boolean; error?: string }> {
+    try {
+        const db = await getDb();
+        const newReport = {
+            ...reportData,
+            id: crypto.randomUUID(),
+            date: new Date().toISOString(),
+            type: 'evaluation'
+        };
+        await db.collection('progressReports').insertOne(newReport);
+        revalidatePath('/reports');
+        return { success: true };
+    } catch (error) {
+        console.error('Error creating evaluation report:', error);
+        return { success: false, error: 'Failed to create evaluation report.' };
     }
 }
 
