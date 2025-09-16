@@ -20,10 +20,6 @@ export default async function TeacherManagementPage() {
           <h1 className="text-3xl font-bold text-foreground">Gestión de Docentes</h1>
           <p className="text-muted-foreground">Administrar perfiles de docentes y asignaciones a áreas.</p>
         </div>
-        <div className="flex gap-2">
-          <ExportTeachersButton teachers={teachers} />
-          <AddTeacherDialog />
-        </div>
       </div>
       
       <Card>
@@ -69,6 +65,11 @@ export default async function TeacherManagementPage() {
           </Table>
         </CardContent>
       </Card>
+      
+      <div className="flex justify-end gap-2">
+        <ExportTeachersButton teachers={teachers} />
+        <AddTeacherDialog />
+      </div>
     </div>
   );
 }

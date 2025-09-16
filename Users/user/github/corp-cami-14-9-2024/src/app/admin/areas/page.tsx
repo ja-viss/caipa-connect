@@ -28,10 +28,6 @@ export default async function AreaManagementPage() {
           <h1 className="text-3xl font-bold text-foreground">Gestión de Áreas</h1>
           <p className="text-muted-foreground">Crear y administrar áreas de especialización.</p>
         </div>
-        <div className="flex gap-2">
-          <ExportAreasButton areas={areas} teachers={allTeachers} students={allStudents} />
-          <AddAreaDialog teachers={allTeachers} students={allStudents} />
-        </div>
       </div>
       
       {areas.length > 0 ? (
@@ -100,6 +96,11 @@ export default async function AreaManagementPage() {
             </CardContent>
         </Card>
       )}
+
+      <div className="flex justify-end gap-2">
+        <ExportAreasButton areas={areas} teachers={allTeachers} students={allStudents} />
+        <AddAreaDialog teachers={allTeachers} students={allStudents} />
+      </div>
     </div>
   );
 }
