@@ -11,10 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   PanelLeft,
-  Search,
   Users,
   LayoutDashboard,
   Shield,
@@ -28,12 +26,10 @@ import {
   User,
   LogOut
 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState, useMemo } from 'react';
 import type { User as UserType } from '@/lib/types';
-import { useRouter } from 'next/navigation';
 
 
 const getNavItemsByRole = (role: UserType['role'] | undefined) => {
@@ -88,10 +84,6 @@ const getNavItemsByRole = (role: UserType['role'] | undefined) => {
 
 export default function Header() {
   const [session, setSession] = useState<{ user: UserType } | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const router = useRouter();
-
 
   useEffect(() => {
     getSession().then(setSession);
@@ -101,30 +93,6 @@ export default function Header() {
   const userInitials = userName.split(' ').map(n => n[0]).join('');
   const navItems = useMemo(() => getNavItemsByRole(session?.user?.role), [session?.user?.role]);
   const homeLink = session?.user?.role === 'teacher' ? '/teacher/dashboard' : session?.user?.role === 'representative' ? '/representative/dashboard' : '/dashboard';
-
-  const searchableNavItems = useMemo(() => navItems.filter(item => item.href && item.label), [navItems]);
-
-  const searchResults = useMemo(() => {
-    if (!searchQuery) return [];
-    return searchableNavItems.filter(item =>
-      item.label!.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, searchableNavItems]);
-
-  const handleSearchNavigation = (href: string) => {
-    router.push(href);
-    setSearchQuery('');
-    setIsSearchFocused(false);
-  }
-
-  const handlePopoverOpenChange = (open: boolean) => {
-    // Only close if the popover is being forced to close, but not on focus shifts
-    if (!open) {
-        setIsSearchFocused(false);
-    }
-  }
-  
-  const isSearchOpen = isSearchFocused && searchQuery.length > 0;
 
   return (
     <header className="fixed top-0 left-0 md:left-64 right-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
@@ -183,74 +151,34 @@ export default function Header() {
         </SheetContent>
       </Sheet>
       
-      <div className="relative ml-auto flex-1 md:grow-0">
-        <Popover open={isSearchOpen} onOpenChange={handlePopoverOpenChange}>
-            <PopoverAnchor asChild>
-                 <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Buscar..."
-                        className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[320px]"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onFocus={() => setIsSearchFocused(true)}
-                        onBlur={() => setIsSearchFocused(false)}
-                    />
-                </div>
-            </PopoverAnchor>
-            <PopoverContent 
-                className="w-[var(--radix-popover-trigger-width)] p-1"
-                onOpenAutoFocus={(e) => e.preventDefault()}
-             >
-                <div className="flex flex-col space-y-1">
-                    {searchResults.length > 0 ? (
-                        searchResults.map((item) => (
-                            <Button
-                                key={item.href}
-                                variant="ghost"
-                                className="justify-start"
-                                onMouseDown={(e) => e.preventDefault()}
-                                onClick={() => handleSearchNavigation(item.href!)}
-                            >
-                                <item.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                                {item.label}
-                            </Button>
-                        ))
-                    ) : (
-                        <p className="p-2 text-center text-sm text-muted-foreground">No se encontraron resultados.</p>
-                    )}
-                </div>
-            </PopoverContent>
-        </Popover>
+      <div className="ml-auto">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
+              <Avatar>
+                <AvatarFallback>{userInitials}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/settings">Configuración</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>Soporte</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <form action={logoutUser}>
+              <button type="submit" className="w-full">
+                  <DropdownMenuItem>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Cerrar Sesión
+                  </DropdownMenuItem>
+              </button>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-            <Avatar>
-              <AvatarFallback>{userInitials}</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{userName}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/settings">Configuración</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Soporte</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <form action={logoutUser}>
-            <button type="submit" className="w-full">
-                <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar Sesión
-                </DropdownMenuItem>
-            </button>
-          </form>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </header>
   );
 }
