@@ -1,22 +1,41 @@
-'use server';
+'use client';
 
+import { usePathname } from 'next/navigation';
 import { Sidebar } from './sidebar';
 import Header from './header';
+import { useEffect, useState } from 'react';
 import { getSession } from '@/lib/actions/users';
+import type { User } from '@/lib/types';
 import { TeacherSidebar } from './teacher-sidebar';
 import { RepresentativeSidebar } from './representative-sidebar';
 
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [session, setSession] = useState<{ user: User } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Si no hay sesión de usuario, no se renderiza el layout principal.
-  // Las páginas como /login y /register se mostrarán directamente.
-  // Las páginas protegidas deberían tener su propia lógica de redirección si se accede sin sesión.
-  if (!session?.user) {
+  useEffect(() => {
+    getSession().then((sessionData) => {
+      setSession(sessionData);
+      setLoading(false);
+    });
+  }, []);
+
+  const isAuthPage = pathname === '/login' || pathname === '/register';
+
+  if (isAuthPage) {
     return <>{children}</>;
   }
+
+  if (loading) {
+    return (
+        <div className="flex min-h-screen w-full items-center justify-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+    );
+  }
   
-  const userRole = session.user.role;
+  const userRole = session?.user?.role;
 
   const renderSidebar = () => {
     switch (userRole) {
@@ -27,7 +46,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       case 'representative':
         return <RepresentativeSidebar />;
       default:
-        // Este caso no debería ocurrir si hay una sesión válida.
         return null;
     }
   };
@@ -35,9 +53,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen w-full">
       {renderSidebar()}
-      <div className="flex flex-col flex-1 md:ml-64">
+      <div className="flex flex-col w-full md:ml-64">
         <Header />
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 pt-20">
+        <main className="p-4 sm:p-6 lg:p-8 flex-1 pt-16">
           {children}
         </main>
       </div>
