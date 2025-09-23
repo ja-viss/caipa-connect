@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -11,6 +10,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+  DropdownMenuSubContent
 } from '@/components/ui/dropdown-menu';
 import {
   PanelLeft,
@@ -25,7 +28,10 @@ import {
   Building,
   FileText,
   User,
-  LogOut
+  LogOut,
+  Sun,
+  Moon,
+  Laptop
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
@@ -151,7 +157,6 @@ export default function Header() {
       </Sheet>
       
       <div className="ml-auto flex items-center gap-4">
-        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
@@ -166,6 +171,16 @@ export default function Header() {
             <DropdownMenuItem asChild>
               <Link href="/settings">Configuración</Link>
             </DropdownMenuItem>
+            <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                    <span>Tema</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                        <ThemeToggle />
+                    </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+            </DropdownMenuSub>
             <DropdownMenuItem>Soporte</DropdownMenuItem>
             <DropdownMenuSeparator />
             <form action={logoutUser}>
