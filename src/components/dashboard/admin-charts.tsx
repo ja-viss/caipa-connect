@@ -46,30 +46,27 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
           <ChartContainer config={CHART_CONFIG} className="h-64">
              <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                data={studentsByArea}
-                layout="vertical"
-                margin={{ left: 20, right: 10 }}
+                  data={studentsByArea}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
                 >
-                <CartesianGrid horizontal={false} />
-                <YAxis
+                  <CartesianGrid vertical={false} />
+                  <XAxis
                     dataKey="name"
-                    type="category"
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={10}
-                    width={120}
-                    className="text-xs truncate"
-                />
-                <XAxis dataKey="studentCount" type="number" hide />
-                <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="line" />}
-                />
-                <Bar dataKey="studentCount" fill="var(--color-studentCount)" radius={4}>
-                   {studentsByArea.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    tickMargin={8}
+                    className="text-xs"
+                  />
+                  <YAxis dataKey="studentCount" tickLine={false} axisLine={false} />
+                  <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent indicator="line" />}
+                  />
+                  <Bar dataKey="studentCount" fill="var(--color-studentCount)" radius={4}>
+                    {studentsByArea.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
-                </Bar>
+                  </Bar>
                 </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
