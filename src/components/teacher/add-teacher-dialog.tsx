@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -74,7 +75,7 @@ export function AddTeacherDialog() {
                </div>
                <div>
                   <Label htmlFor="ci">Cédula de Identidad</Label>
-                  <Input id="ci" name="ci" type="text" required />
+                  <Input id="ci" name="ci" type="text" placeholder="Ej: V-12345678" required />
                   {state?.error?.ci && <p className="text-sm text-destructive mt-1">{state.error.ci[0]}</p>}
                </div>
                <div>

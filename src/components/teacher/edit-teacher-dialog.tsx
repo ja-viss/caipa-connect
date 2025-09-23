@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -25,7 +26,7 @@ import { ScrollArea } from '../ui/scroll-area';
 
 const updateTeacherSchema = z.object({
   fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
-  ci: z.string().regex(/^\d+$/, 'La cédula de identidad solo debe contener números.').min(1, 'La cédula de identidad es obligatoria.'),
+  ci: z.string().min(1, 'La cédula de identidad es obligatoria.'),
   email: z.string().email('Correo electrónico inválido.'),
   phone: z.string().min(1, 'El teléfono es obligatorio.'),
   specialization: z.string().min(1, 'La especialización es obligatoria.'),
@@ -104,7 +105,7 @@ export function EditTeacherDialog({ teacher }: EditTeacherDialogProps) {
                </div>
                <div>
                   <Label htmlFor="ci-edit">Cédula de Identidad</Label>
-                  <Input id="ci-edit" {...register('ci')} />
+                  <Input id="ci-edit" placeholder="Ej: V-12345678" {...register('ci')} />
                   {errors.ci && <p className="text-sm text-destructive mt-1">{errors.ci.message}</p>}
                </div>
                <div>
