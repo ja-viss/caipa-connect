@@ -1,19 +1,20 @@
+
 import { getAreas } from "@/lib/actions/areas";
 import { getStudents } from "@/lib/actions/students";
 import { getTeachers } from "@/lib/actions/teachers";
 import type { Area, Student, Teacher } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Users, Contact, Trash2, Pencil } from "lucide-react";
+import { MoreVertical, Users, Contact } from "lucide-react";
 import { AddAreaDialog } from "@/components/area/add-area-dialog";
 import { DeleteAreaAlert } from "@/components/area/delete-area-alert";
 import { EditAreaDialog } from "@/components/area/edit-area-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ExportAreasButton } from "@/components/area/export-areas-button";
 
 export default async function AreaManagementPage() {
   const areas: Area[] = await getAreas();
@@ -27,7 +28,6 @@ export default async function AreaManagementPage() {
           <h1 className="text-3xl font-bold text-foreground">Gestión de Áreas</h1>
           <p className="text-muted-foreground">Crear y administrar áreas de especialización.</p>
         </div>
-        <AddAreaDialog teachers={allTeachers} students={allStudents} />
       </div>
       
       {areas.length > 0 ? (
@@ -51,6 +51,7 @@ export default async function AreaManagementPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <EditAreaDialog area={area} allTeachers={allTeachers} allStudents={allStudents} />
+                      <ExportAreasButton area={area} teachers={assignedTeachers} students={assignedStudents} isMenuItem />
                       <DeleteAreaAlert areaId={area.id} />
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -95,6 +96,11 @@ export default async function AreaManagementPage() {
             </CardContent>
         </Card>
       )}
+
+      <div className="flex justify-end gap-2">
+        <ExportAreasButton areas={areas} teachers={allTeachers} students={allStudents} />
+        <AddAreaDialog teachers={allTeachers} students={allStudents} />
+      </div>
     </div>
   );
 }

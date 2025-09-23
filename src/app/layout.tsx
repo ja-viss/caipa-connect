@@ -3,6 +3,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import AppLayout from '@/components/layout/AppLayout';
+import { ThemeProvider } from '@/components/layout/theme-provider';
 
 export const metadata: Metadata = {
   title: 'CAIPA Connect',
@@ -26,8 +27,15 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen w-full bg-background text-foreground')}>
-        <AppLayout>{children}</AppLayout>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppLayout>{children}</AppLayout>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

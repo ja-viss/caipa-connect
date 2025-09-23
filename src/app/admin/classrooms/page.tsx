@@ -1,16 +1,16 @@
+
 import { getAreas } from "@/lib/actions/areas";
 import { getClassrooms } from "@/lib/actions/classrooms";
 import type { Area, Classroom } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Calendar, Building, Clock, Trash2, Pencil } from "lucide-react";
+import { MoreVertical, Calendar, Building, Clock } from "lucide-react";
 import { AddClassroomDialog } from "@/components/classroom/add-classroom-dialog";
 import { DeleteClassroomAlert } from "@/components/classroom/delete-classroom-alert";
 import { EditClassroomDialog } from "@/components/classroom/edit-classroom-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,6 @@ export default async function ClassroomManagementPage() {
           <h1 className="text-3xl font-bold text-foreground">Gestión de Aulas</h1>
           <p className="text-muted-foreground">Crear aulas, asignar horarios y vincular áreas.</p>
         </div>
-        <AddClassroomDialog areas={areas} />
       </div>
       
       {classrooms.length > 0 ? (
@@ -98,6 +97,10 @@ export default async function ClassroomManagementPage() {
             </CardContent>
         </Card>
       )}
+
+      <div className="flex justify-end">
+        <AddClassroomDialog areas={areas} />
+      </div>
     </div>
   );
 }

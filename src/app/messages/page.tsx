@@ -1,3 +1,4 @@
+
 import { getMessages } from "@/lib/actions/messages";
 import { getStudents } from "@/lib/actions/students";
 import { getTeachers } from "@/lib/actions/teachers";
@@ -74,7 +75,6 @@ export default async function MessagesPage() {
           <h1 className="text-3xl font-bold text-foreground">Centro de Mensajes</h1>
           <p className="text-muted-foreground">Envía anuncios y mensajes a docentes y representantes.</p>
         </div>
-        <ComposeMessageDialog teachers={teachers} representatives={representatives} />
       </div>
 
       <Card className="flex-1 flex flex-col">
@@ -129,6 +129,10 @@ export default async function MessagesPage() {
             </ScrollArea>
         </CardContent>
       </Card>
+
+       <div className="flex justify-end">
+        <ComposeMessageDialog teachers={teachers} representatives={representatives} />
+      </div>
     </div>
   );
 }

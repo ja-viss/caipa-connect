@@ -1,16 +1,16 @@
+
 import { getStudentById, getActivityLogsByStudentId, getProgressReportsByStudentId } from '@/lib/actions/students';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Mail, User, Phone, Home, Stethoscope, Pill, ShieldAlert, HeartPulse, GraduationCap, Lightbulb, UserRound, Target } from 'lucide-react';
+import { Mail, User, Phone, Home, Stethoscope, Pill, ShieldAlert, HeartPulse, GraduationCap, Lightbulb, Target } from 'lucide-react';
 import ActivityLogger from '@/components/student/activity-logger';
 import ProgressReportGenerator from '@/components/student/progress-report-generator';
 import type { Student, ActivityLog, ProgressReport } from '@/lib/types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { ExportStudentButton } from '@/components/student/export-student-button';
 
 export default async function StudentProfilePage({ params }: { params: { id: string } }) {
   const student: Student | null = await getStudentById(params.id);
@@ -31,6 +31,11 @@ export default async function StudentProfilePage({ params }: { params: { id: str
     .join('\n\n');
 
   return (
+   <>
+    <div className="flex justify-between items-start mb-4">
+        <h1 className="text-3xl font-bold text-foreground">Perfil del Estudiante</h1>
+        <ExportStudentButton student={student} />
+    </div>
     <div className="grid gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1 flex flex-col gap-8">
         <Card>
@@ -199,5 +204,6 @@ export default async function StudentProfilePage({ params }: { params: { id: str
         </Card>
       </div>
     </div>
+   </>
   );
 }

@@ -10,6 +10,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+  DropdownMenuSubContent
 } from '@/components/ui/dropdown-menu';
 import {
   PanelLeft,
@@ -24,23 +28,20 @@ import {
   Building,
   FileText,
   User,
-  LogOut
+  LogOut,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState, useMemo } from 'react';
 import type { User as UserType } from '@/lib/types';
+import { ThemeToggle } from './theme-toggle';
 
 
 const getNavItemsByRole = (role: UserType['role'] | undefined) => {
-    const baseNavItems = [
+    const adminNavItems = [
         { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
         { href: '/students', label: 'Estudiantes', icon: Users },
         { href: '/resources', label: 'Recursos', icon: BookOpen },
-    ];
-    
-    const adminNavItems = [
-        ...baseNavItems,
         { isSeparator: true },
         { title: 'Admin' },
         { href: '/admin/users', label: 'Gestión de Usuarios', icon: Shield },
@@ -98,7 +99,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 md:left-64 right-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
       <Sheet>
         <SheetTrigger asChild>
-          <Button size="icon" variant="outline" className="sm:hidden">
+          <Button size="icon" variant="outline" className="md:hidden">
             <PanelLeft className="h-5 w-5" />
             <span className="sr-only">Alternar Menú</span>
           </Button>
@@ -135,8 +136,9 @@ export default function Header() {
               if (item.title) {
                  return <p key={`title-${index}`} className="px-2.5 text-sm font-semibold text-muted-foreground">{item.title}</p>
               }
+              if (!item.href || !item.icon) return null;
               return (
-                 <Link key={item.href} href={item.href!} className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                 <Link key={item.href} href={item.href} className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
                     <item.icon className="h-5 w-5" />
                     {item.label}
                 </Link>
@@ -151,7 +153,7 @@ export default function Header() {
         </SheetContent>
       </Sheet>
       
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
@@ -166,6 +168,16 @@ export default function Header() {
             <DropdownMenuItem asChild>
               <Link href="/settings">Configuración</Link>
             </DropdownMenuItem>
+            <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                    <span>Tema</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                        <ThemeToggle />
+                    </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+            </DropdownMenuSub>
             <DropdownMenuItem>Soporte</DropdownMenuItem>
             <DropdownMenuSeparator />
             <form action={logoutUser}>

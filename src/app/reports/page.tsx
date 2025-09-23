@@ -16,7 +16,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Sparkles, Save, FileText } from 'lucide-react';
+import { Loader2, Sparkles, Save, FileText, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleGenerateEvaluationReport, saveEvaluationReport } from '../actions';
 import { getStudents, getEvaluationReportsByStudentId } from '@/lib/actions/students';
@@ -24,6 +24,8 @@ import type { Student, ProgressReport } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const reportSchema = z.object({
   studentId: z.string().min(1, 'Debes seleccionar un estudiante.'),
@@ -96,6 +98,22 @@ export default function ReportGeneratorPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleExportReport = (report: ProgressReport) => {
+    const doc = new jsPDF();
+    const student = students.find(s => s.id === report.studentId);
+    
+    doc.setFontSize(18);
+    doc.text(`Informe de Evaluación - ${student?.name || 'Estudiante'}`, 14, 22);
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${format(new Date(report.date), 'PPP', { locale: es })}`, 14, 30);
+    
+    doc.setFontSize(11);
+    const splitText = doc.splitTextToSize(report.content, 180);
+    doc.text(splitText, 14, 40);
+
+    doc.save(`informe_evaluacion_${student?.name?.replace(/\s/g, '_')}_${report.id}.pdf`);
   };
 
   return (
@@ -183,10 +201,16 @@ export default function ReportGeneratorPage() {
                     <div className="w-full space-y-4 max-h-96 overflow-y-auto pr-2">
                         {reports.map(report => (
                              <div key={report.id}>
-                                <p className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2">
-                                    <FileText className="h-4 w-4" />
-                                    Informe del {format(new Date(report.date), 'PPP', { locale: es })}
-                                </p>
+                                <div className="flex justify-between items-center mb-2">
+                                  <p className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                                      <FileText className="h-4 w-4" />
+                                      Informe del {format(new Date(report.date), 'PPP', { locale: es })}
+                                  </p>
+                                  <Button variant="outline" size="sm" onClick={() => handleExportReport(report)}>
+                                    <Download className="mr-2 h-3 w-3" />
+                                    PDF
+                                  </Button>
+                                </div>
                                 <div className="p-4 bg-muted/50 rounded-md text-sm whitespace-pre-wrap font-mono border max-h-60 overflow-y-auto">
                                     {report.content}
                                 </div>
