@@ -13,6 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AdminChartsProps {
   studentsByArea: { name: string; studentCount: number }[];
@@ -28,6 +29,9 @@ const CHART_CONFIG = {
 }
 
 export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsProps) {
+  const isMobile = useIsMobile();
+  const pieRadius = isMobile ? 60 : 80;
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <Card>
@@ -88,7 +92,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={pieRadius}
                     labelLine={false}
                     label={({
                       cx,
@@ -97,7 +101,6 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                       innerRadius,
                       outerRadius,
                       percent,
-                      index,
                     }) => {
                       const RADIAN = Math.PI / 180;
                       const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
