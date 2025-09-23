@@ -1,5 +1,9 @@
 'use server';
 
+/**
+ * @fileoverview Server actions for handling client-side requests, such as AI-powered report generation and database interactions.
+ */
+
 import {
   generateProgressReport,
   type GenerateProgressReportInput,
@@ -24,6 +28,11 @@ const progressReportActionInputSchema = z.object({
   dailyActivityLogs: z.string(),
 });
 
+/**
+ * Handles the generation of a student progress report using an AI flow.
+ * @param input The data required to generate the report.
+ * @returns An object containing the generated report or an error message.
+ */
 export async function handleGenerateReport(input: GenerateProgressReportInput) {
   try {
     const validatedInput = progressReportActionInputSchema.parse(input);
@@ -45,6 +54,11 @@ const messageDraftActionInputSchema = z.object({
   topic: z.string().min(1, 'El tema no puede estar vacío.'),
 });
 
+/**
+ * Handles the generation of a message draft using an AI flow.
+ * @param topic The topic for the message draft.
+ * @returns An object containing the generated draft or an error message.
+ */
 export async function handleGenerateDraft(topic: string) {
     try {
         const validatedInput = messageDraftActionInputSchema.parse({ topic });
@@ -62,7 +76,11 @@ export async function handleGenerateDraft(topic: string) {
     }
 }
 
-
+/**
+ * Handles the generation and enhancement of an evaluation report using an AI flow.
+ * @param input The title and draft content of the report.
+ * @returns An object containing the improved report or an error message.
+ */
 export async function handleGenerateEvaluationReport(input: GenerateEvaluationReportInput) {
   try {
     const validatedInput = GenerateEvaluationReportInputSchema.parse(input);
@@ -80,6 +98,10 @@ export async function handleGenerateEvaluationReport(input: GenerateEvaluationRe
   }
 }
 
+/**
+ * Tests the connection to the MongoDB database.
+ * @returns A success message if the connection is established.
+ */
 export async function testDbConnection() {
   const client = await clientPromise;
   await client.db('admin').command({ ping: 1 });
@@ -93,6 +115,11 @@ const saveEvaluationReportSchema = z.object({
   content: z.string().min(10),
 });
 
+/**
+ * Saves a finalized evaluation report to the database.
+ * @param data The report data, including student ID and content.
+ * @returns A success or failure object.
+ */
 export async function saveEvaluationReport(data: unknown) {
     const validation = saveEvaluationReportSchema.safeParse(data);
     if (!validation.success) {

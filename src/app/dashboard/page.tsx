@@ -1,3 +1,8 @@
+/**
+ * @fileoverview This is the main dashboard page for admin users. It displays key statistics,
+ * charts on student distribution, recent communications, and upcoming events.
+ */
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Activity, Users, FileText, AlertTriangle } from 'lucide-react';
 import { getDashboardStats } from "@/lib/actions/students";
@@ -18,6 +23,7 @@ export default async function Dashboard() {
     error = "No se pudieron cargar las estadísticas del panel de control. Por favor, inténtelo de nuevo más tarde.";
   }
 
+  // Display an error card if stats could not be fetched
   if (error || !stats) {
     return (
       <Card className="w-full">
@@ -38,7 +44,7 @@ export default async function Dashboard() {
     <div className="flex flex-col gap-8">
       <h1 className="text-3xl font-bold text-foreground">Panel de Control</h1>
       
-      {/* Stats Cards */}
+      {/* Stats Cards: Display high-level metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -84,12 +90,12 @@ export default async function Dashboard() {
         </Card>
       </div>
 
-      {/* Charts Section */}
+      {/* Charts Section: Visual representation of student data */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCharts studentsByArea={stats.studentsByArea} studentsByGender={stats.studentsByGender} />
       </div>
 
-      {/* Recent Activity Section */}
+      {/* Recent Activity Section: Communications and Events */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>

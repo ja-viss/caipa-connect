@@ -1,5 +1,10 @@
 'use server';
 
+/**
+ * @fileoverview Server actions for the messaging system.
+ * Includes functions for sending, retrieving, updating, and deleting messages.
+ */
+
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -7,11 +12,16 @@ import type { Message, User } from '../types';
 import { getSession } from './users';
 import { cookies } from 'next/headers';
 
+/**
+ * Retrieves the 'school' database instance.
+ * @returns {Promise<Db>} The database instance.
+ */
 async function getDb() {
   const client = await clientPromise;
   return client.db('school');
 }
 
+// Schema for validating new message data.
 const messageSchema = z.object({
   recipientType: z.enum(['all-teachers', 'all-reps', 'teacher', 'rep']),
   recipientId: z.string().optional(),
@@ -19,6 +29,12 @@ const messageSchema = z.object({
   body: z.string().min(1, 'El cuerpo del mensaje es obligatorio.'),
 });
 
+/**
+ * Sends a new message and saves it to the database.
+ * @param prevState - The previous state of the form.
+ * @param formData - The data from the form submission.
+ * @returns An object indicating success or failure with errors.
+ */
 export async function sendMessage(prevState: any, formData: FormData) {
   const validatedFields = messageSchema.safeParse(
     Object.fromEntries(formData.entries())
@@ -60,7 +76,12 @@ export async function sendMessage(prevState: any, formData: FormData) {
   }
 }
 
-
+/**
+ * Retrieves messages based on the user's role.
+ * Admins get all messages, teachers get messages sent to them or all teachers.
+ * @param user - The current user object.
+ * @returns {Promise<Message[]>} A promise that resolves to an array of messages.
+ */
 export async function getMessages(user: User): Promise<Message[]> {
   try {
     const db = await getDb();
@@ -84,6 +105,11 @@ export async function getMessages(user: User): Promise<Message[]> {
   }
 }
 
+/**
+ * Retrieves messages for a specific representative and marks them as read.
+ * @param repEmail - The email address of the representative.
+ * @returns {Promise<Message[]>} A promise that resolves to an array of messages.
+ */
 export async function getMessagesForRepresentative(repEmail: string): Promise<Message[]> {
     try {
         const db = await getDb();
@@ -108,7 +134,10 @@ export async function getMessagesForRepresentative(repEmail: string): Promise<Me
     }
 }
 
-
+/**
+ * Counts the number of unread messages for the currently logged-in representative.
+ * @returns {Promise<number>} A promise that resolves to the count of unread messages.
+ */
 export async function getUnreadMessagesCount(): Promise<number> {
     const session = await getSession();
     if (!session?.user?.email || session.user.role !== 'representative') {
@@ -132,11 +161,19 @@ export async function getUnreadMessagesCount(): Promise<number> {
     }
 }
 
+// Schema for validating message updates.
 const updateMessageSchema = z.object({
   subject: z.string().min(1, 'El asunto es obligatorio.'),
   body: z.string().min(1, 'El cuerpo del mensaje es obligatorio.'),
 });
 
+/**
+ * Updates an existing message and resets its read status for all recipients.
+ * @param messageId - The ID of the message to update.
+ * @param prevState - The previous state of the form.
+ * @param formData - The data from the form submission.
+ * @returns An object indicating success or failure.
+ */
 export async function updateMessage(messageId: string, prevState: any, formData: FormData) {
   const validatedFields = updateMessageSchema.safeParse(
     Object.fromEntries(formData.entries())
@@ -161,6 +198,11 @@ export async function updateMessage(messageId: string, prevState: any, formData:
   }
 }
 
+/**
+ * Deletes a message from the database.
+ * @param messageId - The ID of the message to delete.
+ * @returns An object indicating success or failure.
+ */
 export async function deleteMessage(messageId: string): Promise<{ success: boolean; error?: string }> {
   try {
     const db = await getDb();

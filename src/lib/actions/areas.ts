@@ -1,15 +1,24 @@
 'use server';
+/**
+ * @fileoverview Server actions for managing areas of specialization.
+ * Includes functions for creating, retrieving, updating, and deleting areas.
+ */
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import type { Area } from '../types';
 
+/**
+ * Retrieves the 'school' database instance.
+ * @returns {Promise<Db>} The database instance.
+ */
 async function getDb() {
   const client = await clientPromise;
   return client.db('school');
 }
 
+// Schema for validating area data.
 const areaSchema = z.object({
   name: z.string().min(1, 'El nombre del área es obligatorio.'),
   description: z.string().min(1, 'La descripción es obligatoria.'),
@@ -17,6 +26,12 @@ const areaSchema = z.object({
   studentIds: z.array(z.string()).optional(),
 });
 
+/**
+ * Creates a new area in the database.
+ * @param prevState - The previous state of the form.
+ * @param formData - The data from the form submission.
+ * @returns An object indicating success or failure with errors.
+ */
 export async function createArea(prevState: any, formData: FormData) {
   const name = formData.get('name') as string;
   const description = formData.get('description') as string;
@@ -44,6 +59,10 @@ export async function createArea(prevState: any, formData: FormData) {
   }
 }
 
+/**
+ * Retrieves all areas from the database.
+ * @returns {Promise<Area[]>} A promise that resolves to an array of areas.
+ */
 export async function getAreas(): Promise<Area[]> {
   try {
     const db = await getDb();
@@ -55,6 +74,13 @@ export async function getAreas(): Promise<Area[]> {
   }
 }
 
+/**
+ * Updates an existing area in the database.
+ * @param areaId - The ID of the area to update.
+ * @param prevState - The previous state of the form.
+ * @param formData - The data from the form submission.
+ * @returns An object indicating success or failure with errors.
+ */
 export async function updateArea(areaId: string, prevState: any, formData: FormData) {
    const name = formData.get('name') as string;
   const description = formData.get('description') as string;
@@ -78,6 +104,11 @@ export async function updateArea(areaId: string, prevState: any, formData: FormD
   }
 }
 
+/**
+ * Deletes an area from the database.
+ * @param areaId - The ID of the area to delete.
+ * @returns An object indicating success or failure.
+ */
 export async function deleteArea(areaId: string): Promise<{ success: boolean; error?: string }> {
   try {
     const db = await getDb();
