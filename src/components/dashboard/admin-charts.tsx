@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
+  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -26,6 +27,22 @@ const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3
 export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsProps) {
   const isMobile = useIsMobile();
   const pieRadius = isMobile ? 60 : 80;
+  
+  const genderChartConfig = studentsByGender.reduce((acc, gender, index) => {
+    acc[gender.name] = {
+      label: gender.name,
+      color: COLORS[index % COLORS.length],
+    };
+    return acc;
+  }, {} as ChartConfig);
+  
+  const areaChartConfig = studentsByArea.reduce((acc, area, index) => {
+    acc[area.name] = {
+      label: area.name,
+      color: COLORS[index % COLORS.length],
+    };
+    return acc;
+  }, {} as ChartConfig);
 
   return (
     <>
@@ -37,7 +54,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <ChartContainer config={{}} className="h-64">
+          <ChartContainer config={areaChartConfig} className="h-64">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                 <ChartTooltip content={<ChartTooltipContent hideLabel />} />
@@ -94,7 +111,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <ChartContainer config={{}} className="h-64">
+          <ChartContainer config={genderChartConfig} className="h-64">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                 <ChartTooltip content={<ChartTooltipContent hideLabel />} />
