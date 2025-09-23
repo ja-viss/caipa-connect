@@ -10,10 +10,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuSubContent
 } from '@/components/ui/dropdown-menu';
 import {
   PanelLeft,
@@ -34,7 +30,6 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState, useMemo } from 'react';
 import type { User as UserType } from '@/lib/types';
-import { ThemeToggle } from './theme-toggle';
 
 
 const getNavItemsByRole = (role: UserType['role'] | undefined) => {
@@ -168,16 +163,6 @@ export default function Header() {
             <DropdownMenuItem asChild>
               <Link href="/settings">Configuración</Link>
             </DropdownMenuItem>
-            <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                    <span>Tema</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                        <ThemeToggle />
-                    </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-            </DropdownMenuSub>
             <DropdownMenuItem>Soporte</DropdownMenuItem>
             <DropdownMenuSeparator />
             <form action={logoutUser}>
