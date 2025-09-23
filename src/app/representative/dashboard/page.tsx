@@ -77,37 +77,37 @@ export default async function RepresentativeDashboard() {
         </Card>
         
         <RepresentativeCharts activityLogs={logs} />
-
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Próximos Eventos
-            </CardTitle>
-             <CardDescription>Eventos importantes y fechas a recordar.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {events.length > 0 ? (
-                events.map((event: Event) => (
-                  <div key={event.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-md">
-                    <div className="flex flex-col items-center p-2 bg-background rounded-md border">
-                        <span className="text-sm font-bold uppercase">{format(new Date(event.date), 'MMM', { locale: es })}</span>
-                        <span className="text-xl font-bold">{format(new Date(event.date), 'dd')}</span>
-                    </div>
-                    <div>
-                        <p className="font-semibold">{event.title}</p>
-                        <p className="text-sm text-muted-foreground">{event.description}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">No hay próximos eventos en el calendario.</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
       </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Próximos Eventos
+          </CardTitle>
+            <CardDescription>Eventos importantes y fechas a recordar.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {events.length > 0 ? (
+              events.map((event: Event) => (
+                <div key={event.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-md">
+                  <div className="flex flex-col items-center p-2 bg-background rounded-md border">
+                      <span className="text-sm font-bold uppercase">{format(new Date(event.date), 'MMM', { locale: es })}</span>
+                      <span className="text-xl font-bold">{format(new Date(event.date), 'dd')}</span>
+                  </div>
+                  <div>
+                      <p className="font-semibold">{event.title}</p>
+                      <p className="text-sm text-muted-foreground">{event.description}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">No hay próximos eventos en el calendario.</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

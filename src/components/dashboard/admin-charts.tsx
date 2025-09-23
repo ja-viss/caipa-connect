@@ -33,7 +33,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
   const pieRadius = isMobile ? 60 : 80;
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <>
       <Card>
         <CardHeader>
           <CardTitle>Distribución de Estudiantes por Área</CardTitle>
@@ -131,6 +131,6 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
           </ChartContainer>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

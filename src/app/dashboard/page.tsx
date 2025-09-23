@@ -37,6 +37,8 @@ export default async function Dashboard() {
   return (
     <div className="flex flex-col gap-8">
       <h1 className="text-3xl font-bold text-foreground">Panel de Control</h1>
+      
+      {/* Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -82,8 +84,12 @@ export default async function Dashboard() {
         </Card>
       </div>
 
-      <AdminCharts studentsByArea={stats.studentsByArea} studentsByGender={stats.studentsByGender} />
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <AdminCharts studentsByArea={stats.studentsByArea} studentsByGender={stats.studentsByGender} />
+      </div>
 
+      {/* Recent Activity Section */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
