@@ -29,11 +29,11 @@ export default function Header() {
   const userInitials = userName.split(' ').map(n => n[0]).join('');
 
   return (
-    <div className="fixed top-4 right-4 z-40">
+    <div className="fixed top-2 right-4 z-40">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="overflow-hidden rounded-full h-12 w-12 shadow-lg">
-              <Avatar className="h-12 w-12">
+            <Button variant="outline" size="icon" className="overflow-hidden rounded-full h-10 w-10 shadow-lg">
+              <Avatar className="h-10 w-10">
                 <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
             </Button>
