@@ -80,8 +80,8 @@ export default function TeacherDashboard() {
   const { teacher, assignedAreas, assignedClassrooms, assignedStudents, recentLogs } = data;
 
   const logSummary = recentLogs.reduce((acc, log) => {
-    acc.achievements += log.achievements.split(/\s+/).length; // Count words
-    acc.challenges += log.challenges.split(/\s+/).length;
+    if (log.achievements) acc.achievements += 1;
+    if (log.challenges) acc.challenges += 1;
     return acc;
   }, { achievements: 0, challenges: 0 });
 
@@ -89,6 +89,21 @@ export default function TeacherDashboard() {
     { name: 'Logros', count: logSummary.achievements, fill: 'hsl(var(--chart-1))' },
     { name: 'Desafíos', count: logSummary.challenges, fill: 'hsl(var(--chart-2))' },
   ];
+
+  const chartConfig = {
+    count: {
+      label: 'Registros',
+    },
+    logros: {
+      label: 'Logros',
+      color: 'hsl(var(--chart-1))',
+    },
+    desafios: {
+      label: 'Desafíos',
+      color: 'hsl(var(--chart-2))',
+    },
+  };
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -146,15 +161,15 @@ export default function TeacherDashboard() {
          <Card>
             <CardHeader>
               <CardTitle>Resumen de Actividad Reciente</CardTitle>
-              <CardDescription>Resumen de palabras en logros y desafíos de los últimos 7 días.</CardDescription>
+              <CardDescription>Resumen de registros de logros y desafíos en los últimos 7 días.</CardDescription>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={{}} className="h-64">
+                <ChartContainer config={chartConfig} className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={chartData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                            <YAxis tickLine={false} axisLine={false} />
+                            <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
                             <Tooltip content={<ChartTooltipContent />} />
                             <Bar dataKey="count" radius={4} />
                         </BarChart>

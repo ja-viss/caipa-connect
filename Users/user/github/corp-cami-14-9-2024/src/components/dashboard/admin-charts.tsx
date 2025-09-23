@@ -31,6 +31,7 @@ const CHART_CONFIG = {
 export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsProps) {
   const isMobile = useIsMobile();
   const pieRadius = isMobile ? 60 : 80;
+  const chartHeight = isMobile ? "h-72" : "h-64";
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -82,7 +83,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <ChartContainer config={{}} className="h-64">
+          <ChartContainer config={{}} className={chartHeight}>
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                 <ChartTooltip content={<ChartTooltipContent hideLabel />} />
@@ -125,7 +126,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                 <Legend />
+                 <Legend iconSize={12} wrapperStyle={{ fontSize: '0.8rem', paddingTop: '1rem' }} />
                 </PieChart>
             </ResponsiveContainer>
           </ChartContainer>

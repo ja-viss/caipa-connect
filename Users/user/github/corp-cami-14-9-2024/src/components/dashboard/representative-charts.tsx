@@ -17,6 +17,13 @@ interface RepresentativeChartsProps {
   activityLogs: ActivityLog[];
 }
 
+const chartConfig = {
+  activities: {
+    label: "Actividades",
+    color: "hsl(var(--chart-1))",
+  },
+};
+
 export function RepresentativeCharts({ activityLogs }: RepresentativeChartsProps) {
   const chartData = activityLogs
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -45,7 +52,7 @@ export function RepresentativeCharts({ activityLogs }: RepresentativeChartsProps
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={{}} className="h-64">
+        <ChartContainer config={chartConfig} className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={aggregatedData}
@@ -62,17 +69,18 @@ export function RepresentativeCharts({ activityLogs }: RepresentativeChartsProps
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+                className="text-xs"
               />
               <Tooltip
-                content={<ChartTooltipContent />}
+                content={<ChartTooltipContent indicator="dot" />}
               />
               <Line
                 type="monotone"
                 dataKey="activities"
-                stroke="hsl(var(--chart-1))"
+                stroke="var(--color-activities)"
                 strokeWidth={2}
                 dot={{
-                  fill: 'hsl(var(--chart-1))',
+                  fill: "var(--color-activities)",
                 }}
                 name="Actividades"
               />
