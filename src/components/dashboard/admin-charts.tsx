@@ -24,6 +24,15 @@ interface AdminChartsProps {
 
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
+// Función para formatear (abreviar) las etiquetas de la leyenda
+const formatLegendLabel = (value: string) => {
+  const maxLength = 15;
+  if (value.length > maxLength) {
+    return `${value.substring(0, maxLength)}...`;
+  }
+  return value;
+};
+
 export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsProps) {
   const isMobile = useIsMobile();
   const pieRadius = isMobile ? 60 : 80;
@@ -97,7 +106,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                 <Legend />
+                 <Legend formatter={formatLegendLabel} />
                 </PieChart>
             </ResponsiveContainer>
           </ChartContainer>
