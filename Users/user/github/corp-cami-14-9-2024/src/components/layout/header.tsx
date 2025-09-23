@@ -29,9 +29,6 @@ import {
   FileText,
   User,
   LogOut,
-  Sun,
-  Moon,
-  Laptop
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
