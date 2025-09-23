@@ -57,12 +57,12 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                     tickMargin={8}
                     className="text-xs"
                   />
-                  <YAxis dataKey="studentCount" tickLine={false} axisLine={false} />
+                  <YAxis dataKey="studentCount" tickLine={false} axisLine={false} allowDecimals={false} />
                   <ChartTooltip
                       cursor={false}
                       content={<ChartTooltipContent indicator="line" />}
                   />
-                  <Bar dataKey="studentCount" fill="var(--color-studentCount)" radius={4}>
+                  <Bar dataKey="studentCount" fill="var(--color-studentCount)" radius={4} maxBarSize={50}>
                     {studentsByArea.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
