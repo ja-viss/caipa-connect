@@ -2,7 +2,7 @@
 
 import clientPromise from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
-import type { Teacher, Student, Area, Classroom } from '@/lib/types';
+import type { Teacher, Student, Area, Classroom, ActivityLog } from '@/lib/types';
 import { z } from 'zod';
 import { createUser, getSession } from './users';
 import { redirect } from 'next/navigation';
@@ -222,5 +222,32 @@ export async function getTeacherData() {
   } catch (error) {
     console.error('Error fetching teacher data:', error);
     return null;
+  }
+}
+
+export async function getTeacherDataWithLogs() {
+  const data = await getTeacherData();
+  if (!data) return null;
+
+  try {
+    const db = await getDb();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    
+    const studentIds = data.assignedStudents.map(s => s.id);
+    const recentLogs = await db.collection('activityLogs').find({
+      studentId: { $in: studentIds },
+      date: { $gte: sevenDaysAgo }
+    }).toArray();
+    
+    return {
+      ...data,
+      recentLogs: JSON.parse(JSON.stringify(recentLogs)) as ActivityLog[],
+    };
+  } catch (error) {
+    console.error('Error fetching teacher logs:', error);
+    return {
+        ...data,
+        recentLogs: [],
+    };
   }
 }

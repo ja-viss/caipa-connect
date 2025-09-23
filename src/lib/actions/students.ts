@@ -296,6 +296,21 @@ export async function getActivityLogsByStudentId(studentId: string): Promise<Act
     }
 }
 
+export async function getActivityLogsByStudentIdForLastWeek(studentId: string): Promise<ActivityLog[]> {
+    try {
+        const db = await getDb();
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const logs = await db.collection('activityLogs').find({ 
+            studentId: studentId,
+            date: { $gte: sevenDaysAgo } 
+        }).sort({ date: -1 }).toArray();
+        return JSON.parse(JSON.stringify(logs));
+    } catch (error) {
+        console.error('Error fetching activity logs for last week:', error);
+        return [];
+    }
+}
+
 export async function getActivityLogsForReport(studentId: string, startDate: string, endDate: string): Promise<ActivityLog[]> {
     try {
         const db = await getDb();
@@ -434,22 +449,37 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         
         const upcomingEvents = await getUpcomingEvents();
 
+        const areas = await db.collection('areas').find({}).toArray();
+        const students = await db.collection('students').find({}).toArray();
+
+        const studentsByArea = areas.map(area => ({
+            name: area.name,
+            studentCount: students.filter(student => area.studentIds?.includes(student.id)).length,
+        }));
+
+        const studentsByGender = students.reduce((acc, student) => {
+            const gender = student.gender || 'No especificado';
+            const existing = acc.find(item => item.name === gender);
+            if (existing) {
+                existing.count += 1;
+            } else {
+                acc.push({ name: gender, count: 1 });
+            }
+            return acc;
+        }, [] as { name: string; count: number }[]);
+
         return {
             totalStudents,
             recentActivities,
             reportsGenerated,
             recentConversations: JSON.parse(JSON.stringify(recentConversations)),
             upcomingEvents: JSON.parse(JSON.stringify(upcomingEvents)),
+            studentsByArea,
+            studentsByGender,
         };
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
-        return {
-            totalStudents: 0,
-            recentActivities: 0,
-            reportsGenerated: 0,
-            recentConversations: [],
-            upcomingEvents: [],
-        };
+        throw new Error('Could not fetch dashboard stats');
     }
 }
 

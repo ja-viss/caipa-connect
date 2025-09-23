@@ -126,6 +126,8 @@ export type DashboardStats = {
   reportsGenerated: number;
   recentConversations: Conversation[];
   upcomingEvents: Event[];
+  studentsByArea: { name: string; studentCount: number }[];
+  studentsByGender: { name: string; count: number }[];
 };
 
 export type Teacher = {

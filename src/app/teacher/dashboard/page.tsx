@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Area, Classroom, Student, Teacher } from '@/lib/types';
-import { getTeacherData } from '@/lib/actions/teachers';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Area, Classroom, Student, Teacher, ActivityLog } from '@/lib/types';
+import { getTeacherDataWithLogs } from '@/lib/actions/teachers';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Users, Shapes, Building, UserCheck } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 export default function TeacherDashboard() {
   const [data, setData] = useState<{
@@ -16,12 +18,13 @@ export default function TeacherDashboard() {
     assignedAreas: Area[];
     assignedClassrooms: Classroom[];
     assignedStudents: Student[];
+    recentLogs: ActivityLog[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const result = await getTeacherData();
+      const result = await getTeacherDataWithLogs();
       if (result) {
         setData(result);
       }
@@ -74,7 +77,33 @@ export default function TeacherDashboard() {
     );
   }
 
-  const { teacher, assignedAreas, assignedClassrooms, assignedStudents } = data;
+  const { teacher, assignedAreas, assignedClassrooms, assignedStudents, recentLogs } = data;
+
+  const logSummary = recentLogs.reduce((acc, log) => {
+    if (log.achievements) acc.achievements += 1;
+    if (log.challenges) acc.challenges += 1;
+    return acc;
+  }, { achievements: 0, challenges: 0 });
+
+  const chartData = [
+    { name: 'Logros', count: logSummary.achievements, fill: 'hsl(var(--chart-1))' },
+    { name: 'Desafíos', count: logSummary.challenges, fill: 'hsl(var(--chart-2))' },
+  ];
+
+  const chartConfig = {
+    count: {
+      label: 'Registros',
+    },
+    logros: {
+      label: 'Logros',
+      color: 'hsl(var(--chart-1))',
+    },
+    desafios: {
+      label: 'Desafíos',
+      color: 'hsl(var(--chart-2))',
+    },
+  };
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -128,37 +157,59 @@ export default function TeacherDashboard() {
         </Card>
       </div>
 
-       <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-                <UserCheck className="h-5 w-5" />
-                Acceso Rápido a Estudiantes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {assignedStudents.length > 0 ? (
-                assignedStudents.map((student) => (
-                  <Link href={`/students/${student.id}`} key={student.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-md hover:bg-muted transition-colors">
-                     <div className="flex items-center gap-4">
-                        <Avatar className="h-10 w-10">
-                            <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
-                            <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-semibold">{student.name}</p>
-                            <p className="text-sm text-muted-foreground">Grupo: {student.pedagogicalInfo.specializationArea}</p>
-                        </div>
-                    </div>
-                    <Badge variant="outline">Ver Perfil</Badge>
-                  </Link>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No tienes estudiantes asignados.</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 lg:grid-cols-2">
+         <Card>
+            <CardHeader>
+              <CardTitle>Resumen de Actividad Reciente</CardTitle>
+              <CardDescription>Resumen de registros de logros y desafíos en los últimos 7 días.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chartConfig} className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                            <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
+                            <Tooltip content={<ChartTooltipContent />} />
+                            <Bar dataKey="count" radius={4} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+            </CardContent>
+          </Card>
+
+         <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                  <UserCheck className="h-5 w-5" />
+                  Acceso Rápido a Estudiantes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {assignedStudents.length > 0 ? (
+                  assignedStudents.map((student) => (
+                    <Link href={`/students/${student.id}`} key={student.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-md hover:bg-muted transition-colors">
+                       <div className="flex items-center gap-4">
+                          <Avatar className="h-10 w-10">
+                              <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
+                              <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                              <p className="font-semibold">{student.name}</p>
+                              <p className="text-sm text-muted-foreground">Grupo: {student.pedagogicalInfo.specializationArea}</p>
+                          </div>
+                      </div>
+                      <Badge variant="outline">Ver Perfil</Badge>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">No tienes estudiantes asignados.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
     </div>
   );
 }

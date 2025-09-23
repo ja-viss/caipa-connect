@@ -1,15 +1,11 @@
-// This is a placeholder file for role-based redirection.
-// The actual logic is handled in the `loginUser` server action
-// and the main dashboard content is now split between `/dashboard` for admins/teachers
-// and `/representative/dashboard` for representatives.
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Activity, Users, FileText, AlertTriangle } from 'lucide-react';
 import { getDashboardStats } from "@/lib/actions/students";
 import type { Conversation, Event, DashboardStats } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { AdminCharts } from "@/components/dashboard/admin-charts";
 
 export default async function Dashboard() {
   let stats: DashboardStats | null = null;
@@ -85,6 +81,9 @@ export default async function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <AdminCharts studentsByArea={stats.studentsByArea} studentsByGender={stats.studentsByGender} />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>

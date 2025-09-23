@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getStudentByRepEmail, getActivityLogsByStudentId, getProgressReportsByStudentId } from '@/lib/actions/students';
+import { getStudentByRepEmail, getActivityLogsByStudentIdForLastWeek } from '@/lib/actions/students';
 import { getUpcomingEvents } from "@/lib/actions/students";
 import type { Student, ActivityLog, ProgressReport, Event } from "@/lib/types";
 import { format } from 'date-fns';
@@ -8,6 +7,7 @@ import { es } from 'date-fns/locale';
 import { Calendar, FileText, Activity } from "lucide-react";
 import { getSession } from "@/lib/actions/users";
 import { redirect } from "next/navigation";
+import { RepresentativeCharts } from "@/components/dashboard/representative-charts";
 
 export default async function RepresentativeDashboard() {
   const session = await getSession();
@@ -36,8 +36,7 @@ export default async function RepresentativeDashboard() {
     );
   }
 
-  const logs: ActivityLog[] = await getActivityLogsByStudentId(student.id);
-  const reports: ProgressReport[] = await getProgressReportsByStudentId(student.id);
+  const logs: ActivityLog[] = await getActivityLogsByStudentIdForLastWeek(student.id);
   const events: Event[] = await getUpcomingEvents();
 
   return (
@@ -77,31 +76,7 @@ export default async function RepresentativeDashboard() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-             <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Informes de Progreso
-            </CardTitle>
-            <CardDescription>Últimos informes generados sobre el avance de tu hijo/a.</CardDescription>
-          </CardHeader>
-          <CardContent>
-             <div className="space-y-6 max-h-96 overflow-y-auto">
-                {reports.length > 0 ? (
-                    reports.slice(0, 2).map(report => (
-                        <div key={report.id}>
-                            <p className="text-sm font-semibold text-muted-foreground mb-2">Informe del {format(new Date(report.date), 'PPP', { locale: es })}</p>
-                            <div className="p-4 bg-muted/50 rounded-md text-sm whitespace-pre-wrap font-mono h-40 overflow-y-auto border">
-                                {report.content}
-                            </div>
-                        </div>
-                    ))
-                 ) : (
-                    <p className="text-sm text-muted-foreground">No se han generado informes.</p>
-                 )}
-             </div>
-          </CardContent>
-        </Card>
+        <RepresentativeCharts activityLogs={logs} />
 
         <Card className="lg:col-span-2">
           <CardHeader>
