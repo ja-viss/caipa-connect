@@ -1,3 +1,4 @@
+
 import { getStudentById, getActivityLogsByStudentId, getProgressReportsByStudentId } from '@/lib/actions/students';
 import { notFound } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
