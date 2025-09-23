@@ -1,17 +1,17 @@
+
 import { getAreas } from "@/lib/actions/areas";
 import { getStudents } from "@/lib/actions/students";
 import { getTeachers } from "@/lib/actions/teachers";
 import type { Area, Student, Teacher } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Users, Contact, Trash2, Pencil } from "lucide-react";
+import { MoreVertical, Users, Contact } from "lucide-react";
 import { AddAreaDialog } from "@/components/area/add-area-dialog";
 import { DeleteAreaAlert } from "@/components/area/delete-area-alert";
 import { EditAreaDialog } from "@/components/area/edit-area-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ExportAreasButton } from "@/components/area/export-areas-button";

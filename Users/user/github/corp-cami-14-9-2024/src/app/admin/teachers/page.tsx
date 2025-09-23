@@ -1,10 +1,11 @@
+
 import { getTeachers } from "@/lib/actions/teachers";
 import type { Teacher } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 import { AddTeacherDialog } from "@/components/teacher/add-teacher-dialog";
 import { DeleteTeacherAlert } from "@/components/teacher/delete-teacher-alert";
 import { EditTeacherDialog } from "@/components/teacher/edit-teacher-dialog";

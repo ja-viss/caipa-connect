@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { getStudents } from "@/lib/actions/students";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, Pencil } from "lucide-react";
+import { MoreHorizontal, Eye } from "lucide-react";
 import type { Student } from "@/lib/types";
 import { AddStudentDialog } from "@/components/student/add-student-dialog";
 import { DeleteStudentAlert } from "@/components/student/delete-student-alert";

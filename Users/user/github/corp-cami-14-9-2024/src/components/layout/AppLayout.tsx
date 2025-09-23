@@ -9,7 +9,6 @@ import { getSession } from '@/lib/actions/users';
 import type { User } from '@/lib/types';
 import { TeacherSidebar } from './teacher-sidebar';
 import { RepresentativeSidebar } from './representative-sidebar';
-import { cn } from '@/lib/utils';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -57,7 +56,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {renderSidebar()}
       <div className="flex flex-col w-full md:pl-64">
         <Header />
-        <main className="p-4 sm:p-6 lg:p-8 flex-1">
+        <main className="p-4 sm:p-6 lg:p-8 flex-1 pt-20">
           {children}
         </main>
       </div>
