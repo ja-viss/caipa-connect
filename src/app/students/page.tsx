@@ -11,7 +11,6 @@ import type { Student } from "@/lib/types";
 import { AddStudentDialog } from "@/components/student/add-student-dialog";
 import { DeleteStudentAlert } from "@/components/student/delete-student-alert";
 import { EditStudentDialog } from "@/components/student/edit-student-dialog";
-import { ExportStudentsButton } from "@/components/student/export-students-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function StudentsPage() {
@@ -91,7 +90,6 @@ export default async function StudentsPage() {
       </Card>
       
       <div className="flex justify-end gap-2">
-        <ExportStudentsButton students={students} />
         <AddStudentDialog />
       </div>
     </div>

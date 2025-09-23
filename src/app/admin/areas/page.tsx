@@ -14,7 +14,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ExportAreasButton } from "@/components/area/export-areas-button";
 
 export default async function AreaManagementPage() {
   const areas: Area[] = await getAreas();
@@ -51,7 +50,6 @@ export default async function AreaManagementPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <EditAreaDialog area={area} allTeachers={allTeachers} allStudents={allStudents} />
-                      <ExportAreasButton area={area} teachers={assignedTeachers} students={assignedStudents} isMenuItem />
                       <DeleteAreaAlert areaId={area.id} />
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -98,7 +96,6 @@ export default async function AreaManagementPage() {
       )}
 
       <div className="flex justify-end gap-2">
-        <ExportAreasButton areas={areas} teachers={allTeachers} students={allStudents} />
         <AddAreaDialog teachers={allTeachers} students={allStudents} />
       </div>
     </div>

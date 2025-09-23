@@ -9,7 +9,6 @@ import { MoreHorizontal } from "lucide-react";
 import { AddTeacherDialog } from "@/components/teacher/add-teacher-dialog";
 import { DeleteTeacherAlert } from "@/components/teacher/delete-teacher-alert";
 import { EditTeacherDialog } from "@/components/teacher/edit-teacher-dialog";
-import { ExportTeachersButton } from "@/components/teacher/export-teachers-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function TeacherManagementPage() {
@@ -71,7 +70,6 @@ export default async function TeacherManagementPage() {
       </Card>
       
       <div className="flex justify-end gap-2">
-        <ExportTeachersButton teachers={teachers} />
         <AddTeacherDialog />
       </div>
     </div>

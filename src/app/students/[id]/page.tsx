@@ -10,7 +10,6 @@ import ProgressReportGenerator from '@/components/student/progress-report-genera
 import type { Student, ActivityLog, ProgressReport } from '@/lib/types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ExportStudentButton } from '@/components/student/export-student-button';
 
 export default async function StudentProfilePage({ params }: { params: { id: string } }) {
   const student: Student | null = await getStudentById(params.id);
@@ -34,7 +33,6 @@ export default async function StudentProfilePage({ params }: { params: { id: str
    <>
     <div className="flex justify-between items-start mb-4">
         <h1 className="text-3xl font-bold text-foreground">Perfil del Estudiante</h1>
-        <ExportStudentButton student={student} />
     </div>
     <div className="grid gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1 flex flex-col gap-8">
