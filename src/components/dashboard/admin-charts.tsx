@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Cell, ResponsiveContainer, Legend } from 'recharts';
@@ -47,7 +48,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                 <BarChart
                 data={studentsByArea}
                 layout="vertical"
-                margin={{ left: 10, right: 10 }}
+                margin={{ left: 20, right: 10 }}
                 >
                 <CartesianGrid horizontal={false} />
                 <YAxis
@@ -56,7 +57,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
-                    width={80}
+                    width={120}
                     className="text-xs truncate"
                 />
                 <XAxis dataKey="studentCount" type="number" hide />
