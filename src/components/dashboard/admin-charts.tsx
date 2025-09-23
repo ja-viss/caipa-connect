@@ -57,7 +57,7 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
                     axisLine={false}
                     tickMargin={10}
                     width={80}
-                    className="text-xs"
+                    className="text-xs truncate"
                 />
                 <XAxis dataKey="studentCount" type="number" hide />
                 <ChartTooltip
