@@ -3,8 +3,8 @@ import { Activity, Users, FileText, AlertTriangle } from 'lucide-react';
 import { getDashboardStats } from "@/lib/actions/students";
 import type { Conversation, Event, DashboardStats } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { format } from 'fns';
-import { es } from 'fns/locale';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { AdminCharts } from "@/components/dashboard/admin-charts";
 
 export default async function Dashboard() {

@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import type { ActivityLog } from '@/lib/types';
-import { format } from 'fns';
-import { es } from 'fns/locale';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface RepresentativeChartsProps {
   activityLogs: ActivityLog[];

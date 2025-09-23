@@ -1,6 +1,6 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Cell } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
 import {
   Card,
   CardContent,
@@ -33,27 +33,29 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
         </CardHeader>
         <CardContent>
           <ChartContainer config={{}} className="h-64">
-            <BarChart
-              data={studentsByArea}
-              layout="vertical"
-              margin={{ left: 10, right: 10 }}
-            >
-              <CartesianGrid horizontal={false} />
-              <YAxis
-                dataKey="name"
-                type="category"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={10}
-                className="text-sm"
-              />
-              <XAxis dataKey="studentCount" type="number" hide />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="line" />}
-              />
-              <Bar dataKey="studentCount" fill="hsl(var(--chart-1))" radius={4} />
-            </BarChart>
+             <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                data={studentsByArea}
+                layout="vertical"
+                margin={{ left: 10, right: 10 }}
+                >
+                <CartesianGrid horizontal={false} />
+                <YAxis
+                    dataKey="name"
+                    type="category"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="text-sm"
+                />
+                <XAxis dataKey="studentCount" type="number" hide />
+                <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent indicator="line" />}
+                />
+                <Bar dataKey="studentCount" fill="hsl(var(--chart-1))" radius={4} />
+                </BarChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
@@ -66,22 +68,24 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
         </CardHeader>
         <CardContent className="flex justify-center">
           <ChartContainer config={{}} className="h-64">
-            <PieChart>
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie
-                data={studentsByGender}
-                dataKey="count"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                {studentsByGender.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                <Pie
+                    data={studentsByGender}
+                    dataKey="count"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                >
+                    {studentsByGender.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                </Pie>
+                </PieChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
