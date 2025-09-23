@@ -1,0 +1,113 @@
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { getStudentByRepEmail, getActivityLogsByStudentIdForLastWeek } from '@/lib/actions/students';
+import { getUpcomingEvents } from "@/lib/actions/students";
+import type { Student, ActivityLog, ProgressReport, Event } from "@/lib/types";
+import { format } from 'fns';
+import { es } from 'fns/locale';
+import { Calendar, FileText, Activity } from "lucide-react";
+import { getSession } from "@/lib/actions/users";
+import { redirect } from "next/navigation";
+import { RepresentativeCharts } from "@/components/dashboard/representative-charts";
+
+export default async function RepresentativeDashboard() {
+  const session = await getSession();
+  
+  if (!session?.user?.email) {
+    redirect('/login');
+  }
+
+  const userEmail = session.user.email;
+  const student: Student | null = await getStudentByRepEmail(userEmail);
+
+  if (!student) {
+    return (
+        <div className="flex items-center justify-center h-full">
+            <Card className="w-full max-w-lg">
+                <CardHeader>
+                    <CardTitle>No se encontró información del estudiante</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">
+                        No pudimos encontrar un estudiante asociado a tu cuenta. Por favor, contacta a la administración.
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
+    );
+  }
+
+  const logs: ActivityLog[] = await getActivityLogsByStudentIdForLastWeek(student.id);
+  const events: Event[] = await getUpcomingEvents();
+
+  return (
+    <div className="flex flex-col gap-8">
+        <div>
+            <h1 className="text-3xl font-bold text-foreground">Panel de {student.name}</h1>
+            <p className="text-muted-foreground">Bienvenido/a, {student.representative.name}. Aquí tienes un resumen del progreso de tu hijo/a.</p>
+        </div>
+      
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Registros de Actividad Reciente
+            </CardTitle>
+            <CardDescription>Últimas 5 actividades registradas por los docentes.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {logs.length > 0 ? (
+                logs.slice(0, 5).map((log) => (
+                  <div key={log.id} className="text-sm p-3 bg-muted/50 rounded-md">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="font-semibold">{log.teacher}</p>
+                      <p className="text-xs text-muted-foreground">{format(new Date(log.date), 'PPP', { locale: es })}</p>
+                    </div>
+                    <p><strong>Logros:</strong> {log.achievements}</p>
+                    <p><strong>Desafíos:</strong> {log.challenges}</p>
+                    <p><strong>Observaciones:</strong> {log.observations}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No se encontraron registros de actividad.</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <RepresentativeCharts activityLogs={logs} />
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Próximos Eventos
+            </CardTitle>
+             <CardDescription>Eventos importantes y fechas a recordar.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {events.length > 0 ? (
+                events.map((event: Event) => (
+                  <div key={event.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-md">
+                    <div className="flex flex-col items-center p-2 bg-background rounded-md border">
+                        <span className="text-sm font-bold uppercase">{format(new Date(event.date), 'MMM', { locale: es })}</span>
+                        <span className="text-xl font-bold">{format(new Date(event.date), 'dd')}</span>
+                    </div>
+                    <div>
+                        <p className="font-semibold">{event.title}</p>
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No hay próximos eventos en el calendario.</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
