@@ -3,6 +3,11 @@ import type { ObjectId } from 'mongodb';
 import type { z } from 'zod';
 import type { GenerateEvaluationReportInputSchema } from '@/ai/schemas';
 
+export type SecurityQuestion = {
+  question: string;
+  answer: string;
+};
+
 export type User = {
   _id?: ObjectId;
   id: string;
@@ -12,6 +17,7 @@ export type User = {
   role: 'admin' | 'teacher' | 'representative';
   teacherId?: string; // Add this to link to a teacher profile
   avatarUrl?: string;
+  securityQuestions?: SecurityQuestion[];
 };
 
 export type Student = {

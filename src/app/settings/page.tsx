@@ -4,6 +4,7 @@ import { UserProfileForm } from "@/components/settings/user-profile-form";
 import { TeacherProfileForm } from "@/components/settings/teacher-profile-form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { getTeacherById } from "@/lib/actions/teachers";
+import { SecurityQuestionsForm } from "@/components/settings/security-questions-form";
 
 export default async function SettingsPage() {
   const session = await getSession();
@@ -25,10 +26,20 @@ export default async function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Mi Perfil de Usuario</CardTitle>
-            <CardDescription>Actualiza tu nombre y contraseña.</CardDescription>
+            <CardDescription>Actualiza tu nombre, foto de perfil y contraseña.</CardDescription>
           </CardHeader>
           <CardContent>
             <UserProfileForm user={user} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Preguntas de Seguridad</CardTitle>
+            <CardDescription>Añade o actualiza tus preguntas para recuperar tu contraseña.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SecurityQuestionsForm securityQuestions={user.securityQuestions || []} />
           </CardContent>
         </Card>
 

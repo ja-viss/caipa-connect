@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Area, Classroom, Student, Teacher, ActivityLog } from '@/lib/types';
+import type { Area, Classroom, Student, Teacher, ActivityLog, User } from '@/lib/types';
 import { getTeacherDataWithLogs } from '@/lib/actions/teachers';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Users, Shapes, Building, UserCheck } from 'lucide-react';
@@ -12,6 +12,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { getSession } from '@/lib/actions/users';
+import { SetupSecurityQuestionsAlert } from '@/components/dashboard/setup-security-questions-alert';
 
 export default function TeacherDashboard() {
   const [data, setData] = useState<{
@@ -22,9 +24,16 @@ export default function TeacherDashboard() {
     recentLogs: ActivityLog[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sessionUser, setSessionUser] = useState<User | null>(null);
+
 
   useEffect(() => {
     async function fetchData() {
+      const session = await getSession();
+      if (session?.user) {
+        setSessionUser(session.user);
+      }
+
       const result = await getTeacherDataWithLogs();
       if (result) {
         setData(result);
@@ -112,6 +121,8 @@ export default function TeacherDashboard() {
             <h1 className="text-3xl font-bold text-foreground">Panel de Docente</h1>
             <p className="text-muted-foreground">Bienvenido/a, {teacher.fullName}. Aquí tienes un resumen de tus asignaciones.</p>
         </div>
+        
+        {sessionUser && <SetupSecurityQuestionsAlert user={sessionUser} />}
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>

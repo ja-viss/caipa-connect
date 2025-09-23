@@ -11,8 +11,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { AdminCharts } from "@/components/dashboard/admin-charts";
+import { getSession } from "@/lib/actions/users";
+import { redirect } from "next/navigation";
+import { SetupSecurityQuestionsAlert } from "@/components/dashboard/setup-security-questions-alert";
 
 export default async function Dashboard() {
+  const session = await getSession();
+  if (!session?.user) {
+    redirect('/login');
+  }
+
   let stats: DashboardStats | null = null;
   let error: string | null = null;
 
@@ -44,6 +52,8 @@ export default async function Dashboard() {
     <div className="flex flex-col gap-8">
       <h1 className="text-3xl font-bold text-foreground">Panel de Control</h1>
       
+      <SetupSecurityQuestionsAlert user={session.user} />
+
       {/* Stats Cards: Display high-level metrics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>

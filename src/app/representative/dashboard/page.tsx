@@ -8,6 +8,7 @@ import { Calendar, FileText, Activity } from "lucide-react";
 import { getSession } from "@/lib/actions/users";
 import { redirect } from "next/navigation";
 import { RepresentativeCharts } from "@/components/dashboard/representative-charts";
+import { SetupSecurityQuestionsAlert } from "@/components/dashboard/setup-security-questions-alert";
 
 export default async function RepresentativeDashboard() {
   const session = await getSession();
@@ -45,6 +46,8 @@ export default async function RepresentativeDashboard() {
             <h1 className="text-3xl font-bold text-foreground">Panel de {student.name}</h1>
             <p className="text-muted-foreground">Bienvenido/a, {student.representative.name}. Aquí tienes un resumen del progreso de tu hijo/a.</p>
         </div>
+        
+        <SetupSecurityQuestionsAlert user={session.user} />
       
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>

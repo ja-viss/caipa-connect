@@ -26,7 +26,7 @@ import {
   User,
   LogOut,
 } from 'lucide-react';
-import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { getSession, logoutUser } from '@/lib/actions/users';
 import { useEffect, useState, useMemo } from 'react';
 import type { User as UserType } from '@/lib/types';
@@ -87,6 +87,7 @@ export default function Header() {
 
   const userName = session?.user?.fullName || 'Usuario';
   const userInitials = userName.split(' ').map(n => n[0]).join('');
+  const userAvatar = session?.user?.avatarUrl;
   const navItems = useMemo(() => getNavItemsByRole(session?.user?.role), [session?.user?.role]);
   const homeLink = session?.user?.role === 'teacher' ? '/teacher/dashboard' : session?.user?.role === 'representative' ? '/representative/dashboard' : '/dashboard';
 
@@ -153,6 +154,7 @@ export default function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
               <Avatar>
+                <AvatarImage src={userAvatar} alt={userName} />
                 <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
             </Button>

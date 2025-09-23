@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -136,6 +137,7 @@ export async function loginUser(prevState: any, formData: FormData) {
         email: foundUser.email,
         role: foundUser.role,
         teacherId: foundUser.teacherId,
+        securityQuestions: foundUser.securityQuestions,
     };
 
   } catch (error) {
@@ -148,21 +150,18 @@ export async function loginUser(prevState: any, formData: FormData) {
   if (user) {
     await createSession(user);
     
+    let redirectTo = '/dashboard';
     switch(user.role) {
         case 'representative':
-            redirect('/representative/dashboard');
+            redirectTo = '/representative/dashboard';
             break;
         case 'teacher':
-            redirect('/teacher/dashboard');
-            break;
-        case 'admin':
-            redirect('/dashboard');
-            break;
-        default:
-            redirect('/dashboard');
+            redirectTo = '/teacher/dashboard';
             break;
     }
+    return { success: true, redirectTo };
   }
+  return { error: { form: ['Error desconocido.'] } };
 }
 
 
@@ -269,11 +268,12 @@ export async function updateUser(userId: string, prevState: any, formData: FormD
 
 const userProfileSchema = z.object({
   fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
-  password: z.string().optional(),
-}).refine(data => !data.password || data.password.length >= 6, {
-  message: 'La nueva contraseña debe tener al menos 6 caracteres.',
-  path: ['password'],
+  password: z.string().optional().refine(val => !val || val.length >= 6, {
+    message: 'La nueva contraseña debe tener al menos 6 caracteres.',
+  }),
+  avatarUrl: z.union([z.string().url('URL de imagen inválida.'), z.literal('')]).optional(),
 });
+
 
 export async function updateUserProfile(data: unknown): Promise<{ success: boolean; error?: string | z.ZodError }> {
     const session = await getSession();
@@ -286,11 +286,11 @@ export async function updateUserProfile(data: unknown): Promise<{ success: boole
         return { success: false, error: validation.error };
     }
 
-    const { fullName, password } = validation.data;
+    const { fullName, password, avatarUrl } = validation.data;
     
     try {
         const db = await getDb();
-        const updateData: { fullName: string, password?: string } = { fullName };
+        const updateData: { fullName: string; password?: string; avatarUrl?: string } = { fullName, avatarUrl };
         if (password) {
             // IMPORTANTE: Hashear contraseña en una app real
             updateData.password = password;
@@ -299,20 +299,129 @@ export async function updateUserProfile(data: unknown): Promise<{ success: boole
         await db.collection('users').updateOne({ id: session.user.id }, { $set: updateData });
 
         if (session.user.role === 'teacher') {
-            await db.collection('teachers').updateOne({ id: session.user.teacherId }, { $set: { fullName } });
+            await db.collection('teachers').updateOne({ id: session.user.teacherId }, { $set: { fullName, avatarUrl } });
         } else if (session.user.role === 'representative') {
             await db.collection('students').updateOne({ 'representative.email': session.user.email }, { $set: { 'representative.name': fullName } });
         }
 
         revalidatePath('/settings');
         // Actualizar la sesión con el nuevo nombre
-        const updatedUser = { ...session.user, fullName };
+        const updatedUser = { ...session.user, fullName, avatarUrl };
         await createSession(updatedUser);
 
         return { success: true };
     } catch (error) {
         console.error('Error updating profile:', error);
         return { success: false, error: 'No se pudo actualizar el perfil.' };
+    }
+}
+
+const securityQuestionsSchema = z.object({
+  question1: z.string().min(1),
+  answer1: z.string().min(1),
+  question2: z.string().min(1),
+  answer2: z.string().min(1),
+});
+
+export async function saveSecurityQuestions(prevState: any, formData: FormData) {
+    const session = await getSession();
+    if (!session?.user) return { success: false, error: 'No autorizado.' };
+
+    const validatedFields = securityQuestionsSchema.safeParse(Object.fromEntries(formData.entries()));
+    if (!validatedFields.success) {
+        return { success: false, error: 'Por favor, completa todas las preguntas y respuestas.' };
+    }
+
+    const { question1, answer1, question2, answer2 } = validatedFields.data;
+    const questions = [
+        { question: question1, answer: answer1.toLowerCase().trim() },
+        { question: question2, answer: answer2.toLowerCase().trim() },
+    ];
+
+    try {
+        const db = await getDb();
+        await db.collection('users').updateOne({ id: session.user.id }, { $set: { securityQuestions: questions } });
+        
+        // Update session
+        const updatedUser = { ...session.user, securityQuestions: questions };
+        await createSession(updatedUser);
+        
+        revalidatePath('/settings');
+        return { success: true, message: 'Preguntas de seguridad guardadas exitosamente.' };
+    } catch (e) {
+        return { success: false, error: 'No se pudieron guardar las preguntas.' };
+    }
+}
+
+
+export async function requestPasswordReset(prevState: any, formData: FormData) {
+    const email = formData.get('email') as string;
+    if (!email) return { error: 'El correo es obligatorio.' };
+    
+    try {
+        const db = await getDb();
+        const user = await db.collection('users').findOne({ email });
+
+        if (!user) return { error: 'No se encontró un usuario con ese correo.' };
+        if (!user.securityQuestions || user.securityQuestions.length === 0) {
+            return { error: 'Este usuario no tiene preguntas de seguridad configuradas.' };
+        }
+        
+        const randomIndex = Math.floor(Math.random() * user.securityQuestions.length);
+        const randomQuestion = user.securityQuestions[randomIndex];
+
+        return {
+            success: true,
+            email,
+            question: randomQuestion.question,
+        };
+    } catch (e) {
+        return { error: 'Ocurrió un error en el servidor.' };
+    }
+}
+
+export async function verifySecurityAnswer(prevState: any, formData: FormData) {
+    const email = formData.get('email') as string;
+    const question = formData.get('question') as string;
+    const answer = (formData.get('answer') as string || '').toLowerCase().trim();
+
+    if (!email || !question || !answer) return { ...prevState, error: 'Todos los campos son obligatorios.' };
+
+    try {
+        const db = await getDb();
+        const user = await db.collection('users').findOne({ email, 'securityQuestions.question': question });
+        
+        if (!user) return { ...prevState, error: 'Error de verificación. Inténtalo de nuevo.' };
+        
+        const storedQuestion = user.securityQuestions.find((q: any) => q.question === question);
+        if (storedQuestion.answer !== answer) {
+            return { ...prevState, error: 'La respuesta es incorrecta.' };
+        }
+
+        return { success: true, email };
+    } catch (e) {
+        return { ...prevState, error: 'Ocurrió un error en el servidor.' };
+    }
+}
+
+export async function resetPassword(prevState: any, formData: FormData) {
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    if (!password || password.length < 6) {
+        return { ...prevState, error: 'La contraseña debe tener al menos 6 caracteres.' };
+    }
+    if (!email) {
+        return { ...prevState, error: 'La sesión de reseteo ha expirado. Por favor, inténtalo de nuevo.' };
+    }
+
+    try {
+        const db = await getDb();
+        // Hash password here in a real app
+        await db.collection('users').updateOne({ email }, { $set: { password: password } });
+        return { success: true };
+    } catch (e) {
+        return { ...prevState, error: 'No se pudo actualizar la contraseña.' };
     }
 }
 

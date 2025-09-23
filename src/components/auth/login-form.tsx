@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,12 @@ function SubmitButton() {
 
 export function LoginForm() {
   const [state, action] = useActionState(loginUser, undefined);
+
+  useEffect(() => {
+    if (state?.success && state.redirectTo) {
+      window.location.href = state.redirectTo;
+    }
+  }, [state]);
 
   return (
     <div className="mx-auto grid w-full max-w-sm gap-6 px-4">
@@ -60,7 +66,7 @@ export function LoginForm() {
           <div className="flex items-center">
             <Label htmlFor="password">Contraseña</Label>
             <Link
-              href="#"
+              href="/forgot-password"
               className="ml-auto inline-block text-sm underline"
             >
               ¿Olvidaste tu contraseña?

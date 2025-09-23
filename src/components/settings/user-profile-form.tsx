@@ -13,11 +13,12 @@ import { updateUserProfile } from '@/lib/actions/users';
 
 const userProfileSchema = z.object({
   fullName: z.string().min(1, 'El nombre completo es obligatorio.'),
-  password: z.string().optional(),
-}).refine(data => !data.password || data.password.length >= 6, {
-  message: 'La nueva contraseña debe tener al menos 6 caracteres.',
-  path: ['password'],
+  password: z.string().optional().refine(val => !val || val.length >= 6, {
+    message: 'La nueva contraseña debe tener al menos 6 caracteres.',
+  }),
+  avatarUrl: z.union([z.string().url('URL de imagen inválida.'), z.literal('')]).optional(),
 });
+
 
 type UserProfileFormValues = z.infer<typeof userProfileSchema>;
 
@@ -37,6 +38,7 @@ export function UserProfileForm({ user }: UserProfileFormProps) {
     defaultValues: {
       fullName: user.fullName,
       password: '',
+      avatarUrl: user.avatarUrl || '',
     },
   });
 
@@ -48,11 +50,18 @@ export function UserProfileForm({ user }: UserProfileFormProps) {
         title: 'Perfil Actualizado',
         description: 'Tu información ha sido actualizada exitosamente.',
       });
-      reset({ fullName: data.fullName, password: '' });
+      // Do not reset password field for security
+      reset({ fullName: data.fullName, avatarUrl: data.avatarUrl, password: '' });
     } else {
+      let errorMessage = 'No se pudo actualizar tu perfil.';
+      if (result.error instanceof z.ZodError) {
+        errorMessage = result.error.errors.map(e => e.message).join(', ');
+      } else if (typeof result.error === 'string') {
+        errorMessage = result.error;
+      }
       toast({
         title: 'Error',
-        description: result.error || 'No se pudo actualizar tu perfil.',
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -68,6 +77,12 @@ export function UserProfileForm({ user }: UserProfileFormProps) {
       <div>
         <Label htmlFor="email">Correo Electrónico</Label>
         <Input id="email" type="email" value={user.email} disabled />
+      </div>
+      <div>
+        <Label htmlFor="avatarUrl">URL de Foto de Perfil</Label>
+        <Input id="avatarUrl" placeholder="https://ejemplo.com/imagen.png" {...register('avatarUrl')} />
+        <p className="text-xs text-muted-foreground mt-1">Pega un enlace a una imagen. Déjalo vacío si no quieres foto de perfil.</p>
+        {errors.avatarUrl && <p className="text-sm text-destructive mt-1">{errors.avatarUrl.message}</p>}
       </div>
       <div>
         <Label htmlFor="password">Nueva Contraseña</Label>
