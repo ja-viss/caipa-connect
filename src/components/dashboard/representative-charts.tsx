@@ -69,6 +69,7 @@ export function RepresentativeCharts({ activityLogs }: RepresentativeChartsProps
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+                className="text-xs"
               />
               <Tooltip
                 content={<ChartTooltipContent indicator="dot" />}
