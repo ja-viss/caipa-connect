@@ -14,6 +14,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<{ user: User } | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const isAuthPage =
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname === '/forgot-password';
+    
+  // For auth pages, just render the children without the main layout or loading checks.
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
+
   useEffect(() => {
     getSession().then((sessionData) => {
       setSession(sessionData);
@@ -21,14 +31,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const isAuthPage =
-    pathname === '/login' ||
-    pathname === '/register' ||
-    pathname === '/forgot-password';
-
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
 
   if (loading) {
     return (
@@ -49,6 +51,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       case 'representative':
         return <RepresentativeSidebar />;
       default:
+        // If there's no session or role, we might want to redirect or show a fallback.
+        // For now, returning null will just not render a sidebar.
         return null;
     }
   };
@@ -58,7 +62,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {renderSidebar()}
       <div className="flex flex-1 flex-col md:pl-64">
         <Header />
-        <main className="flex-1 p-4 pt-16 sm:p-6 lg:p-8">
+        <main className="flex-1 pt-16 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
           {children}
         </main>
       </div>
