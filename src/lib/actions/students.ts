@@ -1,3 +1,4 @@
+
 'use server';
 
 import clientPromise from '@/lib/mongodb';
@@ -30,6 +31,8 @@ const studentSchema = z.object({
   name: z.string().min(1, 'El nombre del estudiante es obligatorio.'),
   dob: z.string().min(1, 'La fecha de nacimiento es obligatoria.'),
   gender: z.string().min(1, 'El género es obligatorio.'),
+  avatarUrl: z.union([z.string().url('URL de imagen inválida.'), z.literal('')]).optional(),
+
   
   // Emergency Contact
   emergencyContactName: z.string().min(1, 'El nombre del contacto de emergencia es obligatorio.'),
@@ -90,11 +93,12 @@ export async function createStudent(data: unknown): Promise<{ success: boolean; 
 
 
         // Step 2: Create the student profile
-        const newStudent: Omit<Student, '_id' | 'email' | 'learningObjectives'> = {
+        const newStudent: Omit<Student, '_id'> = {
             id: crypto.randomUUID(),
             name: validatedData.name,
             dob: validatedData.dob,
             gender: validatedData.gender,
+            avatarUrl: validatedData.avatarUrl,
             emergencyContact: {
               name: validatedData.emergencyContactName,
               phone: validatedData.emergencyContactPhone,
@@ -173,6 +177,7 @@ export async function updateStudent(studentId: string, data: unknown): Promise<{
         name: validatedData.name,
         dob: validatedData.dob,
         gender: validatedData.gender,
+        avatarUrl: validatedData.avatarUrl,
         emergencyContact: {
             name: validatedData.emergencyContactName,
             phone: validatedData.emergencyContactPhone,

@@ -11,6 +11,7 @@ export type User = {
   password?: string; // Should be hashed in a real app
   role: 'admin' | 'teacher' | 'representative';
   teacherId?: string; // Add this to link to a teacher profile
+  avatarUrl?: string;
 };
 
 export type Student = {
@@ -19,7 +20,7 @@ export type Student = {
   name: string;
   dob: string;
   gender: string;
-  avatar?: ImagePlaceholder;
+  avatarUrl?: string;
   
   emergencyContact: {
     name: string;
@@ -138,6 +139,7 @@ export type Teacher = {
     email: string;
     phone: string;
     specialization: string;
+    avatarUrl?: string;
 };
 
 export type Area = {

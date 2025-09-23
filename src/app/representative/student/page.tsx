@@ -1,3 +1,4 @@
+
 'use client';
 
 import { getStudentByRepEmail } from '@/lib/actions/students';
@@ -80,7 +81,7 @@ export default function RepresentativeStudentProfilePage() {
             <Card>
             <CardContent className="pt-6 flex flex-col items-center gap-4">
                 <Avatar className="h-24 w-24">
-                <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
+                <AvatarImage src={student.avatarUrl} alt={student.name} />
                 <AvatarFallback className="text-3xl">{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div className="text-center">

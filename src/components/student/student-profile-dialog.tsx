@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -37,7 +38,7 @@ export function StudentProfileDialog({ student }: StudentProfileDialogProps) {
             <DialogHeader className="mb-6">
               <div className="flex items-center gap-4">
                  <Avatar className="h-20 w-20">
-                    <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
+                    <AvatarImage src={student.avatarUrl} alt={student.name} />
                     <AvatarFallback className="text-3xl">{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div>

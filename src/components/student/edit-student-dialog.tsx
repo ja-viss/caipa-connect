@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -30,6 +31,8 @@ const studentSchema = z.object({
   name: z.string().min(1, 'El nombre del estudiante es obligatorio.'),
   dob: z.string().min(1, 'La fecha de nacimiento es obligatoria.'),
   gender: z.string().min(1, 'El género es obligatorio.'),
+  avatarUrl: z.union([z.string().url('URL de imagen inválida.'), z.literal('')]).optional(),
+
   
   // Emergency Contact
   emergencyContactName: z.string().min(1, 'El nombre del contacto de emergencia es obligatorio.'),
@@ -80,6 +83,7 @@ export function EditStudentDialog({ student, asDropdownItem = false }: EditStude
       name: student.name,
       dob: student.dob,
       gender: student.gender,
+      avatarUrl: student.avatarUrl || '',
       emergencyContactName: student.emergencyContact.name,
       emergencyContactPhone: student.emergencyContact.phone,
       emergencyContactRelation: student.emergencyContact.relation,
@@ -162,6 +166,11 @@ export function EditStudentDialog({ student, asDropdownItem = false }: EditStude
                   <Label htmlFor="name-edit">Nombre y Apellido</Label>
                   <Input id="name-edit" {...register('name')} />
                   {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
+               </div>
+               <div>
+                  <Label htmlFor="avatarUrl-edit">URL de la Foto de Perfil</Label>
+                  <Input id="avatarUrl-edit" placeholder="https://ejemplo.com/imagen.png" {...register('avatarUrl')} />
+                  {errors.avatarUrl && <p className="text-sm text-destructive mt-1">{errors.avatarUrl.message}</p>}
                </div>
                <div>
                   <Label htmlFor="dob-edit">Fecha de Nacimiento</Label>

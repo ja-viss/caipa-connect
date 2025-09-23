@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -192,7 +193,7 @@ export default function TeacherDashboard() {
                     <Link href={`/students/${student.id}`} key={student.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-md hover:bg-muted transition-colors">
                        <div className="flex items-center gap-4">
                           <Avatar className="h-10 w-10">
-                              <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
+                              <AvatarImage src={student.avatarUrl} alt={student.name} />
                               <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                           </Avatar>
                           <div>

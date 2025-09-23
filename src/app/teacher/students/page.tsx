@@ -1,3 +1,4 @@
+
 'use client';
 import { useEffect, useState } from 'react';
 import type { Student, Teacher } from '@/lib/types';
@@ -92,7 +93,7 @@ export default function TeacherStudentsPage() {
                   <TableRow key={student.id}>
                     <TableCell className="hidden sm:table-cell">
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={student.avatar?.imageUrl} alt={student.name} data-ai-hint={student.avatar?.imageHint} />
+                        <AvatarImage src={student.avatarUrl} alt={student.name} />
                         <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                       </Avatar>
                     </TableCell>
