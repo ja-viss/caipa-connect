@@ -57,7 +57,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {renderSidebar()}
       <div className="flex flex-col w-full md:ml-64">
         <Header />
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 pt-20">
+        <main className="p-4 sm:p-6 lg:p-8 flex-1">
           {children}
         </main>
       </div>
