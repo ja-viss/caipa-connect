@@ -15,6 +15,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 interface AdminChartsProps {
   studentsByArea: { name: string; studentCount: number }[];
@@ -43,33 +44,39 @@ export function AdminCharts({ studentsByArea, studentsByGender }: AdminChartsPro
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={CHART_CONFIG} className="h-64">
-             <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={studentsByArea}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    className="text-xs"
-                  />
-                  <YAxis dataKey="studentCount" tickLine={false} axisLine={false} allowDecimals={false} />
-                  <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent indicator="line" />}
-                  />
-                  <Bar dataKey="studentCount" fill="var(--color-studentCount)" radius={4} maxBarSize={50}>
-                    {studentsByArea.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-            </ResponsiveContainer>
-          </ChartContainer>
+          <div className={cn(
+            'w-full',
+            // If there are few bars, constrain the width on mobile to make them thinner
+            studentsByArea.length <= 3 && 'md:max-w-none max-w-xs mx-auto'
+          )}>
+            <ChartContainer config={CHART_CONFIG} className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={studentsByArea}
+                    margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
+                  >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="name"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      className="text-xs"
+                    />
+                    <YAxis dataKey="studentCount" tickLine={false} axisLine={false} allowDecimals={false} />
+                    <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent indicator="line" />}
+                    />
+                    <Bar dataKey="studentCount" fill="var(--color-studentCount)" radius={4} maxBarSize={50}>
+                      {studentsByArea.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </div>
         </CardContent>
       </Card>
       <Card>
