@@ -1,12 +1,12 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import type { SecurityQuestion } from '@/lib/types';
 import { saveSecurityQuestions } from '@/lib/actions/users';
 
@@ -35,6 +35,8 @@ interface SecurityQuestionsFormProps {
 export function SecurityQuestionsForm({ securityQuestions }: SecurityQuestionsFormProps) {
   const { toast } = useToast();
   const [state, action] = useActionState(saveSecurityQuestions, undefined);
+  const [showAnswer1, setShowAnswer1] = useState(false);
+  const [showAnswer2, setShowAnswer2] = useState(false);
 
   useEffect(() => {
     if (state?.success) {
@@ -56,12 +58,24 @@ export function SecurityQuestionsForm({ securityQuestions }: SecurityQuestionsFo
         >
           {PREDEFINED_QUESTIONS.map(q => <option key={q} value={q}>{q}</option>)}
         </select>
-        <Input
-          name="answer1"
-          placeholder="Respuesta 1"
-          defaultValue={securityQuestions[0]?.answer}
-          required
-        />
+        <div className="relative">
+            <Input
+              name="answer1"
+              placeholder="Respuesta 1"
+              type={showAnswer1 ? 'text' : 'password'}
+              defaultValue={securityQuestions[0]?.answer}
+              required
+            />
+            <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute inset-y-0 right-0 h-full px-3"
+                onClick={() => setShowAnswer1(!showAnswer1)}
+            >
+                {showAnswer1 ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="question2">Pregunta 2</Label>
@@ -73,12 +87,24 @@ export function SecurityQuestionsForm({ securityQuestions }: SecurityQuestionsFo
         >
           {PREDEFINED_QUESTIONS.map(q => <option key={q} value={q}>{q}</option>)}
         </select>
-        <Input
-          name="answer2"
-          placeholder="Respuesta 2"
-          defaultValue={securityQuestions[1]?.answer}
-          required
-        />
+         <div className="relative">
+            <Input
+              name="answer2"
+              placeholder="Respuesta 2"
+              type={showAnswer2 ? 'text' : 'password'}
+              defaultValue={securityQuestions[1]?.answer}
+              required
+            />
+             <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute inset-y-0 right-0 h-full px-3"
+                onClick={() => setShowAnswer2(!showAnswer2)}
+            >
+                {showAnswer2 ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
+        </div>
       </div>
       <SubmitButton />
     </form>
