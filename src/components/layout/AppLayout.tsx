@@ -11,18 +11,21 @@ import { RepresentativeSidebar } from './representative-sidebar';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [session, setSession] = useState<{ user: User } | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const isAuthPage =
     pathname === '/login' ||
     pathname === '/register' ||
     pathname === '/forgot-password';
     
-  // For auth pages, just render the children without the main layout or loading checks.
+  // For auth pages, just render the children without the main layout.
+  // This check must happen before any state or effects to prevent hydration mismatches.
   if (isAuthPage) {
     return <>{children}</>;
   }
+
+  // The rest of the logic is for non-auth pages
+  const [session, setSession] = useState<{ user: User } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSession().then((sessionData) => {
@@ -62,7 +65,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {renderSidebar()}
       <div className="flex flex-1 flex-col md:pl-64">
         <Header />
-        <main className="flex-1 pt-16 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
+        <main className="flex-1 p-4 pt-20 sm:p-6 sm:pt-20 lg:p-8 lg:pt-20">
           {children}
         </main>
       </div>
