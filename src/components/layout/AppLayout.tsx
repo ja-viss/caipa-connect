@@ -9,21 +9,7 @@ import type { User } from '@/lib/types';
 import { TeacherSidebar } from './teacher-sidebar';
 import { RepresentativeSidebar } from './representative-sidebar';
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  const isAuthPage =
-    pathname === '/login' ||
-    pathname === '/register' ||
-    pathname === '/forgot-password';
-    
-  // For auth pages, just render the children without the main layout.
-  // This check must happen before any state or effects to prevent hydration mismatches.
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-
-  // The rest of the logic is for non-auth pages
+function MainLayout({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<{ user: User } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,15 +20,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-
   if (loading) {
     return (
-        <div className="flex min-h-screen w-full items-center justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
     );
   }
-  
+
   const userRole = session?.user?.role;
 
   const renderSidebar = () => {
@@ -54,8 +39,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       case 'representative':
         return <RepresentativeSidebar />;
       default:
-        // If there's no session or role, we might want to redirect or show a fallback.
-        // For now, returning null will just not render a sidebar.
         return null;
     }
   };
@@ -65,10 +48,25 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {renderSidebar()}
       <div className="flex flex-1 flex-col md:pl-64">
         <Header />
-        <main className="flex-1 pt-16 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
+        <main className="flex-1 pt-24 p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>
     </div>
   );
+}
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  const isAuthPage =
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname === '/forgot-password';
+
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
+
+  return <MainLayout>{children}</MainLayout>;
 }
